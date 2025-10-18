@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);" xmlns="http://javafx.com/javafx/21.0.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="primeriopacote.telas.auth.controller.RegistroController">
+    <children>
+        <!-- Header com gradiente suave -->
+        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="220.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(135,206,235,0.8) 50%, rgba(79,168,216,0.9) 100%);">
+            <children>
+                <!-- Elementos decorativos orgânicos de fundo -->
+                <Circle centerX="100.0" centerY="50.0" fill="rgba(255,255,255,0.3)" radius="40.0" />
+                <Circle centerX="1100.0" centerY="150.0" fill="rgba(255,255,255,0.2)" radius="60.0" />
+                <Circle centerX="200.0" centerY="180.0" fill="rgba(135,206,235,0.4)" radius="25.0" />
+                <Circle centerX="1000.0" centerY="40.0" fill="rgba(255,255,255,0.25)" radius="35.0" />
+                
+                <!-- Título principal com sombra suave -->
+                <Text fill="#2c5282" layoutX="335.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="CADASTRO DE EMPRESA">
+                    <font>
+                        <Font name="Segoe UI Light" size="48.0" />
+                    </font>
+                    <effect>
+                        <DropShadow color="rgba(44,82,130,0.3)" offsetY="2.0" radius="8.0" />
+                    </effect>
+                </Text>
+                
+                <!-- Subtítulo moderno -->
+                <Text fill="#4a90a4" layoutX="459.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 200;" text="Sistema Integrado de Supermercados">
+                    <font>
+                        <Font name="Segoe UI Light" size="18.0" />
+                    </font>
+                </Text>
+            </children>
+            <effect>
+                <DropShadow color="rgba(0,0,0,0.1)" offsetY="5.0" radius="15.0" />
+            </effect>
+        </AnchorPane>
+
+        <!-- Área principal do conteúdo -->
+        <AnchorPane prefHeight="580.0" prefWidth="1200.0">
+            <children>
+                <!-- Elementos decorativos de fundo - bolhas orgânicas -->
+                <Circle centerX="150.0" centerY="100.0" fill="rgba(255,255,255,0.15)" radius="80.0">
+                    <effect>
+                        <GaussianBlur radius="20.0" />
+                    </effect>
+                </Circle>
+                <Circle centerX="1050.0" centerY="400.0" fill="rgba(135,206,235,0.2)" radius="120.0">
+                    <effect>
+                        <GaussianBlur radius="25.0" />
+                    </effect>
+                </Circle>
+                <Circle centerX="300.0" centerY="450.0" fill="rgba(255,255,255,0.1)" radius="60.0">
+                    <effect>
+                        <GaussianBlur radius="15.0" />
+                    </effect>
+                </Circle>
+
+                <!-- Container principal do formulário -->
+                <Rectangle arcHeight="40.0" arcWidth="40.0" fill="rgba(255,255,255,0.85)" height="786.0" layoutX="400.0" layoutY="34.0" strokeType="INSIDE" width="400.0">
+                    <effect>
+                        <DropShadow color="rgba(0,0,0,0.1)" offsetY="8.0" radius="25.0" spread="0.2" />
+                    </effect>
+                </Rectangle>
+
+                <!-- Elementos decorativos no container -->
+                <Circle centerX="420.0" centerY="100.0" fill="rgba(79,168,216,0.3)" layoutX="2.0" layoutY="-33.0" radius="12.0" />
+                <Circle centerX="780.0" centerY="110.0" fill="rgba(135,206,235,0.4)" layoutX="2.0" layoutY="-33.0" radius="8.0" />
+                <Circle centerX="750.0" centerY="610.0" fill="rgba(255,255,255,0.6)" layoutX="9.0" layoutY="166.0" radius="15.0" />
+
+                <!-- Título do formulário -->
+                <Text fill="#2c5282" layoutX="505.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Dados da Empresa">
+                    <font>
+                        <Font name="Segoe UI Light" size="24.0" />
+                    </font>
+                </Text>
+
+                <!-- CNPJ -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="CNPJ:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="cnpjField" layoutX="430.0" layoutY="140.0" prefHeight="40.0" prefWidth="340.0" promptText="00.000.000/0000-00" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Razão Social -->
+                <Text fill="#4a90a4" layoutX="429.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Razão Social:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="razaoSocialField" layoutX="429.0" layoutY="208.0" prefHeight="40.0" prefWidth="340.0" promptText="Nome legal da empresa" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Nome Fantasia -->
+                <Text fill="#4a90a4" layoutX="429.0" layoutY="263.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Nome Fantasia:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="nomeFantasiaField" layoutX="429.0" layoutY="273.0" prefHeight="40.0" prefWidth="340.0" promptText="Nome comercial da empresa" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Inscrição Estadual -->
+                <Text fill="#4a90a4" layoutX="429.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Inscrição Estadual:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="inscricaoEstadualField" layoutX="429.0" layoutY="338.0" prefHeight="40.0" prefWidth="340.0" promptText="Inscrição estadual (se houver)" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- E-mail -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="E-mail:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="emailField" layoutX="430.0" layoutY="415.0" prefHeight="40.0" prefWidth="340.0" promptText="email@empresa.com" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Telefone -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="470.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Telefone:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="telefoneField" layoutX="430.0" layoutY="480.0" prefHeight="40.0" prefWidth="340.0" promptText="(00) 00000-0000" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- CEP -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="535.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="CEP:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="cepField" layoutX="430.0" layoutY="545.0" prefHeight="40.0" prefWidth="340.0" promptText="00000-000" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Rua e Número (em linha) -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="615.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Endereço:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <HBox layoutX="430.0" layoutY="625.0" spacing="10.0">
+                    <TextField fx:id="ruaField" prefHeight="40.0" prefWidth="230.0" promptText="Nome da rua e Bairro" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                        <effect>
+                            <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                        </effect>
+                    </TextField>
+                    <TextField fx:id="numeroField" prefHeight="40.0" prefWidth="100.0" promptText="Nº" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                        <effect>
+                            <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                        </effect>
+                    </TextField>
+                </HBox>
+
+                <!-- Bairro -->
+                <Text fill="#4a90a4" layoutX="430.0" layoutY="680.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="Cidade e Estado:">
+                    <font>
+                        <Font name="Segoe UI Light" size="14.0" />
+                    </font>
+                </Text>
+                <TextField fx:id="bairroField" layoutX="430.0" layoutY="690.0" prefHeight="40.0" prefWidth="340.0" promptText="Cidade e Estado" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 20; -fx-border-color: rgba(135,206,235,0.5); -fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: #2c5282; -fx-prompt-text-fill: rgba(74,144,164,0.7); -fx-font-size: 14px; -fx-font-family: 'Segoe UI Light'; -fx-padding: 0 15;">
+                    <effect>
+                        <DropShadow color="rgba(135,206,235,0.3)" offsetY="3.0" radius="10.0" />
+                    </effect>
+                </TextField>
+
+                <!-- Botão de registro -->
+                <Button fx:id="registroButton" layoutX="544.0" layoutY="738.0" mnemonicParsing="false" onAction="#handleRegistro" prefHeight="45.0" prefWidth="110.0" style="-fx-background-color: linear-gradient(to bottom, #87ceeb 0%, #4fa8d8 100%); -fx-background-radius: 22.5; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-family: 'Segoe UI Light'; -fx-font-weight: 300; -fx-cursor: hand;" text="Cadastrar">
+                    <effect>
+                        <DropShadow color="rgba(79,168,216,0.4)" offsetY="4.0" radius="12.0" />
+                    </effect>
+                </Button>
+
+                <!-- Link para login -->
+                <Text fill="#4fa8d8" layoutX="528.0" layoutY="804.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300; -fx-cursor: hand; -fx-underline: true;" text="Já tem cadastro? Fazer login">
+                    <font>
+                        <Font name="Segoe UI Light" size="12.0" />
+                    </font>
+                </Text>
+
+                <!-- Mensagem de status -->
+                <Text fx:id="statusMessage" fill="#2c5282" layoutX="430.0" layoutY="830.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300;" text="" visible="false">
+                    <font>
+                        <Font name="Segoe UI Light" size="12.0" />
+                    </font>
+                </Text>
+
+                <!-- Elementos decorativos flutuantes -->
+                <Circle centerX="850.0" centerY="250.0" fill="rgba(255,255,255,0.4)" radius="6.0" />
+                <Circle centerX="900.0" centerY="300.0" fill="rgba(135,206,235,0.3)" radius="4.0" />
+                <Circle centerX="870.0" centerY="320.0" fill="rgba(255,255,255,0.35)" radius="5.0" />
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/21.0.8"
+            fx:controller="main.controllers.AuthController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: linear-gradient(to bottom, #cde8f5 0%, #87ceeb 70%, #4fa8d8 100%);">
+
+    <!-- TOPO (cabeçalho) -->
+    <top>
+       <VBox alignment="CENTER" spacing="5" 
+      style="-fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(79,168,216,0.2) 100%); -fx-padding: 20;">
+            <Text text="BEM-VINDO AO BANCO DE DADOS"
+                  fill="#2c5282"
+                  style="-fx-font-weight: 300;"
+                  >
+                <font>
+                    <Font name="Segoe UI Light" size="48"/>
+                </font>
+                <effect>
+                    <DropShadow color="rgba(44,82,130,0.3)" offsetY="2" radius="8"/>
+                </effect>
+            </Text>
+            <Text text="Sistema Integrado de Supermercados"
+                  fill="#4a90a4"
+                  style="-fx-font-weight: 200;">
+                <font>
+                    <Font name="Segoe UI Light" size="18"/>
+                </font>
+            </Text>
+        </VBox>
+    </top>
+
+    <!-- CONTEÚDO CENTRAL -->
+    <center>
+        <StackPane alignment="CENTER">
+            <!-- Fundo decorativo -->
+            <Circle radius="200" fill="rgba(255,255,255,0.1)">
+                <effect>
+                    <GaussianBlur radius="20"/>
+                </effect>
+            </Circle>
+
+            <!-- Formulário -->
+            <VBox spacing="15" alignment="CENTER"
+                  prefWidth="400"
+                  style="-fx-background-color: rgba(255,255,255,0.85);
+                         -fx-background-radius: 20;
+                         -fx-padding: 40;">
+                <Text text="Acesso ao Sistema"
+                      fill="#2c5282"
+                      style="-fx-font-weight: 300;">
+                    <font>
+                        <Font name="Segoe UI Light" size="26"/>
+                    </font>
+                </Text>
+
+                <TextField fx:id="documentField"
+                           promptText="Digite aqui seu CPF/CNPJ"
+                           style="-fx-background-color: white;
+                                  -fx-background-radius: 10;
+                                  -fx-border-color: #87ceeb;
+                                  -fx-border-radius: 10;
+                                  -fx-border-width: 2;
+                                  -fx-font-size: 14;
+                                  -fx-text-fill: #2c5282;
+                                  -fx-prompt-text-fill: rgba(74,144,164,0.7);"
+                           prefHeight="45"
+                           prefWidth="320"/>
+
+                <Button fx:id="accessButton"
+                        text="Acessar"
+                        onAction="#handleAccessButton"
+                        style="-fx-background-color: linear-gradient(to bottom, #87ceeb 0%, #4fa8d8 100%);
+                               -fx-background-radius: 22;
+                               -fx-text-fill: white;
+                               -fx-font-size: 16;
+                               -fx-font-family: 'Segoe UI Light';
+                               -fx-font-weight: 300;
+                               -fx-cursor: hand;"
+                        prefHeight="45"
+                        prefWidth="140"/>
+
+                <Text text="Utilize apenas números, sem pontos ou traços"
+                      fill="#7bb3c7"
+                      style="-fx-font-weight: 200;">
+                    <font>
+                        <Font name="Segoe UI Light" size="12"/>
+                    </font>
+                </Text>
+
+                <Text fx:id="statusMessage"
+                      text=""
+                      fill="#2c5282"
+                      visible="false">
+                    <font>
+                        <Font name="Segoe UI Light" size="12"/>
+                    </font>
+                </Text>
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>

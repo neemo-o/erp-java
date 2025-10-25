@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);" xmlns="http://javafx.com/javafx/21.0.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="primeriopacote.telas.auth.controller.RegistroController">
+<VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);" xmlns="http://javafx.com/javafx/21.0.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.RegistroController">
     <children>
         <!-- Header com gradiente suave -->
         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="220.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(135,206,235,0.8) 50%, rgba(79,168,216,0.9) 100%);">
@@ -207,7 +207,7 @@
                 </Button>
 
                 <!-- Link para login -->
-                <Text fill="#4fa8d8" layoutX="528.0" layoutY="804.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300; -fx-cursor: hand; -fx-underline: true;" text="Já tem cadastro? Fazer login">
+                <Text fill="#4fa8d8" layoutX="528.0" layoutY="804.0" onMouseClicked="#handleLoginLink" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 300; -fx-cursor: hand; -fx-underline: true;" text="Já tem cadastro? Fazer login">
                     <font>
                         <Font name="Segoe UI Light" size="12.0" />
                     </font>

@@ -108,6 +108,18 @@
                         <Font name="Segoe UI Light" size="12"/>
                     </font>
                 </Text>
+
+                <!-- Link para cadastro -->
+                <Text fill="#4fa8d8"
+                      onMouseClicked="#handleCadastroLink"
+                      strokeType="OUTSIDE"
+                      strokeWidth="0.0"
+                      style="-fx-font-weight: 300; -fx-cursor: hand; -fx-underline: true;"
+                      text="Não tem cadastro? Cadastrar empresa">
+                    <font>
+                        <Font name="Segoe UI Light" size="12"/>
+                    </font>
+                </Text>
             </VBox>
         </StackPane>
     </center>

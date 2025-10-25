@@ -1,10 +1,14 @@
 package main.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import main.database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,13 +42,14 @@ public class AuthController {
     @FXML
     private void handleAccessButton() {
         String doc = documentField.getText().trim();
-
+        
         // Validar se o CNPJ tem exatamente 18 caracteres
         if (doc.length() != 18) {
             statusMessage.setText("CNPJ deve ter exatamente 18 caracteres.");
             statusMessage.setVisible(true);
             return;
         }
+
 
         // Validar formato básico do CNPJ (exemplo: XX.XXX.XXX/XXXX-XX)
         if (!doc.matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
@@ -69,6 +74,19 @@ public class AuthController {
                     if ("PAGO".equals(status)) {
                         statusMessage.setText("CNPJ conectado com sucesso.");
                         statusMessage.setVisible(true);
+
+                        // Navegar para Login2.fxml
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/Login2.fxml"));
+                            Parent root = loader.load();
+                            Scene scene = new Scene(root);
+                            Stage stage = (Stage) accessButton.getScene().getWindow();
+                            stage.setScene(scene);
+                            stage.show();
+                        } catch (Exception e) {
+                            statusMessage.setText("Erro ao carregar a próxima tela: " + e.getMessage());
+                            statusMessage.setVisible(true);
+                        }
                     } else {
                         statusMessage.setText("CNPJ não pago. Acesso negado.");
                         statusMessage.setVisible(true);
@@ -87,6 +105,21 @@ public class AuthController {
 
         } catch (SQLException e) {
             statusMessage.setText("Erro ao conectar ao banco de dados: " + e.getMessage());
+            statusMessage.setVisible(true);
+        }
+    }
+
+    @FXML
+    private void handleCadastroLink() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/Registro1.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) accessButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            statusMessage.setText("Erro ao carregar a tela de cadastro: " + e.getMessage());
             statusMessage.setVisible(true);
         }
     }

@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="680.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);" xmlns="http://javafx.com/javafx/21.0.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.loginsupermercado.controller.Login2Controller">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="680.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);" xmlns="http://javafx.com/javafx/21.0.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.Login2Controller">
     <children>
 
         <!-- Área principal do conteúdo -->

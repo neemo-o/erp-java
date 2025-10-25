@@ -46,6 +46,12 @@ public class RegistroController {
     private TextField bairroField;
 
     @FXML
+    private TextField cidadeField;
+
+    @FXML
+    private TextField estadoField;
+
+    @FXML
     private Button registroButton;
 
     @FXML
@@ -63,6 +69,8 @@ public class RegistroController {
         String rua = ruaField.getText().trim();
         String numero = numeroField.getText().trim();
         String bairro = bairroField.getText().trim();
+        String cidade = cidadeField.getText().trim(); // Campo não utilizado
+        String estado = estadoField.getText().trim();
 
         // Validações básicas
         if (cnpj.isEmpty() || razaoSocial.isEmpty() || email.isEmpty()) {
@@ -92,8 +100,8 @@ public class RegistroController {
                 stmt.setString(7, rua);
                 stmt.setString(8, numero);
                 stmt.setString(9, bairro);
-                stmt.setString(10, ""); // cidade
-                stmt.setString(11, ""); // estado
+                stmt.setString(10, cidade); // cidade
+                stmt.setString(11, estado); // estado
                 stmt.setString(12, cep);
 
                 int rows = stmt.executeUpdate();

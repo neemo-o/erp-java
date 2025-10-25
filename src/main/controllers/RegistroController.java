@@ -122,6 +122,7 @@ public class RegistroController {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) registroButton.getScene().getWindow();
+            stage.centerOnScreen();
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {

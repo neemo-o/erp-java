@@ -39,14 +39,6 @@ CREATE TRIGGER trigger_atualizar_data
     FOR EACH ROW
     EXECUTE FUNCTION atualizar_data_modificacao();
 
--- Comentários nas colunas para documentação
-COMMENT ON TABLE licencas IS 'Tabela de cadastro de clientes';
-COMMENT ON COLUMN licencas.cnpj IS 'CNPJ do cliente (chave primária)';
-COMMENT ON COLUMN licencas.razao_social IS 'Razão social da empresa';
-COMMENT ON COLUMN licencas.nome_fantasia IS 'Nome fantasia da empresa';
-COMMENT ON COLUMN licencas.inscricao_estadual IS 'Inscrição estadual';
-COMMENT ON COLUMN licencas.status IS 'Status de pagamento: PAGO ou NAO_PAGO';
-
 -- Exemplo de inserção de dados
 INSERT INTO licencas (
     cnpj, razao_social, nome_fantasia, inscricao_estadual,
@@ -67,17 +59,3 @@ INSERT INTO licencas (
     'SP',
     '01234-567'
 );
-
--- Consultas úteis
-
--- Listar todos os clientes
--- SELECT * FROM licencas;
-
--- Buscar clientes por status
--- SELECT * FROM licencas WHERE status = 'PAGO';
-
--- Buscar clientes por cidade
--- SELECT * FROM licencas WHERE cidade = 'São Paulo';
-
--- Contar clientes por status
--- SELECT status, COUNT(*) as total FROM licencas GROUP BY status;

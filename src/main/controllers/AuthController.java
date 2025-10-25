@@ -81,6 +81,7 @@ public class AuthController {
                             Parent root = loader.load();
                             Scene scene = new Scene(root);
                             Stage stage = (Stage) accessButton.getScene().getWindow();
+                            stage.centerOnScreen();
                             stage.setScene(scene);
                             stage.show();
                         } catch (Exception e) {

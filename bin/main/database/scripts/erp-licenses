@@ -1,33 +1,11 @@
-CREATE DATABASE erp-oficial
-
-
--- Conectar ao banco de dados
-\c clientes_db;
-
--- Criação da tabela CLIENTES_CADASTRADOS
-CREATE TABLE IF NOT EXISTS clientes_cadastrados (
-    -- Chave única (CNPJ)
+CREATE TABLE IF NOT EXISTS licencas (
     cnpj VARCHAR(18) PRIMARY KEY,
-    
-    -- Razão Social
     razao_social VARCHAR(255) NOT NULL,
-    
-    -- Nome Fantasia
     nome_fantasia VARCHAR(255),
-    
-    -- Inscrição Estadual
     inscricao_estadual VARCHAR(50),
-    
-    -- Telefone
     telefone VARCHAR(20),
-    
-    -- E-mail
     e_mail VARCHAR(255),
-    
-    -- Status (Pago ou Não)
     status VARCHAR(20) CHECK (status IN ('PAGO', 'NAO_PAGO')),
-    
-    -- Localidade (Rua, Número, Bairro, Cidade, Estado, CEP)
     rua VARCHAR(255),
     numero VARCHAR(10),
     bairro VARCHAR(100),
@@ -41,11 +19,11 @@ CREATE TABLE IF NOT EXISTS clientes_cadastrados (
 );
 
 -- Índices para melhorar performance
-CREATE INDEX idx_razao_social ON clientes_cadastrados(razao_social);
-CREATE INDEX idx_nome_fantasia ON clientes_cadastrados(nome_fantasia);
-CREATE INDEX idx_status ON clientes_cadastrados(status);
-CREATE INDEX idx_cidade ON clientes_cadastrados(cidade);
-CREATE INDEX idx_estado ON clientes_cadastrados(estado);
+CREATE INDEX idx_razao_social ON licencas(razao_social);
+CREATE INDEX idx_nome_fantasia ON licencas(nome_fantasia);
+CREATE INDEX idx_status ON licencas(status);
+CREATE INDEX idx_cidade ON licencas(cidade);
+CREATE INDEX idx_estado ON licencas(estado);
 
 -- Trigger para atualizar automaticamente data_atualizacao
 CREATE OR REPLACE FUNCTION atualizar_data_modificacao()
@@ -57,20 +35,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_atualizar_data
-    BEFORE UPDATE ON clientes_cadastrados
+    BEFORE UPDATE ON licencas
     FOR EACH ROW
     EXECUTE FUNCTION atualizar_data_modificacao();
 
 -- Comentários nas colunas para documentação
-COMMENT ON TABLE clientes_cadastrados IS 'Tabela de cadastro de clientes';
-COMMENT ON COLUMN clientes_cadastrados.cnpj IS 'CNPJ do cliente (chave primária)';
-COMMENT ON COLUMN clientes_cadastrados.razao_social IS 'Razão social da empresa';
-COMMENT ON COLUMN clientes_cadastrados.nome_fantasia IS 'Nome fantasia da empresa';
-COMMENT ON COLUMN clientes_cadastrados.inscricao_estadual IS 'Inscrição estadual';
-COMMENT ON COLUMN clientes_cadastrados.status IS 'Status de pagamento: PAGO ou NAO_PAGO';
+COMMENT ON TABLE licencas IS 'Tabela de cadastro de clientes';
+COMMENT ON COLUMN licencas.cnpj IS 'CNPJ do cliente (chave primária)';
+COMMENT ON COLUMN licencas.razao_social IS 'Razão social da empresa';
+COMMENT ON COLUMN licencas.nome_fantasia IS 'Nome fantasia da empresa';
+COMMENT ON COLUMN licencas.inscricao_estadual IS 'Inscrição estadual';
+COMMENT ON COLUMN licencas.status IS 'Status de pagamento: PAGO ou NAO_PAGO';
 
 -- Exemplo de inserção de dados
-INSERT INTO clientes_cadastrados (
+INSERT INTO licencas (
     cnpj, razao_social, nome_fantasia, inscricao_estadual,
     telefone, e_mail, status, rua, numero, bairro,
     cidade, estado, cep
@@ -93,13 +71,13 @@ INSERT INTO clientes_cadastrados (
 -- Consultas úteis
 
 -- Listar todos os clientes
--- SELECT * FROM clientes_cadastrados;
+-- SELECT * FROM licencas;
 
 -- Buscar clientes por status
--- SELECT * FROM clientes_cadastrados WHERE status = 'PAGO';
+-- SELECT * FROM licencas WHERE status = 'PAGO';
 
 -- Buscar clientes por cidade
--- SELECT * FROM clientes_cadastrados WHERE cidade = 'São Paulo';
+-- SELECT * FROM licencas WHERE cidade = 'São Paulo';
 
 -- Contar clientes por status
--- SELECT status, COUNT(*) as total FROM clientes_cadastrados GROUP BY status;
+-- SELECT status, COUNT(*) as total FROM licencas GROUP BY status;

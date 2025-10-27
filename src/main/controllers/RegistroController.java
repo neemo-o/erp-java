@@ -58,6 +58,19 @@ public class RegistroController {
     private Text statusMessage;
 
     @FXML
+    public void initialize() {
+        // Desabilitar resize da janela
+        cnpjField.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                if (stage != null) {
+                    stage.setResizable(false);
+                }
+            }
+        });
+    }
+
+    @FXML
     private void handleRegistro() {
         String cnpj = cnpjField.getText().trim();
         String razaoSocial = razaoSocialField.getText().trim();
@@ -130,6 +143,7 @@ public class RegistroController {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) registroButton.getScene().getWindow();
+            stage.setResizable(false);
             stage.centerOnScreen();
             stage.setScene(scene);
             stage.show();

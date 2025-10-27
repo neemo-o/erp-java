@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class Login2Controller {
 
@@ -21,11 +22,24 @@ public class Login2Controller {
     private Text statusMessage;
 
     @FXML
+    public void initialize() {
+        
+        usernameField.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                if (stage != null) {
+                    stage.setResizable(false);
+                }
+            }
+        });
+    }
+
+    @FXML
     private void handleLoginButton() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
-        // Validações básicas
+        
         if (username.isEmpty()) {
             statusMessage.setText("Nome de usuário não pode estar vazio.");
             statusMessage.setVisible(true);
@@ -38,7 +52,7 @@ public class Login2Controller {
             return;
         }
 
-        // Lógica de login aqui (exemplo simples)
+        
         if ("admin".equals(username) && "password".equals(password)) {
             statusMessage.setText("Login realizado com sucesso!");
             statusMessage.setVisible(true);

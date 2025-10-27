@@ -37,6 +37,16 @@ public class AuthController {
             return change;
         };
         documentField.setTextFormatter(new TextFormatter<>(filter));
+        
+        // Desabilitar resize da janela
+        documentField.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                if (stage != null) {
+                    stage.setResizable(false);
+                }
+            }
+        });
     }
 
     @FXML
@@ -81,6 +91,7 @@ public class AuthController {
                             Parent root = loader.load();
                             Scene scene = new Scene(root);
                             Stage stage = (Stage) accessButton.getScene().getWindow();
+                            stage.setResizable(false); // Garantir que a nova janela também não seja redimensionável
                             stage.centerOnScreen();
                             stage.setScene(scene);
                             stage.show();
@@ -117,6 +128,7 @@ public class AuthController {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) accessButton.getScene().getWindow();
+            stage.setResizable(false); 
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {

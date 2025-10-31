@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="600.0" maxWidth="1000.0" spacing="15.0" style="-fx-background-color: #f5f7fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.RelatoriosController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <Text fill="#2c5282" strokeType="OUTSIDE" strokeWidth="0.0" text="Relatórios e Análises">
+               <font>
+                  <Font name="Segoe UI" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <VBox spacing="15.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label style="-fx-text-fill: #2c5282;" text="Filtros e Parâmetros">
+               <font>
+                  <Font name="Segoe UI Semibold" size="13.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Tipo de Relatório:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cbTipoRelatorio" prefWidth="180.0" promptText="Selecione" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Período:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cbPeriodo" prefWidth="150.0" promptText="Selecione" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Data Inicial:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <DatePicker fx:id="dpDataInicial" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Data Final:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <DatePicker fx:id="dpDataFinal" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Button fx:id="btnGerarRelatorio" mnemonicParsing="false" onAction="#handleGerarRelatorio" prefHeight="32.0" prefWidth="130.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Gerar Relatório" />
+                  <Button fx:id="btnLimpar" mnemonicParsing="false" onAction="#handleLimpar" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #999; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Limpar" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnExportarPDF" mnemonicParsing="false" onAction="#handleExportarPDF" prefHeight="32.0" prefWidth="110.0" style="-fx-background-color: #e57373; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Exportar PDF" />
+                  <Button fx:id="btnExportarExcel" mnemonicParsing="false" onAction="#handleExportarExcel" prefHeight="32.0" prefWidth="110.0" style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Exportar Excel" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox spacing="12.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" VBox.vgrow="ALWAYS">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Resumo do Período">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="13.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="lblPeriodoSelecionado" style="-fx-text-fill: #666;" text="Período: --">
+                     <font>
+                        <Font name="Segoe UI" size="11.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="5.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Total de Vendas">
+                           <font>
+                              <Font name="Segoe UI" size="10.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblTotalVendas" style="-fx-text-fill: #2c5282;" text="R$ 0,00">
+                           <font>
+                              <Font name="Segoe UI Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" spacing="5.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Quantidade de Vendas">
+                           <font>
+                              <Font name="Segoe UI" size="10.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblQuantidadeVendas" style="-fx-text-fill: #2c5282;" text="0">
+                           <font>
+                              <Font name="Segoe UI Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" spacing="5.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Ticket Médio">
+                           <font>
+                              <Font name="Segoe UI" size="10.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblTicketMedio" style="-fx-text-fill: #2c5282;" text="R$ 0,00">
+                           <font>
+                              <Font name="Segoe UI Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" />
+            <Label style="-fx-text-fill: #2c5282;" text="Detalhamento">
+               <font>
+                  <Font name="Segoe UI Semibold" size="13.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tableRelatorio" style="-fx-background-color: white; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="colData" prefWidth="100.0" text="Data" />
+                <TableColumn fx:id="colDescricao" prefWidth="300.0" text="Descrição" />
+                  <TableColumn fx:id="colQuantidade" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Quantidade" />
+                  <TableColumn fx:id="colValor" prefWidth="120.0" style="-fx-alignment: CENTER_RIGHT;" text="Valor" />
+                  <TableColumn fx:id="colCategoria" prefWidth="150.0" text="Categoria" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #e8e8e8; -fx-padding: 10; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
+         <children>
+            <Label fx:id="lblTotalRegistros" style="-fx-text-fill: #666;" text="Total: 0 registros">
+               <font>
+                  <Font name="Segoe UI" size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </children>
+</VBox>

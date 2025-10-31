@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="600.0" maxWidth="1000.0" spacing="15.0" style="-fx-background-color: #f5f7fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.DashboardController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <Text fill="#2c5282" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard - Visão Geral">
+               <font>
+                  <Font name="Segoe UI" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" spacing="15.0">
+         <children>
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20;">
+               <children>
+                  <Text fill="#5a9fd4" strokeType="OUTSIDE" strokeWidth="0.0" text="💰">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Text>
+                  <Label style="-fx-text-fill: #666;" text="Vendas Hoje">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblVendasHoje" style="-fx-text-fill: #2c5282;" text="R$ 0,00">
+                     <font>
+                        <Font name="Segoe UI" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20;">
+               <children>
+                  <Text fill="#5a9fd4" strokeType="OUTSIDE" strokeWidth="0.0" text="📦">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Text>
+                  <Label style="-fx-text-fill: #666;" text="Total Produtos">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblTotalProdutos" style="-fx-text-fill: #2c5282;" text="0">
+                     <font>
+                        <Font name="Segoe UI" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20;">
+               <children>
+                  <Text fill="#5a9fd4" strokeType="OUTSIDE" strokeWidth="0.0" text="👥">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Text>
+                  <Label style="-fx-text-fill: #666;" text="Total Clientes">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblTotalClientes" style="-fx-text-fill: #2c5282;" text="0">
+                     <font>
+                        <Font name="Segoe UI" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20;">
+               <children>
+                  <Text fill="#5a9fd4" strokeType="OUTSIDE" strokeWidth="0.0" text="📊">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Text>
+                  <Label style="-fx-text-fill: #666;" text="Vendas Mês">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblVendasMes" style="-fx-text-fill: #2c5282;" text="R$ 0,00">
+                     <font>
+                        <Font name="Segoe UI" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox spacing="15.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox spacing="10.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Métodos de Pagamento">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <PieChart fx:id="chartPagamentos" legendSide="BOTTOM" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox spacing="10.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Produtos com Baixo Estoque">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <VBox fx:id="vboxBaixoEstoque" spacing="8.0" style="-fx-background-color: #f9f9f9; -fx-padding: 10;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #999;" text="Nenhum produto com estoque baixo">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #e8e8e8; -fx-padding: 10; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
+         <children>
+            <Label fx:id="lblUltimaAtualizacao" style="-fx-text-fill: #666;" text="Última atualização: --">
+               <font>
+                  <Font name="Segoe UI" size="11.0" />
+               </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label style="-fx-text-fill: #666;" text="Sistema de Gestão v1.0">
+               <font>
+                  <Font name="Segoe UI" size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </children>
+</VBox>

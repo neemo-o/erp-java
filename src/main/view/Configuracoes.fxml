@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="600.0" maxWidth="1000.0" spacing="15.0" style="-fx-background-color: #f5f7fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.ConfiguracoesController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <Text fill="#2c5282" strokeType="OUTSIDE" strokeWidth="0.0" text="Configurações do Sistema">
+               <font>
+                  <Font name="Segoe UI" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <VBox spacing="20.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" VBox.vgrow="ALWAYS">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <VBox spacing="12.0">
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Informações da Empresa">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="15.0">
+                     <children>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-text-fill: #666;" text="Nome da Empresa:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtNomeEmpresa" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-text-fill: #666;" text="CNPJ:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtCnpj" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Endereço:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtEndereco" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <Separator prefWidth="200.0" />
+            <VBox spacing="12.0">
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Horário de Funcionamento">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="15.0">
+                     <children>
+                        <VBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #666;" text="Horário de Abertura:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtHorarioAbertura" prefWidth="100.0" promptText="08:00" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #666;" text="Horário de Fechamento:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtHorarioFechamento" prefWidth="100.0" promptText="18:00" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="chkFuncionaFds" mnemonicParsing="false" style="-fx-text-fill: #666;" text="Funciona aos finais de semana">
+                     <font>
+                        <Font name="Segoe UI" size="11.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </VBox>
+            <Separator prefWidth="200.0" />
+            <VBox spacing="12.0">
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Permissões e Restrições">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="chkPermitirVendaSemEstoque" mnemonicParsing="false" style="-fx-text-fill: #666;" text="Permitir venda de produtos sem estoque">
+                     <font>
+                        <Font name="Segoe UI" size="11.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="chkRequerAutorizacaoDesconto" mnemonicParsing="false" style="-fx-text-fill: #666;" text="Requerer autorização do gerente para descontos acima de 10%">
+                     <font>
+                        <Font name="Segoe UI" size="11.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="chkBloquearSistemaForaHorario" mnemonicParsing="false" style="-fx-text-fill: #666;" text="Bloquear acesso ao sistema fora do horário de funcionamento">
+                     <font>
+                        <Font name="Segoe UI" size="11.0" />
+                     </font>
+                  </CheckBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-text-fill: #666;" text="Nível de permissão do usuário atual:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cbNivelPermissao" prefWidth="200.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <Separator prefWidth="200.0" />
+            <VBox spacing="12.0">
+               <children>
+                  <Label style="-fx-text-fill: #2c5282;" text="Backup e Segurança">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="10.0">
+                     <children>
+                        <CheckBox fx:id="chkBackupAutomatico" mnemonicParsing="false" style="-fx-text-fill: #666;" text="Backup automático diário">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="btnFazerBackup" mnemonicParsing="false" onAction="#handleFazerBackup" prefHeight="28.0" prefWidth="120.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Fazer Backup" />
+                        <Button fx:id="btnRestaurarBackup" mnemonicParsing="false" onAction="#handleRestaurarBackup" prefHeight="28.0" prefWidth="120.0" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Restaurar Backup" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-background-color: #e8e8e8; -fx-padding: 10; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
+         <children>
+            <Button fx:id="btnSalvarConfiguracoes" mnemonicParsing="false" onAction="#handleSalvarConfiguracoes" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Salvar Configurações" />
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #999; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Cancelar" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

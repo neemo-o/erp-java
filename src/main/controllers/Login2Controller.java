@@ -103,8 +103,10 @@ public class Login2Controller {
             statusMessage.setVisible(true);
             return;
         }
+        try{
+            Integer userId = Integer.parseInt(username);
 
-        if (authenticateUser(Integer.parseInt(username), password)) {
+            if (authenticateUser(userId, password)) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/MainScreen.fxml"));
                 Parent root = loader.load();
@@ -125,6 +127,13 @@ public class Login2Controller {
                 statusMessage.setVisible(true);
             }
         }
+
+        } catch (NumberFormatException e) {
+            statusMessage.setText("ID de usuário inválido.");
+            statusMessage.setVisible(true);
+            return;
+        }
+        
 
     }
 

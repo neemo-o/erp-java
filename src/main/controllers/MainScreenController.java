@@ -75,9 +75,20 @@ public class MainScreenController {
     private Button currentActiveButton;
 
     @FXML
-    public void initialize() {
-        // Configurar janela para tela cheia e sem resize
-        contentArea.sceneProperty().addListener((obs, oldScene, newScene) -> {
+public void initialize() {
+    System.out.println("=== INITIALIZE MainScreenController ===");
+    
+    // Debug: Verificar quais botões estão null
+    System.out.println("btnProdutos: " + (btnProdutos == null ? "NULL" : "OK"));
+    System.out.println("btnClientes: " + (btnClientes == null ? "NULL" : "OK"));
+    System.out.println("btnVendas: " + (btnVendas == null ? "NULL" : "OK"));
+    System.out.println("btnEstoque: " + (btnEstoque == null ? "NULL" : "OK"));
+    System.out.println("btnFornecedores: " + (btnFornecedores == null ? "NULL" : "OK"));
+    System.out.println("btnRelatorios: " + (btnRelatorios == null ? "NULL" : "OK"));
+    System.out.println("btnConfiguracoes: " + (btnConfiguracoes == null ? "NULL" : "OK"));
+    
+    // Configurar janela para tela cheia e sem resize
+    contentArea.sceneProperty().addListener((obs, oldScene, newScene) -> {
         if (newScene != null) {
             Stage stage = (Stage) newScene.getWindow();
             stage.setResizable(false);
@@ -85,48 +96,61 @@ public class MainScreenController {
         }
     });
 
-        // Obter IP da máquina
-        try {
-            InetAddress ip = InetAddress.getLocalHost();
-            ipLabel.setText(ip.getHostAddress());
-        } catch (Exception e) {
-            ipLabel.setText("N/A");
-        }
-
-        // Iniciar relógio em tempo real
-        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-            LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            dataHoraLabel.setText(now.format(formatter));
-        }), new KeyFrame(Duration.seconds(1)));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
-
-        // Carregar dados iniciais do dashboard
-        carregarDashboard();
-
-        // Adicionar efeitos hover aos botões do menu
-        adicionarEfeitosMenu();
+    // Obter IP da máquina
+    try {
+        InetAddress ip = InetAddress.getLocalHost();
+        ipLabel.setText(ip.getHostAddress());
+    } catch (Exception e) {
+        ipLabel.setText("N/A");
     }
 
-    private void adicionarEfeitosMenu() {
-        Button[] menuButtons = {btnProdutos, btnClientes, btnVendas, btnEstoque, 
-                                btnFornecedores, btnRelatorios, btnConfiguracoes};
+    // Iniciar relógio em tempo real
+    Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        dataHoraLabel.setText(now.format(formatter));
+    }), new KeyFrame(Duration.seconds(1)));
+    clock.setCycleCount(Animation.INDEFINITE);
+    clock.play();
 
-        for (Button btn : menuButtons) {
-            btn.setOnMouseEntered(e -> {
-                if (btn != currentActiveButton) {
-                    btn.setStyle(btn.getStyle() + "-fx-background-color: #e8f4f8;");
-                }
-            });
+    // Carregar dados iniciais do dashboard
+    carregarDashboard();
 
-            btn.setOnMouseExited(e -> {
-                if (btn != currentActiveButton) {
-                    btn.setStyle(btn.getStyle().replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
-                }
-            });
+    // Adicionar efeitos hover aos botões do menu
+    adicionarEfeitosMenu();
+    
+    System.out.println("=== INITIALIZE CONCLUÍDO ===");
+}
+
+private void adicionarEfeitosMenu() {
+    System.out.println("Adicionando efeitos ao menu...");
+    
+    Button[] menuButtons = {btnProdutos, btnClientes, btnVendas, btnEstoque, 
+                            btnFornecedores, btnRelatorios, btnConfiguracoes};
+
+    for (int i = 0; i < menuButtons.length; i++) {
+        Button btn = menuButtons[i];
+        
+        if (btn == null) {
+            System.err.println("ERRO: Botão na posição " + i + " está NULL");
+            continue;
         }
+        
+        btn.setOnMouseEntered(e -> {
+            if (btn != currentActiveButton) {
+                btn.setStyle(btn.getStyle() + "-fx-background-color: #e8f4f8;");
+            }
+        });
+
+        btn.setOnMouseExited(e -> {
+            if (btn != currentActiveButton) {
+                btn.setStyle(btn.getStyle().replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
+            }
+        });
     }
+    
+    System.out.println("Efeitos adicionados com sucesso");
+}
 
     private void setActiveButton(Button button) {
         // Remover destaque do botão anterior

@@ -77,13 +77,13 @@ public class MainScreenController {
     @FXML
     public void initialize() {
         // Configurar janela para tela cheia e sem resize
-        Platform.runLater(() -> {
-            Stage stage = (Stage) contentArea.getScene().getWindow();
-            if (stage != null) {
-                stage.setResizable(false);
-                stage.setMaximized(true);
-            }
-        });
+        contentArea.sceneProperty().addListener((obs, oldScene, newScene) -> {
+        if (newScene != null) {
+            Stage stage = (Stage) newScene.getWindow();
+            stage.setResizable(false);
+            stage.setMaximized(true);
+        }
+    });
 
         // Obter IP da máquina
         try {
@@ -213,8 +213,10 @@ public class MainScreenController {
 
     @FXML
     private void handleMinimize() {
-        Stage stage = (Stage) minimizeButton.getScene().getWindow();
-        stage.setIconified(true);
+        if (minimizeButton.getScene() != null && minimizeButton.getScene().getWindow() != null) {
+            Stage stage = (Stage) minimizeButton.getScene().getWindow();
+            stage.setIconified(true);
+        }
     }
 
     @FXML

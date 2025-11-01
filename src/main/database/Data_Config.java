@@ -12,7 +12,7 @@ public class Data_Config {
 
     // mercado
     public static final class Banco2 {
-        public static final String URL = "jdbc:postgresql://localhost:5432/erp_mercado";
+        public static final String URL = "jdbc:postgresql://localhost:5432/erp_oficial";
         public static final String USER = "postgres";
         public static final String PASSWORD = "postgres";
         public static final String NOME = "ERP_MERCADO";

@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS licencas (
     cidade VARCHAR(100),
     estado VARCHAR(2),
     cep VARCHAR(10),
-    credenciais VARCHAR(50),
-    senha VARCHAR(50),
+    id_credencial_principal INTEGER,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_credencial_principal) REFERENCES licenca_credenciais(id)
 );
 
 -- Índices para melhorar performance

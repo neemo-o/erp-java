@@ -83,7 +83,7 @@
                      <Font size="36.0" />
                   </font>
            </Button>
-               <Button fx:id="loginButton1" onAction="#handleLoginButton" prefHeight="41.0" prefWidth="132.0" style="-fx-background-color: linear-gradient(to bottom, #B86454, #C22406); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-size: 13; -fx-font-family: 'Segoe UI'; -fx-cursor: hand; -fx-padding: 8 35;" text="Fechar">
+               <Button fx:id="loginButton1" onAction="#handleCloseButton" prefHeight="41.0" prefWidth="132.0" style="-fx-background-color: linear-gradient(to bottom, #B86454, #C22406); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-size: 13; -fx-font-family: 'Segoe UI'; -fx-cursor: hand; -fx-padding: 8 35;" text="Fechar">
                   <effect>
                      <DropShadow color="rgba(79,168,216,0.4)" offsetY="4" radius="12" />
                   </effect>

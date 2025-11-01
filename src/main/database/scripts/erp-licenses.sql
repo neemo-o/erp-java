@@ -1,3 +1,5 @@
+-- Active: 1762011391712@@localhost@5432@erp_lincenses
+
 CREATE TABLE IF NOT EXISTS licencas (
     cnpj VARCHAR(18) PRIMARY KEY,
     razao_social VARCHAR(255) NOT NULL,
@@ -12,10 +14,8 @@ CREATE TABLE IF NOT EXISTS licencas (
     cidade VARCHAR(100),
     estado VARCHAR(2),
     cep VARCHAR(10),
-    id_credencial_principal INTEGER,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_credencial_principal) REFERENCES licenca_credenciais(id)
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Índices para melhorar performance

@@ -1,4 +1,5 @@
--- Active: 1761779476832@@127.0.0.1@5432@erp_oficial
+-- Active: 1762011391712@@localhost@5432@erp_mercado
+
 -- ========================================
 -- TABELA FORNECEDOR
 -- ========================================
@@ -107,6 +108,35 @@ CREATE TABLE IF NOT EXISTS item_compra (
 );
 
 -- ========================================
+-- TABELA ENDEREÇOS
+-- ========================================
+CREATE TABLE enderecos (
+    id_endereco SERIAL PRIMARY KEY,
+    logradouro VARCHAR(255) NOT NULL,
+    numero VARCHAR(10),
+    complemento VARCHAR(255),
+    bairro VARCHAR(255) NOT NULL,
+    cidade VARCHAR(255) NOT NULL,
+    estado VARCHAR(2) NOT NULL,
+    cep VARCHAR(9) NOT NULL
+);
+
+-- ========================================
+-- TABELA CLIENTES
+-- ========================================
+CREATE TABLE clientes (
+    cnpj VARCHAR(14) NOT NULL PRIMARY KEY,
+    razao_social VARCHAR(255) NOT NULL,
+    nome_fantasia VARCHAR(255),
+    inscricao_estadual VARCHAR(255),
+    email_cliente VARCHAR(255) NOT NULL,
+    telefone_cliente VARCHAR(20),
+    id_endereco_cliente INTEGER REFERENCES enderecos(id_endereco),
+    status_cliente VARCHAR(10) NOT NULL CHECK (status_cliente IN ('PAGO', 'NAO_PAGO'))
+);
+
+
+-- ========================================
 -- ÍNDICES PARA MELHORAR PERFORMANCE
 -- ========================================
 CREATE INDEX idx_fornecedor_empresa ON fornecedor(id_empresa);
@@ -132,6 +162,9 @@ CREATE INDEX idx_compra_data ON compra(data_compra);
 
 CREATE INDEX idx_item_compra_compra ON item_compra(id_compra);
 CREATE INDEX idx_item_compra_produto ON item_compra(id_produto);
+
+CREATE INDEX idx_enderecos_cidade ON enderecos(cidade);
+CREATE INDEX idx_enderecos_cep ON enderecos(cep);
 
 -- ========================================
 -- TRIGGERS PARA ATUALIZAR DATA_ATUALIZACAO
@@ -164,3 +197,6 @@ COMMENT ON TABLE item_venda IS 'Itens de cada venda';
 COMMENT ON TABLE venda IS 'Registro de vendas';
 COMMENT ON TABLE compra IS 'Registro de compras';
 COMMENT ON TABLE item_compra IS 'Itens de cada compra';
+
+COMMENT ON TABLE enderecos IS 'Cadastro de endereços';
+COMMENT ON TABLE clientes IS 'Cadastro de clientes';

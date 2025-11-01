@@ -13,11 +13,11 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="600.0" maxWidth="800.0" minHeight="450" minWidth="600" prefHeight="600" prefWidth="800" style="-fx-background: #b8dce8;" xmlns="http://javafx.com/javafx/21.0.9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.AuthController">
   <VBox alignment="TOP_CENTER" spacing="8.0" style="-fx-background-color: linear-gradient(to bottom, #e8f4f8 0%, #b8dce8 30%, #87ceeb 70%, #4fa8d8 100%);">
-      <HBox alignment="CENTER_RIGHT" spacing="0" style="-fx-background-color: rgba(44,82,130,0.3); -fx-padding: 5 10;">
-         <children>
-            <Button fx:id="minimizeButton" prefHeight="9.0" prefWidth="45" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16; -fx-cursor: hand; -fx-padding: 0 15;" text="__" />
-            <Button fx:id="closeButton" prefHeight="25" prefWidth="45" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-cursor: hand; -fx-padding: 0 15;" text="✕" />
-         </children>
+      <HBox alignment="CENTER_RIGHT" spacing="0" style="-fx-background-color: rgba(44,82,130,0.3); -fx-padding: 5 10;" onMousePressed="#handleMousePressed" onMouseDragged="#handleMouseDragged">
+          <children>
+              <Button fx:id="minimizeButton" onAction="#handleMinimize" prefHeight="9.0" prefWidth="45" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16; -fx-cursor: hand; -fx-padding: 0 15;" text="__" />
+              <Button fx:id="closeButton" onAction="#handleClose" prefHeight="25" prefWidth="45" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-cursor: hand; -fx-padding: 0 15;" text="✕" />
+          </children>
       </HBox>
     
     <!-- Cabeçalho -->

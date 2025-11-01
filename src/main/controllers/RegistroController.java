@@ -1,5 +1,6 @@
 package main.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,6 +19,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class RegistroController {
+
+    private double xOffset = 0;
+    private double yOffset = 0;
+
+    @FXML
+    private Button minimizeButton;
+
+    @FXML
+    private Button closeButton;
 
     @FXML
     private TextField cnpjField;
@@ -198,7 +208,7 @@ public class RegistroController {
                     stmtCredenciais.setString(3, senha);
 
                     int credenciaisRows = stmtCredenciais.executeUpdate();
-                    int idCredencial = -1;
+                    
 
                     if (credenciaisRows > 0) {
                         // Obter o ID gerado da credencial
@@ -295,5 +305,31 @@ public class RegistroController {
             statusMessage.setText("Erro ao voltar para login: " + e.getMessage());
             statusMessage.setVisible(true);
         }
+    }
+
+    @FXML
+    private void handleMinimize() {
+        if (minimizeButton.getScene() != null && minimizeButton.getScene().getWindow() != null) {
+            Stage stage = (Stage) minimizeButton.getScene().getWindow();
+            stage.setIconified(true);
+        }
+    }
+
+    @FXML
+    private void handleClose() {
+        Platform.exit();
+    }
+
+    @FXML
+    private void handleMousePressed(javafx.scene.input.MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+
+    @FXML
+    private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
+    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
     }
 }

@@ -1,5 +1,6 @@
 package main.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +18,15 @@ import java.sql.SQLException;
 import java.util.function.UnaryOperator;
 
 public class AuthController {
+
+    private double xOffset = 0;
+    private double yOffset = 0;
+
+    @FXML
+    private Button minimizeButton;
+
+    @FXML
+    private Button closeButton;
 
     @FXML
     private TextField documentField;
@@ -39,14 +49,7 @@ public class AuthController {
         documentField.setTextFormatter(new TextFormatter<>(filter));
         
         // Desabilitar resize da janela
-        documentField.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null) {
-                Stage stage = (Stage) newScene.getWindow();
-                if (stage != null) {
-                    stage.setResizable(false);
-                }
-            }
-        });
+        
     }
 
     @FXML
@@ -135,5 +138,31 @@ public class AuthController {
             statusMessage.setText("Erro ao carregar a tela de cadastro: " + e.getMessage());
             statusMessage.setVisible(true);
         }
+    }
+
+    @FXML
+    private void handleMinimize() {
+        if (minimizeButton.getScene() != null && minimizeButton.getScene().getWindow() != null) {
+            Stage stage = (Stage) minimizeButton.getScene().getWindow();
+            stage.setIconified(true);
+        }
+    }
+
+    @FXML
+    private void handleClose() {
+        Platform.exit();
+    }
+
+    @FXML
+    private void handleMousePressed(javafx.scene.input.MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+
+    @FXML
+    private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
+    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
     }
 }

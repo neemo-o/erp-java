@@ -74,25 +74,23 @@ public class MainScreenController {
 
     private Button currentActiveButton;
 
-    @FXML
+   @FXML
 public void initialize() {
     System.out.println("=== INITIALIZE MainScreenController ===");
     
-    // Debug: Verificar quais botões estão null
-    System.out.println("btnProdutos: " + (btnProdutos == null ? "NULL" : "OK"));
-    System.out.println("btnClientes: " + (btnClientes == null ? "NULL" : "OK"));
-    System.out.println("btnVendas: " + (btnVendas == null ? "NULL" : "OK"));
-    System.out.println("btnEstoque: " + (btnEstoque == null ? "NULL" : "OK"));
-    System.out.println("btnFornecedores: " + (btnFornecedores == null ? "NULL" : "OK"));
-    System.out.println("btnRelatorios: " + (btnRelatorios == null ? "NULL" : "OK"));
-    System.out.println("btnConfiguracoes: " + (btnConfiguracoes == null ? "NULL" : "OK"));
-    
-    // Configurar janela para tela cheia e sem resize
-    contentArea.sceneProperty().addListener((obs, oldScene, newScene) -> {
-        if (newScene != null) {
-            Stage stage = (Stage) newScene.getWindow();
-            stage.setResizable(false);
-            stage.setMaximized(true);
+    // IMPORTANTE: Configurar janela IMEDIATAMENTE quando a cena estiver disponível
+    Platform.runLater(() -> {
+        try {
+            if (contentArea.getScene() != null && contentArea.getScene().getWindow() != null) {
+                Stage stage = (Stage) contentArea.getScene().getWindow();
+                System.out.println("Configurando stage...");
+                stage.setResizable(false);
+                stage.setMaximized(true);
+                System.out.println("Stage maximizado: " + stage.isMaximized());
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao maximizar: " + e.getMessage());
+            e.printStackTrace();
         }
     });
 
@@ -245,7 +243,6 @@ private void adicionarEfeitosMenu() {
 
     @FXML
     private void handleClose() {
-        // Aqui você pode adicionar confirmação de saída se necessário
         Platform.exit();
     }
 

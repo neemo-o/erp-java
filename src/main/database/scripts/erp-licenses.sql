@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS licencas (
     cidade VARCHAR(100),
     estado VARCHAR(2),
     cep VARCHAR(10),
-    
-    -- Campos de auditoria
+    credenciais VARCHAR(50),
+    senha VARCHAR(50),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

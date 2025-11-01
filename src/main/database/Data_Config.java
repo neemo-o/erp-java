@@ -4,18 +4,18 @@ public class Data_Config {
 
     // licenças
     public static final class Banco1 {
-        public static final String URL = "jdbc:postgresql://localhost:5432/erp-oficial";
+        public static final String URL = "jdbc:postgresql://localhost:5432/erp_lincences";
         public static final String USER = "postgres";
         public static final String PASSWORD = "postgres";
-        public static final String NOME = "ERP-OFICIAL";
+        public static final String NOME = "ERP_LICENCAS";
     }
 
     // mercado
     public static final class Banco2 {
-        public static final String URL = "jdbc:postgresql://localhost:5432/erp-mercado";
+        public static final String URL = "jdbc:postgresql://localhost:5432/erp_mercado";
         public static final String USER = "postgres";
         public static final String PASSWORD = "postgres";
-        public static final String NOME = "ERP-MERCADO";
+        public static final String NOME = "ERP_MERCADO";
     }
 
     // Configurações gerais do banco

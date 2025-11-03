@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS fornecedor (
     id_fornecedor SERIAL PRIMARY KEY,
     cnpj VARCHAR(18) UNIQUE NOT NULL,
     razao_social VARCHAR(255) NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
     telefone VARCHAR(20),
     e_mail VARCHAR(255),
     id_endereco INTEGER REFERENCES enderecos(id_endereco),
@@ -66,7 +65,7 @@ CREATE TABLE IF NOT EXISTS venda (
     id_venda SERIAL PRIMARY KEY,
     data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valor_total DECIMAL(10, 2) NOT NULL,
-    forma_pagamento VARCHAR(50),
+    forma_pagamento VARCHAR(50) CHECK (forma_pagamento IN ('PIX', 'CARTAO', 'DINHEIRO')),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -78,7 +77,7 @@ CREATE TABLE IF NOT EXISTS compra (
     id_fornecedor INTEGER NOT NULL,
     data_compra TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valor_total DECIMAL(10, 2) NOT NULL,
-    forma_pagamento VARCHAR(50),
+    forma_pagamento VARCHAR(50) CHECK (forma_pagamento IN ('PIX', 'CARTAO', 'DINHEIRO')),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_fornecedor) REFERENCES fornecedor(id_fornecedor) ON DELETE RESTRICT
 );

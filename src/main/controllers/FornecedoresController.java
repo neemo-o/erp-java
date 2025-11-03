@@ -1,89 +1,53 @@
 package main.controllers;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
+import javafx.util.Duration;
 import main.database.FornecedorDAO;
 import main.models.Fornecedor;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FornecedoresController {
 
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private TableView<Fornecedor> tableFornecedores;
-
-    @FXML
-    private TableColumn<Fornecedor, Integer> colId;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colNome;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colCnpj;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colContato;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colTelefone;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colEmail;
-
-    @FXML
-    private TableColumn<Fornecedor, String> colEndereco;
-
-    @FXML
-    private Button btnNovo;
-
-    @FXML
-    private Button btnEditar;
-
-    @FXML
-    private Button btnExcluir;
-
-    @FXML
-    private Label lblTotal;
-
-    @FXML
-    private ScrollPane formContainer;
-
-    @FXML
-    private Text lblFormTitle;
-
-    @FXML
-    private TextField txtNome;
-
-    @FXML
-    private TextField txtCnpj;
-
-    @FXML
-    private TextField txtContato;
-
-    @FXML
-    private TextField txtTelefone;
-
-    @FXML
-    private TextField txtEmail;
-
-    @FXML
-    private TextField txtEndereco;
-
-    @FXML
-    private Button btnSalvar;
-
-    @FXML
-    private Button btnCancelar;
+    @FXML private TextField searchField;
+    @FXML private TableView<Fornecedor> tableFornecedores;
+    @FXML private TableColumn<Fornecedor, Integer> colId;
+    @FXML private TableColumn<Fornecedor, String> colNome;
+    @FXML private TableColumn<Fornecedor, String> colCnpj;
+    @FXML private TableColumn<Fornecedor, String> colContato;
+    @FXML private TableColumn<Fornecedor, String> colTelefone;
+    @FXML private TableColumn<Fornecedor, String> colEmail;
+    @FXML private TableColumn<Fornecedor, String> colEndereco;
+    @FXML private Button btnNovo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnExcluir;
+    @FXML private Label lblTotal;
+    @FXML private ScrollPane formContainer;
+    @FXML private Text lblFormTitle;
+    @FXML private TextField txtNome;
+    @FXML private TextField txtCnpj;
+    @FXML private TextField txtContato;
+    @FXML private TextField txtTelefone;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtEndereco;
+    @FXML private Button btnSalvar;
+    @FXML private Button btnCancelar;
 
     private FornecedorDAO fornecedorDAO;
     private ObservableList<Fornecedor> fornecedores;
@@ -94,19 +58,216 @@ public class FornecedoresController {
     void initialize() {
         fornecedorDAO = new FornecedorDAO();
 
-        // Configurar TableView
         configurarTableView();
-
-        // Carregar dados
+        aplicarMascaras();
+        aplicarValidacoes();
+        
         carregarFornecedores();
         atualizarTotal();
-
-        // Configurar busca
         configurarBusca();
 
-        // Ocultar formulário inicialmente
         formContainer.setVisible(false);
         formContainer.setManaged(false);
+    }
+
+    private void aplicarMascaras() {
+        // Máscara CNPJ
+        txtCnpj.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 14) numbers = numbers.substring(0, 14);
+            
+            String formatted = "";
+            for (int i = 0; i < numbers.length(); i++) {
+                if (i == 2 || i == 5) formatted += ".";
+                if (i == 8) formatted += "/";
+                if (i == 12) formatted += "-";
+                formatted += numbers.charAt(i);
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtCnpj.setText(formatted);
+                txtCnpj.positionCaret(formatted.length());
+            }
+        });
+
+        // Máscara Telefone
+        txtTelefone.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 11) numbers = numbers.substring(0, 11);
+            
+            String formatted = "";
+            if (numbers.length() > 0) {
+                formatted += "(";
+                formatted += numbers.substring(0, Math.min(2, numbers.length()));
+                if (numbers.length() > 2) {
+                    formatted += ") ";
+                    if (numbers.length() <= 10) {
+                        formatted += numbers.substring(2, Math.min(6, numbers.length()));
+                        if (numbers.length() > 6) {
+                            formatted += "-";
+                            formatted += numbers.substring(6);
+                        }
+                    } else {
+                        formatted += numbers.substring(2, Math.min(7, numbers.length()));
+                        if (numbers.length() > 7) {
+                            formatted += "-";
+                            formatted += numbers.substring(7);
+                        }
+                    }
+                }
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtTelefone.setText(formatted);
+                txtTelefone.positionCaret(formatted.length());
+            }
+        });
+
+        // Limites de caracteres
+        limitarCaracteres(txtNome, 100);
+        limitarCaracteres(txtContato, 100);
+        limitarCaracteres(txtEmail, 100);
+        limitarCaracteres(txtEndereco, 200);
+    }
+
+    private void aplicarValidacoes() {
+        validarCampoObrigatorio(txtNome);
+        validarCampoObrigatorio(txtCnpj);
+
+        // Validação email
+        txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !txtEmail.getText().trim().isEmpty()) {
+                String email = txtEmail.getText().trim();
+                if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                    txtEmail.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    txtEmail.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            } else if (txtEmail.getText().trim().isEmpty()) {
+                txtEmail.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
+            }
+        });
+
+        // Validação CNPJ
+        txtCnpj.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !txtCnpj.getText().trim().isEmpty()) {
+                String cnpj = extrairNumeros(txtCnpj.getText());
+                if (cnpj.length() == 14) {
+                    txtCnpj.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    txtCnpj.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+    }
+
+    private void validarCampoObrigatorio(TextField field) {
+        field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                if (field.getText().trim().isEmpty()) {
+                    field.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+        
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
+                field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+            }
+        });
+    }
+
+    private void limitarCaracteres(TextField field, int max) {
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.length() > max) {
+                field.setText(oldVal);
+            }
+        });
+    }
+
+    private String extrairNumeros(String texto) {
+        return texto == null ? "" : texto.replaceAll("[^0-9]", "");
+    }
+
+    private void limparEstilos() {
+        String estiloPadrao = "-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;";
+        txtNome.setStyle(estiloPadrao);
+        txtCnpj.setStyle(estiloPadrao);
+        txtEmail.setStyle(estiloPadrao);
+    }
+
+    private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
+        if (txtNome.getScene() == null || txtNome.getScene().getWindow() == null) return;
+        
+        Popup popup = new Popup();
+        String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
+        String icone = tipo.equals("sucesso") ? "✓" : tipo.equals("erro") ? "✗" : "⚠";
+        
+        VBox container = new VBox(5);
+        container.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 5;" +
+            "-fx-border-color: " + cor + ";" +
+            "-fx-border-width: 2;" +
+            "-fx-border-radius: 5;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
+        );
+        container.setPadding(new Insets(15));
+        container.setMaxWidth(350);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        
+        Label iconLabel = new Label(icone);
+        iconLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 20px; -fx-font-weight: bold;");
+        
+        Label titleLabel = new Label(titulo);
+        titleLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+        titleLabel.setFont(Font.font("Segoe UI", 14));
+        
+        header.getChildren().addAll(iconLabel, titleLabel);
+
+        Label messageLabel = new Label(mensagem);
+        messageLabel.setWrapText(true);
+        messageLabel.setStyle("-fx-text-fill: #333; -fx-font-size: 12px;");
+        messageLabel.setFont(Font.font("Segoe UI", 12));
+        messageLabel.setMaxWidth(320);
+
+        container.getChildren().addAll(header, messageLabel);
+        popup.getContent().add(container);
+
+        popup.setAutoHide(true);
+        popup.show(txtNome.getScene().getWindow(), 
+            txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380, 
+            txtNome.getScene().getWindow().getY() + 60
+        );
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), container);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+
+        PauseTransition pause = new PauseTransition(Duration.millis(3000));
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), container);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> popup.hide());
+
+        SequentialTransition sequence = new SequentialTransition(fadeIn, pause, fadeOut);
+        sequence.play();
+    }
+
+    private void mostrarListaErros(List<String> erros) {
+        StringBuilder mensagem = new StringBuilder();
+        for (int i = 0; i < erros.size(); i++) {
+            mensagem.append("• ").append(erros.get(i));
+            if (i < erros.size() - 1) mensagem.append("\n");
+        }
+        mostrarNotificacao("Corrija os erros", mensagem.toString(), "erro");
     }
 
     private void configurarTableView() {
@@ -137,7 +298,7 @@ public class FornecedoresController {
             fornecedores.clear();
             fornecedores.addAll(listaFornecedores);
         } catch (SQLException e) {
-            mostrarErro("Erro ao carregar fornecedores", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao carregar fornecedores", "erro");
         }
     }
 
@@ -159,7 +320,7 @@ public class FornecedoresController {
                 fornecedores.clear();
                 fornecedores.addAll(listaFiltrada);
             } catch (SQLException e) {
-                mostrarErro("Erro ao filtrar fornecedores", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao filtrar fornecedores", "erro");
             }
         }
     }
@@ -177,10 +338,9 @@ public class FornecedoresController {
     void handleEditar() {
         fornecedorSelecionado = tableFornecedores.getSelectionModel().getSelectedItem();
         if (fornecedorSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um fornecedor para editar.");
+            mostrarNotificacao("Atenção", "Selecione um fornecedor para editar", "aviso");
             return;
         }
-
         modoEdicao = true;
         preencherFormulario(fornecedorSelecionado);
         lblFormTitle.setText("Editar Fornecedor");
@@ -191,7 +351,7 @@ public class FornecedoresController {
     void handleExcluir() {
         fornecedorSelecionado = tableFornecedores.getSelectionModel().getSelectedItem();
         if (fornecedorSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um fornecedor para excluir.");
+            mostrarNotificacao("Atenção", "Selecione um fornecedor para excluir", "aviso");
             return;
         }
 
@@ -205,42 +365,40 @@ public class FornecedoresController {
                 if (fornecedorDAO.excluir(fornecedorSelecionado.getIdFornecedor())) {
                     carregarFornecedores();
                     atualizarTotal();
-                    mostrarSucesso("Fornecedor excluído com sucesso!");
+                    mostrarNotificacao("Sucesso", "Fornecedor excluído com sucesso!", "sucesso");
                 } else {
-                    mostrarErro("Erro", "Não foi possível excluir o fornecedor.");
+                    mostrarNotificacao("Erro", "Não foi possível excluir o fornecedor", "erro");
                 }
             } catch (SQLException e) {
-                mostrarErro("Erro ao excluir fornecedor", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao excluir fornecedor", "erro");
             }
         }
     }
 
     @FXML
     void handleSalvar() {
-        if (!validarFormulario()) {
+        List<String> erros = validarFormulario();
+        
+        if (!erros.isEmpty()) {
+            mostrarListaErros(erros);
             return;
         }
 
         try {
             Fornecedor fornecedor = criarFornecedorDoFormulario();
-
-            boolean sucesso;
-            if (modoEdicao) {
-                sucesso = fornecedorDAO.atualizar(fornecedor);
-            } else {
-                sucesso = fornecedorDAO.inserir(fornecedor);
-            }
+            boolean sucesso = modoEdicao ? fornecedorDAO.atualizar(fornecedor) : fornecedorDAO.inserir(fornecedor);
 
             if (sucesso) {
                 carregarFornecedores();
                 atualizarTotal();
                 mostrarFormulario(false);
-                mostrarSucesso(modoEdicao ? "Fornecedor atualizado com sucesso!" : "Fornecedor cadastrado com sucesso!");
+                mostrarNotificacao("Sucesso", 
+                    modoEdicao ? "Fornecedor atualizado!" : "Fornecedor cadastrado!", "sucesso");
             } else {
-                mostrarErro("Erro", "Não foi possível salvar o fornecedor.");
+                mostrarNotificacao("Erro", "Não foi possível salvar o fornecedor", "erro");
             }
         } catch (SQLException e) {
-            mostrarErro("Erro ao salvar fornecedor", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao salvar fornecedor", "erro");
         }
     }
 
@@ -254,6 +412,7 @@ public class FornecedoresController {
         formContainer.setManaged(mostrar);
         tableFornecedores.setVisible(!mostrar);
         tableFornecedores.setManaged(!mostrar);
+        if (!mostrar) limparEstilos();
     }
 
     private void limparFormulario() {
@@ -263,6 +422,7 @@ public class FornecedoresController {
         txtTelefone.clear();
         txtEmail.clear();
         txtEndereco.clear();
+        limparEstilos();
     }
 
     private void preencherFormulario(Fornecedor fornecedor) {
@@ -278,83 +438,58 @@ public class FornecedoresController {
         Fornecedor fornecedor = modoEdicao ? fornecedorSelecionado : new Fornecedor();
 
         if (!modoEdicao) {
-            fornecedor.setIdEmpresa(1); // ID da empresa padrão
+            fornecedor.setIdEmpresa(1);
         }
 
         fornecedor.setRazaoSocial(txtNome.getText().trim());
-        fornecedor.setCnpj(txtCnpj.getText().trim());
-        fornecedor.setTelefone(txtTelefone.getText().trim());
+        fornecedor.setCnpj(extrairNumeros(txtCnpj.getText()));
+        fornecedor.setTelefone(extrairNumeros(txtTelefone.getText()));
         fornecedor.setEmail(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
-
-        // Por enquanto, não salvar endereço separado já que o FXML tem apenas um campo único
-        // Em uma versão futura, pode-se implementar parsing do endereço único
 
         return fornecedor;
     }
 
-    private boolean validarFormulario() {
-        StringBuilder erros = new StringBuilder();
+    private List<String> validarFormulario() {
+        List<String> erros = new ArrayList<>();
 
         if (txtNome.getText().trim().isEmpty()) {
-            erros.append("- Razão social é obrigatória\n");
+            erros.add("Razão social é obrigatória");
         }
 
         if (txtCnpj.getText().trim().isEmpty()) {
-            erros.append("- CNPJ é obrigatório\n");
+            erros.add("CNPJ é obrigatório");
         } else {
-            // Validação básica de CNPJ (14 dígitos)
-            String cnpj = txtCnpj.getText().trim().replaceAll("[^0-9]", "");
+            String cnpj = extrairNumeros(txtCnpj.getText());
             if (cnpj.length() != 14) {
-                erros.append("- CNPJ deve ter 14 dígitos\n");
+                erros.add("CNPJ deve ter 14 dígitos");
             } else {
                 try {
                     Integer idExcluir = modoEdicao ? fornecedorSelecionado.getIdFornecedor() : null;
                     if (fornecedorDAO.cnpjExiste(cnpj, idExcluir)) {
-                        erros.append("- CNPJ já cadastrado\n");
+                        erros.add("CNPJ já cadastrado");
                     }
                 } catch (SQLException e) {
-                    erros.append("- Erro ao verificar CNPJ\n");
+                    erros.add("Erro ao verificar CNPJ");
                 }
             }
         }
 
         if (!txtEmail.getText().trim().isEmpty()) {
-            // Validação básica de email
             String email = txtEmail.getText().trim();
-            if (!email.contains("@") || !email.contains(".")) {
-                erros.append("- Email inválido\n");
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                erros.add("E-mail inválido");
             }
         }
 
-        if (erros.length() > 0) {
-            mostrarErro("Dados inválidos", erros.toString());
-            return false;
+        if (txtTelefone.getText().trim().isEmpty()) {
+            erros.add("Telefone é obrigatório");
+        } else {
+            String telefone = extrairNumeros(txtTelefone.getText());
+            if (telefone.length() < 10) {
+                erros.add("Telefone deve ter no mínimo 10 dígitos");
+            }
         }
 
-        return true;
-    }
-
-    private void mostrarErro(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarAlerta(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarSucesso(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
+        return erros;
     }
 }

@@ -94,9 +94,12 @@ public class AuthController {
                             Parent root = loader.load();
                             Scene scene = new Scene(root);
                             Stage stage = (Stage) accessButton.getScene().getWindow();
-                            stage.setResizable(false); // Garantir que a nova janela também não seja redimensionável
-                            stage.centerOnScreen();
                             stage.setScene(scene);
+                            stage.setResizable(false); // Garantir que a nova janela também não seja redimensionável
+
+                            javafx.application.Platform.runLater(() -> {
+                            stage.centerOnScreen();
+                        });
                             stage.show();
                         } catch (Exception e) {
                             statusMessage.setText("Erro ao carregar a próxima tela: " + e.getMessage());

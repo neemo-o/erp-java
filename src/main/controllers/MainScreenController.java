@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,6 +30,9 @@ public class MainScreenController {
 
     @FXML
     private Button closeButton;
+
+    @FXML
+    private Button btnHome;
 
     @FXML
     private Button btnProdutos;
@@ -53,6 +57,9 @@ public class MainScreenController {
 
     @FXML
     private StackPane contentArea;
+
+    @FXML
+    private VBox dashboardContent;
 
     @FXML
     private Label usuarioLabel;
@@ -125,7 +132,7 @@ public class MainScreenController {
     private void adicionarEfeitosMenu() {
         System.out.println("Adicionando efeitos ao menu...");
 
-        Button[] menuButtons = { btnProdutos, btnClientes, btnVendas, btnEstoque,
+        Button[] menuButtons = { btnHome, btnProdutos, btnClientes, btnVendas, btnEstoque,
                 btnFornecedores, btnRelatorios, btnConfiguracoes };
 
         for (int i = 0; i < menuButtons.length; i++) {
@@ -199,6 +206,34 @@ public class MainScreenController {
             e.printStackTrace();
         }
 
+    }
+
+    @FXML
+    private void handleHome() {
+        // Remove destaque de todos os botões
+        if (currentActiveButton != null) {
+            String style = currentActiveButton.getStyle();
+            currentActiveButton.setStyle(style.replace("-fx-border-color: #4fa8d8;", "-fx-border-color: transparent;")
+                    .replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
+            currentActiveButton = null;
+        }
+
+        // Volta para o dashboard padrão
+        mostrarDashboard();
+    }
+
+    private void mostrarDashboard() {
+        try {
+            // Limpa a área de conteúdo e adiciona o dashboard novamente
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(dashboardContent);
+            
+            // Recarrega os dados do dashboard
+            carregarDashboard();
+        } catch (Exception e) {
+            System.err.println("Erro ao mostrar dashboard: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML

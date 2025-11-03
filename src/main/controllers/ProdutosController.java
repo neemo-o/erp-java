@@ -1,13 +1,21 @@
 package main.controllers;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
+import javafx.util.Duration;
 import main.database.FornecedorDAO;
 import main.database.ProdutoDAO;
 import main.models.Fornecedor;
@@ -15,81 +23,35 @@ import main.models.Produto;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutosController {
 
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private TableView<Produto> tableProdutos;
-
-    @FXML
-    private TableColumn<Produto, Integer> colId;
-
-    @FXML
-    private TableColumn<Produto, String> colCodigo;
-
-    @FXML
-    private TableColumn<Produto, String> colNome;
-
-    @FXML
-    private TableColumn<Produto, String> colCategoria;
-
-    @FXML
-    private TableColumn<Produto, BigDecimal> colPreco;
-
-    @FXML
-    private TableColumn<Produto, Integer> colEstoque;
-
-    @FXML
-    private TableColumn<Produto, String> colFornecedor;
-
-    @FXML
-    private Button btnNovo;
-
-    @FXML
-    private Button btnEditar;
-
-    @FXML
-    private Button btnExcluir;
-
-    @FXML
-    private Label lblTotal;
-
-    @FXML
-    private ScrollPane formContainer;
-
-    @FXML
-    private Text lblFormTitle;
-
-    @FXML
-    private TextField txtCodigo;
-
-    @FXML
-    private TextField txtNome;
-
-    @FXML
-    private ComboBox<String> cbCategoria;
-
-    @FXML
-    private TextField txtPreco;
-
-    @FXML
-    private TextField txtEstoque;
-
-    @FXML
-    private ComboBox<Fornecedor> cbFornecedor;
-
-    @FXML
-    private TextArea txtDescricao;
-
-    @FXML
-    private Button btnSalvar;
-
-    @FXML
-    private Button btnCancelar;
+    @FXML private TextField searchField;
+    @FXML private TableView<Produto> tableProdutos;
+    @FXML private TableColumn<Produto, Integer> colId;
+    @FXML private TableColumn<Produto, String> colCodigo;
+    @FXML private TableColumn<Produto, String> colNome;
+    @FXML private TableColumn<Produto, String> colCategoria;
+    @FXML private TableColumn<Produto, BigDecimal> colPreco;
+    @FXML private TableColumn<Produto, Integer> colEstoque;
+    @FXML private TableColumn<Produto, String> colFornecedor;
+    @FXML private Button btnNovo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnExcluir;
+    @FXML private Label lblTotal;
+    @FXML private ScrollPane formContainer;
+    @FXML private Text lblFormTitle;
+    @FXML private TextField txtCodigo;
+    @FXML private TextField txtNome;
+    @FXML private ComboBox<String> cbCategoria;
+    @FXML private TextField txtPreco;
+    @FXML private TextField txtEstoque;
+    @FXML private ComboBox<Fornecedor> cbFornecedor;
+    @FXML private TextArea txtDescricao;
+    @FXML private Button btnSalvar;
+    @FXML private Button btnCancelar;
 
     private ProdutoDAO produtoDAO;
     private FornecedorDAO fornecedorDAO;
@@ -103,23 +65,203 @@ public class ProdutosController {
         produtoDAO = new ProdutoDAO();
         fornecedorDAO = new FornecedorDAO();
 
-        // Configurar TableView
         configurarTableView();
-
-        // Configurar ComboBoxes
         configurarComboBoxes();
-
-        // Carregar dados
+        aplicarMascaras();
+        aplicarValidacoes();
+        
         carregarProdutos();
         carregarFornecedores();
         atualizarTotal();
-
-        // Configurar busca
         configurarBusca();
 
-        // Ocultar formulário inicialmente
         formContainer.setVisible(false);
         formContainer.setManaged(false);
+    }
+
+    private void aplicarMascaras() {
+        // Máscara de preço
+        txtPreco.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String cleaned = newVal.replaceAll("[^0-9.,]", "");
+            
+            int commaCount = cleaned.length() - cleaned.replace(",", "").length();
+            int dotCount = cleaned.length() - cleaned.replace(".", "").length();
+            
+            if (commaCount + dotCount > 1) {
+                char separator = cleaned.contains(",") ? ',' : '.';
+                int firstSep = cleaned.indexOf(separator);
+                String beforeSep = cleaned.substring(0, firstSep + 1).replaceAll("[,.]", String.valueOf(separator));
+                String afterSep = cleaned.substring(firstSep + 1).replaceAll("[,.]", "");
+                cleaned = beforeSep + afterSep;
+            }
+            
+            if (cleaned.contains(",")) {
+                String[] parts = cleaned.split(",");
+                if (parts.length > 1 && parts[1].length() > 2) {
+                    cleaned = parts[0] + "," + parts[1].substring(0, 2);
+                }
+            } else if (cleaned.contains(".")) {
+                String[] parts = cleaned.split("\\.");
+                if (parts.length > 1 && parts[1].length() > 2) {
+                    cleaned = parts[0] + "." + parts[1].substring(0, 2);
+                }
+            }
+            
+            if (!cleaned.equals(newVal)) {
+                txtPreco.setText(cleaned);
+                txtPreco.positionCaret(cleaned.length());
+            }
+        });
+
+        // Apenas números para estoque
+        txtEstoque.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.matches("\\d*")) {
+                txtEstoque.setText(newVal.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        // Apenas números para código
+        txtCodigo.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.matches("\\d*")) {
+                txtCodigo.setText(newVal.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        // Limites de caracteres
+        limitarCaracteres(txtCodigo, 20);
+        limitarCaracteres(txtNome, 100);
+        limitarCaracteres(txtPreco, 15);
+        limitarCaracteres(txtEstoque, 10);
+    }
+
+    private void aplicarValidacoes() {
+        validarCampoObrigatorio(txtNome);
+
+        txtPreco.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !txtPreco.getText().trim().isEmpty()) {
+                try {
+                    new BigDecimal(txtPreco.getText().replace(",", "."));
+                    txtPreco.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } catch (NumberFormatException e) {
+                    txtPreco.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+
+        txtEstoque.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !txtEstoque.getText().trim().isEmpty()) {
+                try {
+                    Integer.parseInt(txtEstoque.getText());
+                    txtEstoque.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } catch (NumberFormatException e) {
+                    txtEstoque.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+    }
+
+    private void validarCampoObrigatorio(TextField field) {
+        field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                if (field.getText().trim().isEmpty()) {
+                    field.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+        
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
+                field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+            }
+        });
+    }
+
+    private void limitarCaracteres(TextField field, int max) {
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.length() > max) {
+                field.setText(oldVal);
+            }
+        });
+    }
+
+    private void limparEstilos() {
+        String estiloPadrao = "-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;";
+        txtNome.setStyle(estiloPadrao);
+        txtPreco.setStyle(estiloPadrao);
+        txtEstoque.setStyle(estiloPadrao);
+    }
+
+    private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
+        if (txtNome.getScene() == null || txtNome.getScene().getWindow() == null) return;
+        
+        Popup popup = new Popup();
+        String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
+        String icone = tipo.equals("sucesso") ? "✓" : tipo.equals("erro") ? "✗" : "⚠";
+        
+        VBox container = new VBox(5);
+        container.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 5;" +
+            "-fx-border-color: " + cor + ";" +
+            "-fx-border-width: 2;" +
+            "-fx-border-radius: 5;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
+        );
+        container.setPadding(new Insets(15));
+        container.setMaxWidth(350);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        
+        Label iconLabel = new Label(icone);
+        iconLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 20px; -fx-font-weight: bold;");
+        
+        Label titleLabel = new Label(titulo);
+        titleLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+        titleLabel.setFont(Font.font("Segoe UI", 14));
+        
+        header.getChildren().addAll(iconLabel, titleLabel);
+
+        Label messageLabel = new Label(mensagem);
+        messageLabel.setWrapText(true);
+        messageLabel.setStyle("-fx-text-fill: #333; -fx-font-size: 12px;");
+        messageLabel.setFont(Font.font("Segoe UI", 12));
+        messageLabel.setMaxWidth(320);
+
+        container.getChildren().addAll(header, messageLabel);
+        popup.getContent().add(container);
+
+        popup.setAutoHide(true);
+        popup.show(txtNome.getScene().getWindow(), 
+            txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380, 
+            txtNome.getScene().getWindow().getY() + 60
+        );
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), container);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+
+        PauseTransition pause = new PauseTransition(Duration.millis(3000));
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), container);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> popup.hide());
+
+        SequentialTransition sequence = new SequentialTransition(fadeIn, pause, fadeOut);
+        sequence.play();
+    }
+
+    private void mostrarListaErros(List<String> erros) {
+        StringBuilder mensagem = new StringBuilder();
+        for (int i = 0; i < erros.size(); i++) {
+            mensagem.append("• ").append(erros.get(i));
+            if (i < erros.size() - 1) mensagem.append("\n");
+        }
+        mostrarNotificacao("Corrija os erros", mensagem.toString(), "erro");
     }
 
     private void configurarTableView() {
@@ -134,24 +276,18 @@ public class ProdutosController {
             if (idFornecedor != null) {
                 Fornecedor fornecedor = fornecedores.stream()
                     .filter(f -> f.getIdFornecedor() == idFornecedor)
-                    .findFirst()
-                    .orElse(null);
+                    .findFirst().orElse(null);
                 return new javafx.beans.property.SimpleStringProperty(
                     fornecedor != null ? fornecedor.getRazaoSocial() : "");
             }
             return new javafx.beans.property.SimpleStringProperty("");
         });
 
-        // Configurar formatação de preço
         colPreco.setCellFactory(column -> new TableCell<Produto, BigDecimal>() {
             @Override
             protected void updateItem(BigDecimal item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.format("R$ %.2f", item));
-                }
+                setText(empty || item == null ? null : String.format("R$ %.2f", item));
             }
         });
 
@@ -160,13 +296,28 @@ public class ProdutosController {
     }
 
     private void configurarComboBoxes() {
-        // Categorias/Unidades de medida
         cbCategoria.setItems(FXCollections.observableArrayList(
             "UN", "KG", "L", "M", "M²", "M³", "PCT", "CX", "FD"
         ));
 
         fornecedores = FXCollections.observableArrayList();
         cbFornecedor.setItems(fornecedores);
+        
+        cbFornecedor.setCellFactory(param -> new ListCell<Fornecedor>() {
+            @Override
+            protected void updateItem(Fornecedor item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getRazaoSocial());
+            }
+        });
+        
+        cbFornecedor.setButtonCell(new ListCell<Fornecedor>() {
+            @Override
+            protected void updateItem(Fornecedor item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getRazaoSocial());
+            }
+        });
     }
 
     private void configurarBusca() {
@@ -181,7 +332,7 @@ public class ProdutosController {
             produtos.clear();
             produtos.addAll(listaProdutos);
         } catch (SQLException e) {
-            mostrarErro("Erro ao carregar produtos", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao carregar produtos", "erro");
         }
     }
 
@@ -191,7 +342,7 @@ public class ProdutosController {
             fornecedores.clear();
             fornecedores.addAll(listaFornecedores);
         } catch (SQLException e) {
-            mostrarErro("Erro ao carregar fornecedores", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao carregar fornecedores", "erro");
         }
     }
 
@@ -213,7 +364,7 @@ public class ProdutosController {
                 produtos.clear();
                 produtos.addAll(listaFiltrada);
             } catch (SQLException e) {
-                mostrarErro("Erro ao filtrar produtos", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao filtrar produtos", "erro");
             }
         }
     }
@@ -231,10 +382,9 @@ public class ProdutosController {
     void handleEditar() {
         produtoSelecionado = tableProdutos.getSelectionModel().getSelectedItem();
         if (produtoSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um produto para editar.");
+            mostrarNotificacao("Atenção", "Selecione um produto para editar", "aviso");
             return;
         }
-
         modoEdicao = true;
         preencherFormulario(produtoSelecionado);
         lblFormTitle.setText("Editar Produto");
@@ -245,7 +395,7 @@ public class ProdutosController {
     void handleExcluir() {
         produtoSelecionado = tableProdutos.getSelectionModel().getSelectedItem();
         if (produtoSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um produto para excluir.");
+            mostrarNotificacao("Atenção", "Selecione um produto para excluir", "aviso");
             return;
         }
 
@@ -259,42 +409,40 @@ public class ProdutosController {
                 if (produtoDAO.excluir(produtoSelecionado.getIdProduto())) {
                     carregarProdutos();
                     atualizarTotal();
-                    mostrarSucesso("Produto excluído com sucesso!");
+                    mostrarNotificacao("Sucesso", "Produto excluído com sucesso!", "sucesso");
                 } else {
-                    mostrarErro("Erro", "Não foi possível excluir o produto.");
+                    mostrarNotificacao("Erro", "Não foi possível excluir o produto", "erro");
                 }
             } catch (SQLException e) {
-                mostrarErro("Erro ao excluir produto", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao excluir produto", "erro");
             }
         }
     }
 
     @FXML
     void handleSalvar() {
-        if (!validarFormulario()) {
+        List<String> erros = validarFormulario();
+        
+        if (!erros.isEmpty()) {
+            mostrarListaErros(erros);
             return;
         }
 
         try {
             Produto produto = criarProdutoDoFormulario();
-
-            boolean sucesso;
-            if (modoEdicao) {
-                sucesso = produtoDAO.atualizar(produto);
-            } else {
-                sucesso = produtoDAO.inserir(produto);
-            }
+            boolean sucesso = modoEdicao ? produtoDAO.atualizar(produto) : produtoDAO.inserir(produto);
 
             if (sucesso) {
                 carregarProdutos();
                 atualizarTotal();
                 mostrarFormulario(false);
-                mostrarSucesso(modoEdicao ? "Produto atualizado com sucesso!" : "Produto cadastrado com sucesso!");
+                mostrarNotificacao("Sucesso", 
+                    modoEdicao ? "Produto atualizado!" : "Produto cadastrado!", "sucesso");
             } else {
-                mostrarErro("Erro", "Não foi possível salvar o produto.");
+                mostrarNotificacao("Erro", "Não foi possível salvar o produto", "erro");
             }
         } catch (SQLException e) {
-            mostrarErro("Erro ao salvar produto", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao salvar produto", "erro");
         }
     }
 
@@ -308,6 +456,7 @@ public class ProdutosController {
         formContainer.setManaged(mostrar);
         tableProdutos.setVisible(!mostrar);
         tableProdutos.setManaged(!mostrar);
+        if (!mostrar) limparEstilos();
     }
 
     private void limparFormulario() {
@@ -318,6 +467,7 @@ public class ProdutosController {
         txtEstoque.clear();
         cbFornecedor.setValue(null);
         txtDescricao.clear();
+        limparEstilos();
     }
 
     private void preencherFormulario(Produto produto) {
@@ -330,8 +480,7 @@ public class ProdutosController {
         if (produto.getIdFornecedor() != null) {
             Fornecedor fornecedor = fornecedores.stream()
                 .filter(f -> f.getIdFornecedor() == produto.getIdFornecedor())
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
             cbFornecedor.setValue(fornecedor);
         } else {
             cbFornecedor.setValue(null);
@@ -344,7 +493,7 @@ public class ProdutosController {
         Produto produto = modoEdicao ? produtoSelecionado : new Produto();
 
         if (!modoEdicao) {
-            produto.setIdEmpresa(1); // ID da empresa padrão
+            produto.setIdEmpresa(1);
         }
 
         produto.setDescricao(txtNome.getText().trim());
@@ -359,70 +508,50 @@ public class ProdutosController {
         return produto;
     }
 
-    private boolean validarFormulario() {
-        StringBuilder erros = new StringBuilder();
+    private List<String> validarFormulario() {
+        List<String> erros = new ArrayList<>();
 
         if (txtNome.getText().trim().isEmpty()) {
-            erros.append("- Nome do produto é obrigatório\n");
+            erros.add("Nome do produto é obrigatório");
         }
 
-        if (!txtPreco.getText().trim().isEmpty()) {
+        if (txtPreco.getText().trim().isEmpty()) {
+            erros.add("Preço é obrigatório");
+        } else {
             try {
-                new BigDecimal(txtPreco.getText().replace(",", "."));
+                BigDecimal preco = new BigDecimal(txtPreco.getText().replace(",", "."));
+                if (preco.compareTo(BigDecimal.ZERO) <= 0) {
+                    erros.add("Preço deve ser maior que zero");
+                }
             } catch (NumberFormatException e) {
-                erros.append("- Preço deve ser um número válido\n");
+                erros.add("Preço inválido");
             }
         }
 
-        if (!txtEstoque.getText().trim().isEmpty()) {
+        if (txtEstoque.getText().trim().isEmpty()) {
+            erros.add("Estoque é obrigatório");
+        } else {
             try {
-                Integer.parseInt(txtEstoque.getText());
+                int estoque = Integer.parseInt(txtEstoque.getText());
+                if (estoque < 0) {
+                    erros.add("Estoque não pode ser negativo");
+                }
             } catch (NumberFormatException e) {
-                erros.append("- Estoque deve ser um número inteiro\n");
+                erros.add("Estoque inválido");
             }
         }
 
-        // Verificar código de barras único
         if (!txtCodigo.getText().trim().isEmpty()) {
             try {
                 Integer idExcluir = modoEdicao ? produtoSelecionado.getIdProduto() : null;
                 if (produtoDAO.codigoBarrasExiste(txtCodigo.getText().trim(), idExcluir)) {
-                    erros.append("- Código de barras já existe\n");
+                    erros.add("Código de barras já cadastrado");
                 }
             } catch (SQLException e) {
-                erros.append("- Erro ao verificar código de barras\n");
+                erros.add("Erro ao verificar código de barras");
             }
         }
 
-        if (erros.length() > 0) {
-            mostrarErro("Dados inválidos", erros.toString());
-            return false;
-        }
-
-        return true;
-    }
-
-    private void mostrarErro(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarAlerta(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarSucesso(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
+        return erros;
     }
 }

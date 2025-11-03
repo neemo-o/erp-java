@@ -1,110 +1,60 @@
 package main.controllers;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
+import javafx.util.Duration;
 import main.database.ClienteDAO;
 import main.models.Cliente;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientesController {
 
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private TableView<Cliente> tableClientes;
-
-    @FXML
-    private TableColumn<Cliente, String> colId;
-
-    @FXML
-    private TableColumn<Cliente, String> colNome;
-
-    @FXML
-    private TableColumn<Cliente, String> colCpfCnpj;
-
-    @FXML
-    private TableColumn<Cliente, String> colTelefone;
-
-    @FXML
-    private TableColumn<Cliente, String> colEmail;
-
-    @FXML
-    private TableColumn<Cliente, String> colEndereco;
-
-    @FXML
-    private TableColumn<Cliente, String> colStatus;
-
-    @FXML
-    private Button btnNovo;
-
-    @FXML
-    private Button btnEditar;
-
-    @FXML
-    private Button btnExcluir;
-
-    @FXML
-    private Label lblTotal;
-
-    @FXML
-    private ScrollPane formContainer;
-
-    @FXML
-    private Text lblFormTitle;
-
-    @FXML
-    private TextField txtNome;
-
-    @FXML
-    private TextField txtCpfCnpj;
-
-    @FXML
-    private TextField txtInscricaoEstadual;
-
-    @FXML
-    private TextField txtTelefone;
-
-    @FXML
-    private TextField txtEmail;
-
-    @FXML
-    private TextField txtLogradouro;
-
-    @FXML
-    private TextField txtNumero;
-
-    @FXML
-    private TextField txtComplemento;
-
-    @FXML
-    private TextField txtBairro;
-
-    @FXML
-    private TextField txtCidade;
-
-    @FXML
-    private TextField txtEstado;
-
-    @FXML
-    private TextField txtCep;
-
-    @FXML
-    private ComboBox cbStatus;
-
-    @FXML
-    private Button btnSalvar;
-
-    @FXML
-    private Button btnCancelar;
+    @FXML private TextField searchField;
+    @FXML private TableView<Cliente> tableClientes;
+    @FXML private TableColumn<Cliente, String> colId;
+    @FXML private TableColumn<Cliente, String> colNome;
+    @FXML private TableColumn<Cliente, String> colCpfCnpj;
+    @FXML private TableColumn<Cliente, String> colTelefone;
+    @FXML private TableColumn<Cliente, String> colEmail;
+    @FXML private TableColumn<Cliente, String> colEndereco;
+    @FXML private TableColumn<Cliente, String> colStatus;
+    @FXML private Button btnNovo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnExcluir;
+    @FXML private Label lblTotal;
+    @FXML private ScrollPane formContainer;
+    @FXML private Text lblFormTitle;
+    @FXML private TextField txtNome;
+    @FXML private TextField txtCpfCnpj;
+    @FXML private TextField txtInscricaoEstadual;
+    @FXML private TextField txtTelefone;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtLogradouro;
+    @FXML private TextField txtNumero;
+    @FXML private TextField txtComplemento;
+    @FXML private TextField txtBairro;
+    @FXML private TextField txtCidade;
+    @FXML private TextField txtEstado;
+    @FXML private TextField txtCep;
+    @FXML private ComboBox<String> cbStatus;
+    @FXML private Button btnSalvar;
+    @FXML private Button btnCancelar;
 
     private ClienteDAO clienteDAO;
     private ObservableList<Cliente> clientes;
@@ -114,23 +64,244 @@ public class ClientesController {
     @FXML
     void initialize() {
         clienteDAO = new ClienteDAO();
-
-        // Configurar TableView
         configurarTableView();
-
-        // Configurar ComboBox do status
+        aplicarMascaras();
+        aplicarValidacoes();
+        
         cbStatus.setItems(FXCollections.observableArrayList("PAGO", "NAO_PAGO"));
-
-        // Carregar dados
+        
         carregarClientes();
         atualizarTotal();
-
-        // Configurar busca
         configurarBusca();
-
-        // Ocultar formulário inicialmente
+        
         formContainer.setVisible(false);
         formContainer.setManaged(false);
+    }
+
+    private void aplicarMascaras() {
+        // Máscara CPF/CNPJ
+        txtCpfCnpj.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 14) numbers = numbers.substring(0, 14);
+            
+            String formatted = "";
+            if (numbers.length() <= 11) {
+                for (int i = 0; i < numbers.length(); i++) {
+                    if (i == 3 || i == 6) formatted += ".";
+                    if (i == 9) formatted += "-";
+                    formatted += numbers.charAt(i);
+                }
+            } else {
+                for (int i = 0; i < numbers.length(); i++) {
+                    if (i == 2 || i == 5) formatted += ".";
+                    if (i == 8) formatted += "/";
+                    if (i == 12) formatted += "-";
+                    formatted += numbers.charAt(i);
+                }
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtCpfCnpj.setText(formatted);
+                txtCpfCnpj.positionCaret(formatted.length());
+            }
+        });
+
+        // Máscara Telefone
+        txtTelefone.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 11) numbers = numbers.substring(0, 11);
+            
+            String formatted = "";
+            if (numbers.length() > 0) {
+                formatted += "(";
+                formatted += numbers.substring(0, Math.min(2, numbers.length()));
+                if (numbers.length() > 2) {
+                    formatted += ") ";
+                    if (numbers.length() <= 10) {
+                        formatted += numbers.substring(2, Math.min(6, numbers.length()));
+                        if (numbers.length() > 6) {
+                            formatted += "-";
+                            formatted += numbers.substring(6);
+                        }
+                    } else {
+                        formatted += numbers.substring(2, Math.min(7, numbers.length()));
+                        if (numbers.length() > 7) {
+                            formatted += "-";
+                            formatted += numbers.substring(7);
+                        }
+                    }
+                }
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtTelefone.setText(formatted);
+                txtTelefone.positionCaret(formatted.length());
+            }
+        });
+
+        // Máscara CEP
+        txtCep.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 8) numbers = numbers.substring(0, 8);
+            
+            String formatted = "";
+            for (int i = 0; i < numbers.length(); i++) {
+                if (i == 5) formatted += "-";
+                formatted += numbers.charAt(i);
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtCep.setText(formatted);
+                txtCep.positionCaret(formatted.length());
+            }
+        });
+
+        // Limites de caracteres
+        limitarCaracteres(txtNome, 100);
+        limitarCaracteres(txtInscricaoEstadual, 20);
+        limitarCaracteres(txtEmail, 100);
+        limitarCaracteres(txtLogradouro, 100);
+        limitarCaracteres(txtNumero, 10);
+        limitarCaracteres(txtComplemento, 50);
+        limitarCaracteres(txtBairro, 50);
+        limitarCaracteres(txtCidade, 50);
+        limitarCaracteres(txtEstado, 2);
+
+        // Estado em maiúsculas
+        txtEstado.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && !newVal.equals(newVal.toUpperCase())) {
+                txtEstado.setText(newVal.toUpperCase());
+            }
+        });
+    }
+
+    private void aplicarValidacoes() {
+        // Validação campos obrigatórios
+        validarCampoObrigatorio(txtNome);
+        validarCampoObrigatorio(txtCpfCnpj);
+
+        // Validação email
+        txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !txtEmail.getText().trim().isEmpty()) {
+                String email = txtEmail.getText().trim();
+                if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                    txtEmail.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    txtEmail.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            } else if (txtEmail.getText().trim().isEmpty()) {
+                txtEmail.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
+            }
+        });
+    }
+
+    private void validarCampoObrigatorio(TextField field) {
+        field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                if (field.getText().trim().isEmpty()) {
+                    field.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                } else {
+                    field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                }
+            }
+        });
+        
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
+                field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+            }
+        });
+    }
+
+    private void limitarCaracteres(TextField field, int max) {
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.length() > max) {
+                field.setText(oldVal);
+            }
+        });
+    }
+
+    private String extrairNumeros(String texto) {
+        return texto == null ? "" : texto.replaceAll("[^0-9]", "");
+    }
+
+    private void limparEstilos() {
+        String estiloPadrao = "-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;";
+        txtNome.setStyle(estiloPadrao);
+        txtCpfCnpj.setStyle(estiloPadrao);
+        txtEmail.setStyle(estiloPadrao);
+    }
+
+    private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
+        Popup popup = new Popup();
+        
+        String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
+        String icone = tipo.equals("sucesso") ? "✓" : tipo.equals("erro") ? "✗" : "⚠";
+        
+        VBox container = new VBox(5);
+        container.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 5;" +
+            "-fx-border-color: " + cor + ";" +
+            "-fx-border-width: 2;" +
+            "-fx-border-radius: 5;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
+        );
+        container.setPadding(new Insets(15));
+        container.setMaxWidth(350);
+
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        
+        Label iconLabel = new Label(icone);
+        iconLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 20px; -fx-font-weight: bold;");
+        
+        Label titleLabel = new Label(titulo);
+        titleLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+        titleLabel.setFont(Font.font("Segoe UI", 14));
+        
+        header.getChildren().addAll(iconLabel, titleLabel);
+
+        Label messageLabel = new Label(mensagem);
+        messageLabel.setWrapText(true);
+        messageLabel.setStyle("-fx-text-fill: #333; -fx-font-size: 12px;");
+        messageLabel.setFont(Font.font("Segoe UI", 12));
+        messageLabel.setMaxWidth(320);
+
+        container.getChildren().addAll(header, messageLabel);
+        popup.getContent().add(container);
+
+        popup.setAutoHide(true);
+        popup.show(txtNome.getScene().getWindow(), 
+            txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380, 
+            txtNome.getScene().getWindow().getY() + 60
+        );
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), container);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+
+        PauseTransition pause = new PauseTransition(Duration.millis(3000));
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), container);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> popup.hide());
+
+        SequentialTransition sequence = new SequentialTransition(fadeIn, pause, fadeOut);
+        sequence.play();
+    }
+
+    private void mostrarListaErros(List<String> erros) {
+        StringBuilder mensagem = new StringBuilder();
+        for (int i = 0; i < erros.size(); i++) {
+            mensagem.append("• ").append(erros.get(i));
+            if (i < erros.size() - 1) mensagem.append("\n");
+        }
+        mostrarNotificacao("Corrija os erros", mensagem.toString(), "erro");
     }
 
     private void configurarTableView() {
@@ -139,12 +310,9 @@ public class ClientesController {
         colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefoneCliente"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("emailCliente"));
-
-        // Configurar coluna de endereço para mostrar endereço completo
         colEndereco.setCellValueFactory(cellData -> {
             Cliente cliente = cellData.getValue();
             StringBuilder endereco = new StringBuilder();
-
             if (cliente.getLogradouro() != null && !cliente.getLogradouro().trim().isEmpty()) {
                 endereco.append(cliente.getLogradouro());
             }
@@ -160,10 +328,8 @@ public class ClientesController {
                 if (endereco.length() > 0) endereco.append("/");
                 endereco.append(cliente.getCidade());
             }
-
             return new javafx.beans.property.SimpleStringProperty(endereco.toString());
         });
-
         colStatus.setCellValueFactory(new PropertyValueFactory<>("statusCliente"));
 
         clientes = FXCollections.observableArrayList();
@@ -182,7 +348,7 @@ public class ClientesController {
             clientes.clear();
             clientes.addAll(listaClientes);
         } catch (SQLException e) {
-            mostrarErro("Erro ao carregar clientes", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao carregar clientes", "erro");
         }
     }
 
@@ -204,7 +370,7 @@ public class ClientesController {
                 clientes.clear();
                 clientes.addAll(listaFiltrada);
             } catch (SQLException e) {
-                mostrarErro("Erro ao filtrar clientes", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao filtrar clientes", "erro");
             }
         }
     }
@@ -222,10 +388,9 @@ public class ClientesController {
     void handleEditar() {
         clienteSelecionado = tableClientes.getSelectionModel().getSelectedItem();
         if (clienteSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um cliente para editar.");
+            mostrarNotificacao("Atenção", "Selecione um cliente para editar", "aviso");
             return;
         }
-
         modoEdicao = true;
         preencherFormulario(clienteSelecionado);
         lblFormTitle.setText("Editar Cliente");
@@ -236,7 +401,7 @@ public class ClientesController {
     void handleExcluir() {
         clienteSelecionado = tableClientes.getSelectionModel().getSelectedItem();
         if (clienteSelecionado == null) {
-            mostrarAlerta("Seleção necessária", "Selecione um cliente para excluir.");
+            mostrarNotificacao("Atenção", "Selecione um cliente para excluir", "aviso");
             return;
         }
 
@@ -250,42 +415,40 @@ public class ClientesController {
                 if (clienteDAO.excluir(clienteSelecionado.getCnpj())) {
                     carregarClientes();
                     atualizarTotal();
-                    mostrarSucesso("Cliente excluído com sucesso!");
+                    mostrarNotificacao("Sucesso", "Cliente excluído com sucesso!", "sucesso");
                 } else {
-                    mostrarErro("Erro", "Não foi possível excluir o cliente.");
+                    mostrarNotificacao("Erro", "Não foi possível excluir o cliente", "erro");
                 }
             } catch (SQLException e) {
-                mostrarErro("Erro ao excluir cliente", e.getMessage());
+                mostrarNotificacao("Erro", "Erro ao excluir cliente", "erro");
             }
         }
     }
 
     @FXML
     void handleSalvar() {
-        if (!validarFormulario()) {
+        List<String> erros = validarFormulario();
+        
+        if (!erros.isEmpty()) {
+            mostrarListaErros(erros);
             return;
         }
 
         try {
             Cliente cliente = criarClienteDoFormulario();
-
-            boolean sucesso;
-            if (modoEdicao) {
-                sucesso = clienteDAO.atualizar(cliente);
-            } else {
-                sucesso = clienteDAO.inserir(cliente);
-            }
+            boolean sucesso = modoEdicao ? clienteDAO.atualizar(cliente) : clienteDAO.inserir(cliente);
 
             if (sucesso) {
                 carregarClientes();
                 atualizarTotal();
                 mostrarFormulario(false);
-                mostrarSucesso(modoEdicao ? "Cliente atualizado com sucesso!" : "Cliente cadastrado com sucesso!");
+                mostrarNotificacao("Sucesso", 
+                    modoEdicao ? "Cliente atualizado!" : "Cliente cadastrado!", "sucesso");
             } else {
-                mostrarErro("Erro", "Não foi possível salvar o cliente.");
+                mostrarNotificacao("Erro", "Não foi possível salvar o cliente", "erro");
             }
         } catch (SQLException e) {
-            mostrarErro("Erro ao salvar cliente", e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao salvar cliente", "erro");
         }
     }
 
@@ -299,6 +462,7 @@ public class ClientesController {
         formContainer.setManaged(mostrar);
         tableClientes.setVisible(!mostrar);
         tableClientes.setManaged(!mostrar);
+        if (!mostrar) limparEstilos();
     }
 
     private void limparFormulario() {
@@ -315,6 +479,7 @@ public class ClientesController {
         txtEstado.clear();
         txtCep.clear();
         cbStatus.setValue(null);
+        limparEstilos();
     }
 
     private void preencherFormulario(Cliente cliente) {
@@ -335,90 +500,62 @@ public class ClientesController {
 
     private Cliente criarClienteDoFormulario() {
         Cliente cliente = modoEdicao ? clienteSelecionado : new Cliente();
-
         cliente.setRazaoSocial(txtNome.getText().trim());
-        cliente.setCnpj(txtCpfCnpj.getText().trim());
+        cliente.setCnpj(extrairNumeros(txtCpfCnpj.getText()));
         cliente.setInscricaoEstadual(txtInscricaoEstadual.getText().trim().isEmpty() ? null : txtInscricaoEstadual.getText().trim());
-        cliente.setNomeFantasia(null); // Campo nome_fantasia não será usado para endereço
+        cliente.setNomeFantasia(null);
         cliente.setEmailCliente(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
-        cliente.setTelefoneCliente(txtTelefone.getText().trim().isEmpty() ? null : txtTelefone.getText().trim());
-
-        // Campos de endereço
+        cliente.setTelefoneCliente(txtTelefone.getText().trim().isEmpty() ? null : extrairNumeros(txtTelefone.getText()));
         cliente.setLogradouro(txtLogradouro.getText().trim().isEmpty() ? null : txtLogradouro.getText().trim());
         cliente.setNumero(txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim());
         cliente.setComplemento(txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim());
         cliente.setBairro(txtBairro.getText().trim().isEmpty() ? null : txtBairro.getText().trim());
         cliente.setCidade(txtCidade.getText().trim().isEmpty() ? null : txtCidade.getText().trim());
         cliente.setEstado(txtEstado.getText().trim().isEmpty() ? null : txtEstado.getText().trim());
-        cliente.setCep(txtCep.getText().trim().isEmpty() ? null : txtCep.getText().trim());
-
+        cliente.setCep(txtCep.getText().trim().isEmpty() ? null : extrairNumeros(txtCep.getText()));
         cliente.setStatusCliente(cbStatus.getValue() != null ? cbStatus.getValue().toString() : "PAGO");
-
         return cliente;
     }
 
-    private boolean validarFormulario() {
-        StringBuilder erros = new StringBuilder();
+    private List<String> validarFormulario() {
+        List<String> erros = new ArrayList<>();
 
         if (txtNome.getText().trim().isEmpty()) {
-            erros.append("- Nome/Razão Social é obrigatório\n");
+            erros.add("Nome/Razão Social é obrigatório");
         }
 
         if (txtCpfCnpj.getText().trim().isEmpty()) {
-            erros.append("- CNPJ é obrigatório\n");
+            erros.add("CPF/CNPJ é obrigatório");
         } else {
-            // Validar formato básico do CNPJ (apenas números)
-            String cnpj = txtCpfCnpj.getText().trim().replaceAll("[^0-9]", "");
-            if (cnpj.length() != 14) {
-                erros.append("- CNPJ deve ter 14 dígitos\n");
+            String cpfCnpj = extrairNumeros(txtCpfCnpj.getText());
+            if (cpfCnpj.length() != 11 && cpfCnpj.length() != 14) {
+                erros.add("CPF deve ter 11 dígitos ou CNPJ 14 dígitos");
             } else {
                 try {
                     String cnpjExcluir = modoEdicao ? clienteSelecionado.getCnpj() : null;
-                    if (clienteDAO.cnpjExiste(cnpj, cnpjExcluir)) {
-                        erros.append("- CNPJ já cadastrado\n");
+                    if (clienteDAO.cnpjExiste(cpfCnpj, cnpjExcluir)) {
+                        erros.add("CPF/CNPJ já cadastrado");
                     }
                 } catch (SQLException e) {
-                    erros.append("- Erro ao verificar CNPJ\n");
+                    erros.add("Erro ao verificar CPF/CNPJ");
                 }
             }
         }
 
         if (!txtEmail.getText().trim().isEmpty()) {
             String email = txtEmail.getText().trim();
-            if (!email.contains("@") || !email.contains(".")) {
-                erros.append("- E-mail deve ter formato válido\n");
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                erros.add("E-mail inválido");
             }
         }
 
-        if (erros.length() > 0) {
-            mostrarErro("Dados inválidos", erros.toString());
-            return false;
+        if (!txtCep.getText().trim().isEmpty()) {
+            String cep = extrairNumeros(txtCep.getText());
+            if (cep.length() != 8) {
+                erros.add("CEP deve ter 8 dígitos");
+            }
         }
 
-        return true;
-    }
-
-    private void mostrarErro(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarAlerta(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
-
-    private void mostrarSucesso(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
+        return erros;
     }
 }

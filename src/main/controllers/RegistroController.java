@@ -82,9 +82,365 @@ public class RegistroController {
                 }
             }
         });
+
+        // Configurar formatação automática e validações em tempo real
+        setupCNPJField();
+        setupTelefoneField();
+        setupCEPField();
+        setupEmailField();
+        setupTextFields();
+        setupNumeroField();
+        setupEstadoField();
     }
 
-    // GERAR ID CREDENCIAL
+    // ==================== FORMATAÇÃO AUTOMÁTICA ====================
+
+    private void setupCNPJField() {
+        cnpjField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                // Remove todos os caracteres não numéricos
+                String digits = newValue.replaceAll("\\D", "");
+                
+                // Limita a 14 dígitos
+                if (digits.length() > 14) {
+                    digits = digits.substring(0, 14);
+                }
+                
+                // Formata o CNPJ: XX.XXX.XXX/XXXX-XX
+                String formatted = formatCNPJ(digits);
+                
+                if (!formatted.equals(newValue)) {
+                    cnpjField.setText(formatted);
+                    cnpjField.positionCaret(formatted.length());
+                }
+                
+                // Validação visual em tempo real
+                validateCNPJVisual(digits);
+            }
+        });
+        
+        // Remove estilo ao focar
+        cnpjField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                cnpjField.setStyle(cnpjField.getStyle().replaceAll("-fx-border-color: [^;]+;", "-fx-border-color: #87ceeb;"));
+            }
+        });
+    }
+
+    private void setupTelefoneField() {
+        telefoneField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String digits = newValue.replaceAll("\\D", "");
+                
+                // Limita a 11 dígitos (celular com 9)
+                if (digits.length() > 11) {
+                    digits = digits.substring(0, 11);
+                }
+                
+                String formatted = formatTelefone(digits);
+                
+                if (!formatted.equals(newValue)) {
+                    telefoneField.setText(formatted);
+                    telefoneField.positionCaret(formatted.length());
+                }
+                
+                validateTelefoneVisual(digits);
+            }
+        });
+        
+        telefoneField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                telefoneField.setStyle(telefoneField.getStyle().replaceAll("-fx-border-color: [^;]+;", "-fx-border-color: #87ceeb;"));
+            }
+        });
+    }
+
+    private void setupCEPField() {
+        cepField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String digits = newValue.replaceAll("\\D", "");
+                
+                // Limita a 8 dígitos
+                if (digits.length() > 8) {
+                    digits = digits.substring(0, 8);
+                }
+                
+                String formatted = formatCEP(digits);
+                
+                if (!formatted.equals(newValue)) {
+                    cepField.setText(formatted);
+                    cepField.positionCaret(formatted.length());
+                }
+                
+                validateCEPVisual(digits);
+            }
+        });
+        
+        cepField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                cepField.setStyle(cepField.getStyle().replaceAll("-fx-border-color: [^;]+;", "-fx-border-color: #87ceeb;"));
+            }
+        });
+    }
+
+    private void setupEmailField() {
+        emailField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && !emailField.getText().trim().isEmpty()) {
+                validateEmailVisual(emailField.getText().trim());
+            } else if (isNowFocused) {
+                emailField.setStyle(emailField.getStyle().replaceAll("-fx-border-color: [^;]+;", "-fx-border-color: #87ceeb;"));
+            }
+        });
+    }
+
+    private void setupTextFields() {
+        // Limite de caracteres para campos de texto
+        razaoSocialField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 100) {
+                razaoSocialField.setText(old);
+            }
+        });
+        
+        nomeFantasiaField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 100) {
+                nomeFantasiaField.setText(old);
+            }
+        });
+        
+        inscricaoEstadualField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 20) {
+                inscricaoEstadualField.setText(old);
+            }
+        });
+        
+        ruaField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 100) {
+                ruaField.setText(old);
+            }
+        });
+        
+        bairroField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 50) {
+                bairroField.setText(old);
+            }
+        });
+        
+        cidadeField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && newVal.length() > 50) {
+                cidadeField.setText(old);
+            }
+        });
+    }
+
+    private void setupNumeroField() {
+        numeroField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                // Permite números e algumas letras (para casos como "123-A")
+                if (newVal.length() > 10) {
+                    numeroField.setText(old);
+                }
+            }
+        });
+    }
+
+    private void setupEstadoField() {
+        estadoField.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                // Converte para maiúsculas e limita a 2 caracteres
+                String upper = newVal.toUpperCase().replaceAll("[^A-Z]", "");
+                if (upper.length() > 2) {
+                    upper = upper.substring(0, 2);
+                }
+                if (!upper.equals(newVal)) {
+                    estadoField.setText(upper);
+                    estadoField.positionCaret(upper.length());
+                }
+            }
+        });
+    }
+
+    // ==================== FORMATADORES ====================
+
+    private String formatCNPJ(String digits) {
+        if (digits.isEmpty()) return "";
+        
+        StringBuilder formatted = new StringBuilder();
+        
+        // XX.XXX.XXX/XXXX-XX
+        for (int i = 0; i < digits.length(); i++) {
+            if (i == 2 || i == 5) {
+                formatted.append(".");
+            } else if (i == 8) {
+                formatted.append("/");
+            } else if (i == 12) {
+                formatted.append("-");
+            }
+            formatted.append(digits.charAt(i));
+        }
+        
+        return formatted.toString();
+    }
+
+    private String formatTelefone(String digits) {
+        if (digits.isEmpty()) return "";
+        
+        StringBuilder formatted = new StringBuilder();
+        
+        // (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+        formatted.append("(");
+        
+        for (int i = 0; i < digits.length(); i++) {
+            if (i == 2) {
+                formatted.append(") ");
+            } else if ((digits.length() == 11 && i == 7) || (digits.length() == 10 && i == 6)) {
+                formatted.append("-");
+            }
+            formatted.append(digits.charAt(i));
+        }
+        
+        return formatted.toString();
+    }
+
+    private String formatCEP(String digits) {
+        if (digits.isEmpty()) return "";
+        
+        StringBuilder formatted = new StringBuilder();
+        
+        // XXXXX-XXX
+        for (int i = 0; i < digits.length(); i++) {
+            if (i == 5) {
+                formatted.append("-");
+            }
+            formatted.append(digits.charAt(i));
+        }
+        
+        return formatted.toString();
+    }
+
+    // ==================== VALIDAÇÕES VISUAIS ====================
+
+    private void validateCNPJVisual(String digits) {
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-padding: 5; -fx-font-size: 11;";
+        
+        if (digits.isEmpty()) {
+            cnpjField.setStyle(baseStyle + " -fx-border-color: #87ceeb;");
+        } else if (digits.length() == 14) {
+            cnpjField.setStyle(baseStyle + " -fx-border-color: #4caf50;");
+        } else {
+            cnpjField.setStyle(baseStyle + " -fx-border-color: #ff9800;");
+        }
+    }
+
+    private void validateTelefoneVisual(String digits) {
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-padding: 5; -fx-font-size: 11;";
+        
+        if (digits.isEmpty()) {
+            telefoneField.setStyle(baseStyle + " -fx-border-color: #87ceeb;");
+        } else if (digits.length() == 10 || digits.length() == 11) {
+            telefoneField.setStyle(baseStyle + " -fx-border-color: #4caf50;");
+        } else {
+            telefoneField.setStyle(baseStyle + " -fx-border-color: #ff9800;");
+        }
+    }
+
+    private void validateCEPVisual(String digits) {
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-padding: 5; -fx-font-size: 11;";
+        
+        if (digits.isEmpty()) {
+            cepField.setStyle(baseStyle + " -fx-border-color: #87ceeb;");
+        } else if (digits.length() == 8) {
+            cepField.setStyle(baseStyle + " -fx-border-color: #4caf50;");
+        } else {
+            cepField.setStyle(baseStyle + " -fx-border-color: #ff9800;");
+        }
+    }
+
+    private void validateEmailVisual(String email) {
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-padding: 5; -fx-font-size: 11;";
+        
+        if (email.isEmpty()) {
+            emailField.setStyle(baseStyle + " -fx-border-color: #87ceeb;");
+        } else if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            emailField.setStyle(baseStyle + " -fx-border-color: #4caf50;");
+        } else {
+            emailField.setStyle(baseStyle + " -fx-border-color: #f44336;");
+        }
+    }
+
+    // ==================== VALIDAÇÃO NO SUBMIT ====================
+
+    private boolean validarCampos() {
+        boolean valido = true;
+        String mensagemErro = "";
+
+        // CNPJ
+        String cnpjDigits = cnpjField.getText().replaceAll("\\D", "");
+        if (cnpjDigits.isEmpty()) {
+            mensagemErro = "CNPJ é obrigatório";
+            valido = false;
+            setFieldError(cnpjField);
+        } else if (cnpjDigits.length() != 14) {
+            mensagemErro = "CNPJ deve conter 14 dígitos";
+            valido = false;
+            setFieldError(cnpjField);
+        }
+
+        // Razão Social
+        if (razaoSocialField.getText().trim().isEmpty()) {
+            if (!mensagemErro.isEmpty()) mensagemErro += " | ";
+            mensagemErro += "Razão Social é obrigatória";
+            valido = false;
+            setFieldError(razaoSocialField);
+        }
+
+        // Email
+        String email = emailField.getText().trim();
+        if (email.isEmpty()) {
+            if (!mensagemErro.isEmpty()) mensagemErro += " | ";
+            mensagemErro += "E-mail é obrigatório";
+            valido = false;
+            setFieldError(emailField);
+        } else if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            if (!mensagemErro.isEmpty()) mensagemErro += " | ";
+            mensagemErro += "E-mail inválido";
+            valido = false;
+            setFieldError(emailField);
+        }
+
+        // Telefone (opcional, mas se preenchido deve ser válido)
+        String telefoneDigits = telefoneField.getText().replaceAll("\\D", "");
+        if (!telefoneDigits.isEmpty() && telefoneDigits.length() != 10 && telefoneDigits.length() != 11) {
+            if (!mensagemErro.isEmpty()) mensagemErro += " | ";
+            mensagemErro += "Telefone deve ter 10 ou 11 dígitos";
+            valido = false;
+            setFieldError(telefoneField);
+        }
+
+        // CEP (opcional, mas se preenchido deve ser válido)
+        String cepDigits = cepField.getText().replaceAll("\\D", "");
+        if (!cepDigits.isEmpty() && cepDigits.length() != 8) {
+            if (!mensagemErro.isEmpty()) mensagemErro += " | ";
+            mensagemErro += "CEP deve ter 8 dígitos";
+            valido = false;
+            setFieldError(cepField);
+        }
+
+        if (!valido) {
+            statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+            statusMessage.setText(mensagemErro);
+            statusMessage.setVisible(true);
+        }
+
+        return valido;
+    }
+
+    private void setFieldError(TextField field) {
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-padding: 5; -fx-font-size: 11;";
+        field.setStyle(baseStyle + " -fx-border-color: #f44336;");
+    }
+
+    // ==================== MÉTODOS ORIGINAIS ====================
+
     private Integer gerarIDCredencial(String cnpj) {
         Integer id = null;
         Connection db = null;
@@ -113,9 +469,6 @@ public class RegistroController {
         return id;
     }
 
-    /**
-     * Gera uma senha aleatória de 10 caracteres alfanuméricos
-     */
     private String gerarSenhaAleatoria() {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         SecureRandom random = new SecureRandom();
@@ -128,17 +481,22 @@ public class RegistroController {
         return senha.toString();
     }
 
-    /**
-     * Gera um nome de usuário baseado no CNPJ
-     */
     private String gerarNomeUsuario(String cnpj) {
-        // Remove pontos, barras e traços do CNPJ e pega os primeiros 8 dígitos
         String cnpjLimpo = cnpj.replaceAll("[./-]", "");
         return "user" + cnpjLimpo.substring(0, Math.min(8, cnpjLimpo.length()));
     }
 
     @FXML
     private void handleRegistro() {
+        // Limpa mensagem anterior
+        statusMessage.setVisible(false);
+        
+        // Valida campos
+        if (!validarCampos()) {
+            return;
+        }
+
+        // Pega valores (já formatados e validados)
         String cnpj = cnpjField.getText().trim();
         String razaoSocial = razaoSocialField.getText().trim();
         String nomeFantasia = nomeFantasiaField.getText().trim();
@@ -149,31 +507,15 @@ public class RegistroController {
         String rua = ruaField.getText().trim();
         String numero = numeroField.getText().trim();
         String bairro = bairroField.getText().trim();
-        String cidade = cidadeField.getText().trim(); // Campo não utilizado
+        String cidade = cidadeField.getText().trim();
         String estado = estadoField.getText().trim();
 
-        // Validações básicas
-        if (cnpj.isEmpty() || razaoSocial.isEmpty() || email.isEmpty()) {
-            statusMessage.setText("CNPJ, Razão Social e E-mail são obrigatórios.");
-            statusMessage.setVisible(true);
-            return;
-        }
-
-        if (cnpj.length() != 18 || !cnpj.matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
-            statusMessage.setText("CNPJ deve ter formato XX.XXX.XXX/XXXX-XX e 18 caracteres.");
-            statusMessage.setVisible(true);
-            return;
-        }
-
-        // Inserir no banco - primeiro a empresa, depois as credenciais
         Connection db = null;
         try {
             db = DatabaseConnection.getConnectionLicenses();
             if (db != null) {
-                // Desabilitar auto-commit para usar transação
                 db.setAutoCommit(false);
 
-                // PASSO 1: Inserir a empresa na tabela licencas (sem credencial ainda)
                 String queryLicenca = "INSERT INTO licencas (cnpj, razao_social, nome_fantasia, inscricao_estadual, telefone, e_mail, rua, numero, bairro, cidade, estado, cep, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PAGO')";
                 PreparedStatement stmtLicenca = db.prepareStatement(queryLicenca);
                 stmtLicenca.setString(1, cnpj);
@@ -193,14 +535,10 @@ public class RegistroController {
                 stmtLicenca.close();
 
                 if (licencaRows > 0) {
-                    // PASSO 2: Empresa cadastrada com sucesso, agora criar as credenciais
-
-                    // Gerar credenciais para o usuário administrador
                     Integer idCredencial = gerarIDCredencial(cnpj);
                     String nomeUsuario = gerarNomeUsuario(cnpj);
                     String senha = gerarSenhaAleatoria();
 
-                    // Inserir as credenciais na tabela licenca_credenciais
                     String queryCredenciais = "INSERT INTO licenca_credenciais (ID_Credenciais, cnpj, credenciais, senha, tipo_usuario) VALUES (?, ?, ?, ?, 'ADM')";
                     PreparedStatement stmtCredenciais = db.prepareStatement(queryCredenciais, Statement.RETURN_GENERATED_KEYS);
                     stmtCredenciais.setString(1, cnpj);
@@ -208,10 +546,8 @@ public class RegistroController {
                     stmtCredenciais.setString(3, senha);
 
                     int credenciaisRows = stmtCredenciais.executeUpdate();
-                    
 
                     if (credenciaisRows > 0) {
-                        // Obter o ID gerado da credencial
                         ResultSet generatedKeys = stmtCredenciais.getGeneratedKeys();
                         if (generatedKeys.next()) {
                             idCredencial = generatedKeys.getInt(1);
@@ -221,7 +557,6 @@ public class RegistroController {
                     stmtCredenciais.close();
 
                     if (idCredencial > 0) {
-                        // PASSO 3: Atualizar a empresa com o ID da credencial principal
                         String queryUpdate = "UPDATE licencas SET id_credencial_principal = ? WHERE cnpj = ?";
                         PreparedStatement stmtUpdate = db.prepareStatement(queryUpdate);
                         stmtUpdate.setInt(1, idCredencial);
@@ -229,13 +564,12 @@ public class RegistroController {
                         stmtUpdate.executeUpdate();
                         stmtUpdate.close();
 
-                        // Confirmar a transação
                         db.commit();
 
-                        statusMessage.setText("Cadastro realizado com sucesso!");
+                        statusMessage.setFill(javafx.scene.paint.Color.web("#4caf50"));
+                        statusMessage.setText("✓ Cadastro realizado com sucesso!");
                         statusMessage.setVisible(true);
 
-                        // Exibir as credenciais geradas em um Alert
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Credenciais Criadas");
                         alert.setHeaderText("Seu cadastro foi realizado com sucesso!");
@@ -251,23 +585,24 @@ public class RegistroController {
                         alert.showAndWait();
 
                     } else {
-                        // Falhou ao criar credenciais, fazer rollback
                         db.rollback();
-                        statusMessage.setText("Erro ao criar credenciais para a empresa.");
+                        statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+                        statusMessage.setText("✗ Erro ao criar credenciais para a empresa.");
                         statusMessage.setVisible(true);
                     }
 
                 } else {
-                    statusMessage.setText("Erro ao cadastrar empresa.");
+                    statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+                    statusMessage.setText("✗ Erro ao cadastrar empresa.");
                     statusMessage.setVisible(true);
                 }
 
             } else {
-                statusMessage.setText("Falha na conexão com o banco.");
+                statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+                statusMessage.setText("✗ Falha na conexão com o banco.");
                 statusMessage.setVisible(true);
             }
         } catch (SQLException e) {
-            // Em caso de erro, fazer rollback
             if (db != null) {
                 try {
                     db.rollback();
@@ -275,10 +610,10 @@ public class RegistroController {
                     System.err.println("Erro no rollback: " + rollbackEx.getMessage());
                 }
             }
-            statusMessage.setText("Erro: " + e.getMessage());
+            statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+            statusMessage.setText("✗ Erro: " + e.getMessage());
             statusMessage.setVisible(true);
         } finally {
-            // Restaurar auto-commit e fechar conexão
             if (db != null) {
                 try {
                     db.setAutoCommit(true);
@@ -328,7 +663,7 @@ public class RegistroController {
 
     @FXML
     private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
-    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         stage.setX(event.getScreenX() - xOffset);
         stage.setY(event.getScreenY() - yOffset);
     }

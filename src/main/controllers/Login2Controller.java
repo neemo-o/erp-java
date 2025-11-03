@@ -17,6 +17,9 @@ import main.database.DatabaseConnection;
 
 public class Login2Controller {
 
+    private double xOffset = 0;
+    private double yOffset = 0;
+
     @FXML
     private TextField usernameField;
 
@@ -35,14 +38,17 @@ public class Login2Controller {
     @FXML
     public void initialize() {
 
-       //usernameField.sceneProperty().addListener((obs, oldScene, newScene) -> {
-         //   if (newScene != null) {
-           //     Stage stage = (Stage) newScene.getWindow();
-             //   if (stage != null) {
-                    //stage.setResizable(false);
-          //      }
-        //    }
-      //  });
+       usernameField.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                if (stage != null) {
+                    stage.setResizable(false);
+                    javafx.application.Platform.runLater(() -> {
+                        stage.centerOnScreen();
+                    });
+                }
+            }
+        });
     }
 
     private boolean authenticateUser(Integer username, String password) {
@@ -172,4 +178,18 @@ public class Login2Controller {
             System.exit(0);
         }
     }
+
+     @FXML
+    private void handleMousePressed(javafx.scene.input.MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+
+    @FXML
+    private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
+    }
+
 }

@@ -135,6 +135,17 @@ CREATE TABLE clientes (
     status_cliente VARCHAR(10) NOT NULL CHECK (status_cliente IN ('PAGO', 'NAO_PAGO'))
 );
 
+CREATE TABLE licencas(
+    id_usuario integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    name_usuario varchar(255),
+    senha_usuario varchar(255),
+    tipo_usuario varchar(255),
+    PRIMARY KEY(id_usuario),
+    CONSTRAINT licencas_tipo_usuario_check CHECK (((tipo_usuario)::text = ANY ((ARRAY['admin'::character varying, 'user'::character varying])::text[])))
+);
+
+INSERT INTO licencas (name_usuario, senha_usuario, tipo_usuario) VALUES ('User 1','123456','admin');
+
 
 -- ========================================
 -- ÍNDICES PARA MELHORAR PERFORMANCE

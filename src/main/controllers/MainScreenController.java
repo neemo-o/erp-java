@@ -6,7 +6,6 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,8 +13,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import main.database.DatabaseConnection;
 
 import java.net.InetAddress;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -74,88 +77,88 @@ public class MainScreenController {
 
     private Button currentActiveButton;
 
-   @FXML
-public void initialize() {
-    System.out.println("=== INITIALIZE MainScreenController ===");
-    
-    // IMPORTANTE: Configurar janela IMEDIATAMENTE quando a cena estiver disponível
-    Platform.runLater(() -> {
+    @FXML
+    public void initialize() {
+        System.out.println("=== INITIALIZE MainScreenController ===");
+
+        // IMPORTANTE: Configurar janela IMEDIATAMENTE quando a cena estiver disponível
+        Platform.runLater(() -> {
+            try {
+                if (contentArea.getScene() != null && contentArea.getScene().getWindow() != null) {
+                    Stage stage = (Stage) contentArea.getScene().getWindow();
+                    System.out.println("Configurando stage...");
+                    stage.setResizable(false);
+                    stage.setMaximized(true);
+                    System.out.println("Stage maximizado: " + stage.isMaximized());
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao maximizar: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+
+        // Obter IP da máquina
         try {
-            if (contentArea.getScene() != null && contentArea.getScene().getWindow() != null) {
-                Stage stage = (Stage) contentArea.getScene().getWindow();
-                System.out.println("Configurando stage...");
-                stage.setResizable(false);
-                stage.setMaximized(true);
-                System.out.println("Stage maximizado: " + stage.isMaximized());
-            }
+            ipLabel.setText("127.0.0.1");
         } catch (Exception e) {
-            System.err.println("Erro ao maximizar: " + e.getMessage());
-            e.printStackTrace();
+            ipLabel.setText("N/A");
         }
-    });
 
-    // Obter IP da máquina
-    try {
-        InetAddress ip = InetAddress.getLocalHost();
-        ipLabel.setText(ip.getHostAddress());
-    } catch (Exception e) {
-        ipLabel.setText("N/A");
+        // Iniciar relógio em tempo real
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            dataHoraLabel.setText(now.format(formatter));
+        }), new KeyFrame(Duration.seconds(1)));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+
+        // Carregar dados iniciais do dashboard
+        carregarDashboard();
+
+        // Adicionar efeitos hover aos botões do menu
+        adicionarEfeitosMenu();
+
+        System.out.println("=== INITIALIZE CONCLUÍDO ===");
     }
 
-    // Iniciar relógio em tempo real
-    Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        dataHoraLabel.setText(now.format(formatter));
-    }), new KeyFrame(Duration.seconds(1)));
-    clock.setCycleCount(Animation.INDEFINITE);
-    clock.play();
+    private void adicionarEfeitosMenu() {
+        System.out.println("Adicionando efeitos ao menu...");
 
-    // Carregar dados iniciais do dashboard
-    carregarDashboard();
+        Button[] menuButtons = { btnProdutos, btnClientes, btnVendas, btnEstoque,
+                btnFornecedores, btnRelatorios, btnConfiguracoes };
 
-    // Adicionar efeitos hover aos botões do menu
-    adicionarEfeitosMenu();
-    
-    System.out.println("=== INITIALIZE CONCLUÍDO ===");
-}
+        for (int i = 0; i < menuButtons.length; i++) {
+            Button btn = menuButtons[i];
 
-private void adicionarEfeitosMenu() {
-    System.out.println("Adicionando efeitos ao menu...");
-    
-    Button[] menuButtons = {btnProdutos, btnClientes, btnVendas, btnEstoque, 
-                            btnFornecedores, btnRelatorios, btnConfiguracoes};
+            if (btn == null) {
+                System.err.println("ERRO: Botão na posição " + i + " está NULL");
+                continue;
+            }
 
-    for (int i = 0; i < menuButtons.length; i++) {
-        Button btn = menuButtons[i];
-        
-        if (btn == null) {
-            System.err.println("ERRO: Botão na posição " + i + " está NULL");
-            continue;
+            btn.setOnMouseEntered(e -> {
+                if (btn != currentActiveButton) {
+                    btn.setStyle(btn.getStyle() + "-fx-background-color: #e8f4f8;");
+                }
+            });
+
+            btn.setOnMouseExited(e -> {
+                if (btn != currentActiveButton) {
+                    btn.setStyle(btn.getStyle().replace("-fx-background-color: #e8f4f8;",
+                            "-fx-background-color: transparent;"));
+                }
+            });
         }
-        
-        btn.setOnMouseEntered(e -> {
-            if (btn != currentActiveButton) {
-                btn.setStyle(btn.getStyle() + "-fx-background-color: #e8f4f8;");
-            }
-        });
 
-        btn.setOnMouseExited(e -> {
-            if (btn != currentActiveButton) {
-                btn.setStyle(btn.getStyle().replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
-            }
-        });
+        System.out.println("Efeitos adicionados com sucesso");
     }
-    
-    System.out.println("Efeitos adicionados com sucesso");
-}
 
     private void setActiveButton(Button button) {
         // Remover destaque do botão anterior
         if (currentActiveButton != null) {
             String style = currentActiveButton.getStyle();
             currentActiveButton.setStyle(style.replace("-fx-border-color: #4fa8d8;", "-fx-border-color: transparent;")
-                                              .replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
+                    .replace("-fx-background-color: #e8f4f8;", "-fx-background-color: transparent;"));
         }
 
         // Destacar novo botão ativo
@@ -165,11 +168,37 @@ private void adicionarEfeitosMenu() {
     }
 
     private void carregarDashboard() {
-        // Aqui você pode carregar dados reais do banco de dados
-        // Por enquanto, valores de exemplo
-        vendasHojeText.setText("R$ 1.234,56");
-        produtosText.setText("250");
-        clientesText.setText("87");
+        try {
+             Connection db = DatabaseConnection.getConnectionMercado();
+              if (db != null) {
+
+                // Verifica se o ID do usuario existe
+
+                String query = "SELECT (SELECT COUNT(*) FROM clientes) AS total_clientes, (SELECT COUNT(*) FROM produto) AS total_produtos, COALESCE((SELECT SUM(valor_total) FROM venda), 0) AS total_vendas_reais";
+                PreparedStatement stmt = db.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+
+                boolean temResultado = rs.next();
+                System.out.println("Tem resultado? " + temResultado);
+                if (temResultado) {
+                    String totalVendas = String.format("R$ %.2f", rs.getDouble("total_vendas_reais"));
+                    String totalProdutos = String.valueOf(rs.getInt("total_produtos"));
+                    String totalClientes = String.valueOf(rs.getInt("total_clientes"));
+
+
+                    vendasHojeText.setText(totalVendas);
+                    produtosText.setText(totalProdutos);
+                    clientesText.setText(totalClientes);
+                }
+                
+
+              }  
+
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar dados do dashboard: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -218,7 +247,7 @@ private void adicionarEfeitosMenu() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent telaCarregada = loader.load();
-            
+
             // Limpar área de conteúdo e adicionar nova tela
             contentArea.getChildren().clear();
             contentArea.getChildren().add(telaCarregada);
@@ -253,8 +282,11 @@ private void adicionarEfeitosMenu() {
 
     // Método público para atualizar dados do dashboard
     public void atualizarDashboard(String vendas, String produtos, String clientes) {
-        if (vendas != null) vendasHojeText.setText(vendas);
-        if (produtos != null) produtosText.setText(produtos);
-        if (clientes != null) clientesText.setText(clientes);
+        if (vendas != null)
+            vendasHojeText.setText(vendas);
+        if (produtos != null)
+            produtosText.setText(produtos);
+        if (clientes != null)
+            clientesText.setText(clientes);
     }
 }

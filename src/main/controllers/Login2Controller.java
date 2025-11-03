@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -65,7 +64,6 @@ public class Login2Controller {
 
                 if (rs.next()) {
                     String dbPassword = rs.getString("senha_usuario");
-                    String userType = rs.getString("tipo_usuario");
 
                     if (dbPassword.equals(password)) {
                         statusMessage.setText("Login realizado com sucesso!");

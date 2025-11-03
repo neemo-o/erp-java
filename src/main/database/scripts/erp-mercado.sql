@@ -1,22 +1,16 @@
--- Active: 1762011391712@@localhost@5432@erp_mercado
+-- Active: 1761779476832@@127.0.0.1@5432@erp_oficial
 
 -- ========================================
 -- TABELA FORNECEDOR
 -- ========================================
 CREATE TABLE IF NOT EXISTS fornecedor (
     id_fornecedor SERIAL PRIMARY KEY,
-    id_empresa INTEGER NOT NULL,
     cnpj VARCHAR(18) UNIQUE NOT NULL,
     razao_social VARCHAR(255) NOT NULL,
     senha_hash VARCHAR(255) NOT NULL,
     telefone VARCHAR(20),
     e_mail VARCHAR(255),
-    rua VARCHAR(255),
-    numero VARCHAR(10),
-    bairro VARCHAR(100),
-    cidade VARCHAR(100),
-    estado VARCHAR(2),
-    cep VARCHAR(10),
+    id_endereco INTEGER REFERENCES enderecos(id_endereco),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -26,7 +20,6 @@ CREATE TABLE IF NOT EXISTS fornecedor (
 -- ========================================
 CREATE TABLE IF NOT EXISTS produto (
     id_produto SERIAL PRIMARY KEY,
-    id_empresa INTEGER NOT NULL,
     descricao TEXT NOT NULL,
     codigo_barras VARCHAR(50) UNIQUE,
     unidade_medida VARCHAR(10),
@@ -44,7 +37,6 @@ CREATE TABLE IF NOT EXISTS produto (
 -- ========================================
 CREATE TABLE IF NOT EXISTS movimentacao_estoque (
     id_movimento SERIAL PRIMARY KEY,
-    id_empresa INTEGER NOT NULL,
     id_produto INTEGER NOT NULL,
     tipo VARCHAR(20) CHECK (tipo IN ('ENTRADA', 'SAIDA', 'AJUSTE')),
     quantidade INTEGER NOT NULL,
@@ -72,7 +64,6 @@ CREATE TABLE IF NOT EXISTS item_venda (
 -- ========================================
 CREATE TABLE IF NOT EXISTS venda (
     id_venda SERIAL PRIMARY KEY,
-    id_empresa INTEGER NOT NULL,
     data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valor_total DECIMAL(10, 2) NOT NULL,
     forma_pagamento VARCHAR(50),
@@ -84,7 +75,6 @@ CREATE TABLE IF NOT EXISTS venda (
 -- ========================================
 CREATE TABLE IF NOT EXISTS compra (
     id_compra SERIAL PRIMARY KEY,
-    id_empresa INTEGER NOT NULL,
     id_fornecedor INTEGER NOT NULL,
     data_compra TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valor_total DECIMAL(10, 2) NOT NULL,
@@ -150,24 +140,19 @@ INSERT INTO licencas (name_usuario, senha_usuario, tipo_usuario) VALUES ('User 1
 -- ========================================
 -- ÍNDICES PARA MELHORAR PERFORMANCE
 -- ========================================
-CREATE INDEX idx_fornecedor_empresa ON fornecedor(id_empresa);
 CREATE INDEX idx_fornecedor_cnpj ON fornecedor(cnpj);
 
-CREATE INDEX idx_produto_empresa ON produto(id_empresa);
 CREATE INDEX idx_produto_codigo_barras ON produto(codigo_barras);
 CREATE INDEX idx_produto_fornecedor ON produto(id_fornecedor);
 
-CREATE INDEX idx_movimentacao_empresa ON movimentacao_estoque(id_empresa);
 CREATE INDEX idx_movimentacao_produto ON movimentacao_estoque(id_produto);
 CREATE INDEX idx_movimentacao_data ON movimentacao_estoque(data_movimento);
 
 CREATE INDEX idx_item_venda_venda ON item_venda(id_venda);
 CREATE INDEX idx_item_venda_produto ON item_venda(id_produto);
 
-CREATE INDEX idx_venda_empresa ON venda(id_empresa);
 CREATE INDEX idx_venda_data ON venda(data_venda);
 
-CREATE INDEX idx_compra_empresa ON compra(id_empresa);
 CREATE INDEX idx_compra_fornecedor ON compra(id_fornecedor);
 CREATE INDEX idx_compra_data ON compra(data_compra);
 

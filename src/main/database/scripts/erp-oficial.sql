@@ -1,5 +1,22 @@
 -- Active: 1761779476832@@127.0.0.1@5432@erp_oficial
 
+#   RODE O SCRIPT DEPOIS DE CRIAR A DATABASE COM O ESTE COMANDO ISOLADO
+#   CREATE DATABASE erp_oficial;
+
+-- ========================================
+-- TABELA ENDEREÇOS
+-- ========================================
+CREATE TABLE IF NOT EXISTS enderecos (
+    id_endereco SERIAL PRIMARY KEY,
+    logradouro VARCHAR(255) NOT NULL,
+    numero VARCHAR(10),
+    complemento VARCHAR(255),
+    bairro VARCHAR(255) NOT NULL,
+    cidade VARCHAR(255) NOT NULL,
+    estado VARCHAR(2) NOT NULL,
+    cep VARCHAR(9) NOT NULL
+);
+
 -- ========================================
 -- TABELA FORNECEDOR
 -- ========================================
@@ -97,23 +114,9 @@ CREATE TABLE IF NOT EXISTS item_compra (
 );
 
 -- ========================================
--- TABELA ENDEREÇOS
--- ========================================
-CREATE TABLE enderecos (
-    id_endereco SERIAL PRIMARY KEY,
-    logradouro VARCHAR(255) NOT NULL,
-    numero VARCHAR(10),
-    complemento VARCHAR(255),
-    bairro VARCHAR(255) NOT NULL,
-    cidade VARCHAR(255) NOT NULL,
-    estado VARCHAR(2) NOT NULL,
-    cep VARCHAR(9) NOT NULL
-);
-
--- ========================================
 -- TABELA CLIENTES
 -- ========================================
-CREATE TABLE clientes (
+CREATE TABLE IF NOT EXISTS clientes (
     cnpj VARCHAR(14) NOT NULL PRIMARY KEY,
     razao_social VARCHAR(255) NOT NULL,
     nome_fantasia VARCHAR(255),
@@ -124,7 +127,10 @@ CREATE TABLE clientes (
     status_cliente VARCHAR(10) NOT NULL CHECK (status_cliente IN ('PAGO', 'NAO_PAGO'))
 );
 
-CREATE TABLE licencas(
+-- ========================================
+-- TABELA LICENÇAS
+-- ========================================
+CREATE TABLE IF NOT EXISTS licencas(
     id_usuario integer GENERATED ALWAYS AS IDENTITY NOT NULL,
     name_usuario varchar(255),
     senha_usuario varchar(255),
@@ -133,33 +139,27 @@ CREATE TABLE licencas(
     CONSTRAINT licencas_tipo_usuario_check CHECK (((tipo_usuario)::text = ANY ((ARRAY['admin'::character varying, 'user'::character varying])::text[])))
 );
 
+-- Exemplo de inserção de dados
 INSERT INTO licencas (name_usuario, senha_usuario, tipo_usuario) VALUES ('User 1','123456','admin');
 
 
 -- ========================================
 -- ÍNDICES PARA MELHORAR PERFORMANCE
 -- ========================================
-CREATE INDEX idx_fornecedor_cnpj ON fornecedor(cnpj);
-
-CREATE INDEX idx_produto_codigo_barras ON produto(codigo_barras);
-CREATE INDEX idx_produto_fornecedor ON produto(id_fornecedor);
-
-CREATE INDEX idx_movimentacao_produto ON movimentacao_estoque(id_produto);
-CREATE INDEX idx_movimentacao_data ON movimentacao_estoque(data_movimento);
-
-CREATE INDEX idx_item_venda_venda ON item_venda(id_venda);
-CREATE INDEX idx_item_venda_produto ON item_venda(id_produto);
-
-CREATE INDEX idx_venda_data ON venda(data_venda);
-
-CREATE INDEX idx_compra_fornecedor ON compra(id_fornecedor);
-CREATE INDEX idx_compra_data ON compra(data_compra);
-
-CREATE INDEX idx_item_compra_compra ON item_compra(id_compra);
-CREATE INDEX idx_item_compra_produto ON item_compra(id_produto);
-
-CREATE INDEX idx_enderecos_cidade ON enderecos(cidade);
-CREATE INDEX idx_enderecos_cep ON enderecos(cep);
+CREATE INDEX IF NOT EXISTS idx_fornecedor_cnpj ON fornecedor(cnpj);
+CREATE INDEX IF NOT EXISTS idx_produto_codigo_barras ON produto(codigo_barras);
+CREATE INDEX IF NOT EXISTS idx_produto_fornecedor ON produto(id_fornecedor);
+CREATE INDEX IF NOT EXISTS idx_movimentacao_produto ON movimentacao_estoque(id_produto);
+CREATE INDEX IF NOT EXISTS idx_movimentacao_data ON movimentacao_estoque(data_movimento);
+CREATE INDEX IF NOT EXISTS idx_item_venda_venda ON item_venda(id_venda);
+CREATE INDEX IF NOT EXISTS idx_item_venda_produto ON item_venda(id_produto);
+CREATE INDEX IF NOT EXISTS idx_venda_data ON venda(data_venda);
+CREATE INDEX IF NOT EXISTS idx_compra_fornecedor ON compra(id_fornecedor);
+CREATE INDEX IF NOT EXISTS idx_compra_data ON compra(data_compra);
+CREATE INDEX IF NOT EXISTS idx_item_compra_compra ON item_compra(id_compra);
+CREATE INDEX IF NOT EXISTS idx_item_compra_produto ON item_compra(id_produto);
+CREATE INDEX IF NOT EXISTS idx_enderecos_cidade ON enderecos(cidade);
+CREATE INDEX IF NOT EXISTS idx_enderecos_cep ON enderecos(cep);
 
 -- ========================================
 -- TRIGGERS PARA ATUALIZAR DATA_ATUALIZACAO
@@ -192,6 +192,5 @@ COMMENT ON TABLE item_venda IS 'Itens de cada venda';
 COMMENT ON TABLE venda IS 'Registro de vendas';
 COMMENT ON TABLE compra IS 'Registro de compras';
 COMMENT ON TABLE item_compra IS 'Itens de cada compra';
-
 COMMENT ON TABLE enderecos IS 'Cadastro de endereços';
 COMMENT ON TABLE clientes IS 'Cadastro de clientes';

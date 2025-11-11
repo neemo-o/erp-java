@@ -305,14 +305,26 @@ public class ClientesController {
     }
 
     private void configurarTableView() {
+        // Coluna CNPJ (colId)
         colId.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
+        
+        // Coluna Razão Social (colNome)
         colNome.setCellValueFactory(new PropertyValueFactory<>("razaoSocial"));
-        colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
+        
+        // Coluna Inscrição Estadual (colCpfCnpj) - reutilizando o campo
+        colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("inscricaoEstadual"));
+        
+        // Coluna Telefone
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefoneCliente"));
+        
+        // Coluna Email
         colEmail.setCellValueFactory(new PropertyValueFactory<>("emailCliente"));
+        
+        // Coluna Endereço Completo - construída dinamicamente
         colEndereco.setCellValueFactory(cellData -> {
             Cliente cliente = cellData.getValue();
             StringBuilder endereco = new StringBuilder();
+            
             if (cliente.getLogradouro() != null && !cliente.getLogradouro().trim().isEmpty()) {
                 endereco.append(cliente.getLogradouro());
             }
@@ -320,16 +332,31 @@ public class ClientesController {
                 if (endereco.length() > 0) endereco.append(", ");
                 endereco.append(cliente.getNumero());
             }
-            if (cliente.getBairro() != null && !cliente.getBairro().trim().isEmpty()) {
+            if (cliente.getComplemento() != null && !cliente.getComplemento().trim().isEmpty()) {
                 if (endereco.length() > 0) endereco.append(" - ");
+                endereco.append(cliente.getComplemento());
+            }
+            if (cliente.getBairro() != null && !cliente.getBairro().trim().isEmpty()) {
+                if (endereco.length() > 0) endereco.append(", ");
                 endereco.append(cliente.getBairro());
             }
             if (cliente.getCidade() != null && !cliente.getCidade().trim().isEmpty()) {
-                if (endereco.length() > 0) endereco.append("/");
+                if (endereco.length() > 0) endereco.append(" - ");
                 endereco.append(cliente.getCidade());
             }
+            if (cliente.getEstado() != null && !cliente.getEstado().trim().isEmpty()) {
+                if (endereco.length() > 0) endereco.append("/");
+                endereco.append(cliente.getEstado());
+            }
+            if (cliente.getCep() != null && !cliente.getCep().trim().isEmpty()) {
+                if (endereco.length() > 0) endereco.append(" - CEP: ");
+                endereco.append(cliente.getCep());
+            }
+            
             return new javafx.beans.property.SimpleStringProperty(endereco.toString());
         });
+        
+        // Coluna Status
         colStatus.setCellValueFactory(new PropertyValueFactory<>("statusCliente"));
 
         clientes = FXCollections.observableArrayList();

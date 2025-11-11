@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="600.0" maxWidth="1000.0" spacing="15.0" style="-fx-background-color: #f5f7fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.ProdutosController">
+<VBox maxHeight="600.0" maxWidth="1200.0" spacing="15.0" style="-fx-background-color: #f5f7fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.ProdutosController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -44,12 +44,12 @@
             <TableView fx:id="tableProdutos" style="-fx-background-color: white; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
               <columns>
                 <TableColumn fx:id="colId" prefWidth="50.0" style="-fx-alignment: CENTER;" text="ID" />
-                <TableColumn fx:id="colCodigo" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Código" />
-                  <TableColumn fx:id="colNome" prefWidth="220.0" text="Nome do Produto" />
-                  <TableColumn fx:id="colCategoria" prefWidth="110.0" text="Categoria" />
-                  <TableColumn fx:id="colPreco" prefWidth="90.0" style="-fx-alignment: CENTER_RIGHT;" text="Preço" />
-                  <TableColumn fx:id="colEstoque" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Estoque" />
-                  <TableColumn fx:id="colFornecedor" prefWidth="200.0" text="Fornecedor" />
+                <TableColumn fx:id="colCodigo" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Código de Barras" />
+                <TableColumn fx:id="colNome" prefWidth="200.0" text="Nome do Produto" />
+                <TableColumn fx:id="colCategoria" prefWidth="100.0" text="Unidade" />
+                <TableColumn fx:id="colPreco" prefWidth="90.0" style="-fx-alignment: CENTER_RIGHT;" text="Preço Venda" />
+                <TableColumn fx:id="colEstoque" prefWidth="80.0" style="-fx-alignment: CENTER;" text="Estoque" />
+                <TableColumn fx:id="colFornecedor" prefWidth="180.0" text="Fornecedor" />
               </columns>
             </TableView>
          </children>
@@ -108,7 +108,7 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Categoria:">
+                        <Label style="-fx-text-fill: #333;" text="Unidade de Medida:">
                            <font>
                               <Font name="Segoe UI" size="11.0" />
                            </font>

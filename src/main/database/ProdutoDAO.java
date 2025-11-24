@@ -19,7 +19,6 @@ public class ProdutoDAO {
             while (rs.next()) {
                 Produto produto = new Produto();
                 produto.setIdProduto(rs.getInt("id_produto"));
-                produto.setIdEmpresa(rs.getInt("id_empresa"));
                 produto.setDescricao(rs.getString("descricao"));
                 produto.setCodigoBarras(rs.getString("codigo_barras"));
                 produto.setUnidadeMedida(rs.getString("unidade_medida"));
@@ -49,7 +48,6 @@ public class ProdutoDAO {
                 if (rs.next()) {
                     Produto produto = new Produto();
                     produto.setIdProduto(rs.getInt("id_produto"));
-                    produto.setIdEmpresa(rs.getInt("id_empresa"));
                     produto.setDescricao(rs.getString("descricao"));
                     produto.setCodigoBarras(rs.getString("codigo_barras"));
                     produto.setUnidadeMedida(rs.getString("unidade_medida"));
@@ -80,7 +78,6 @@ public class ProdutoDAO {
                 if (rs.next()) {
                     Produto produto = new Produto();
                     produto.setIdProduto(rs.getInt("id_produto"));
-                    produto.setIdEmpresa(rs.getInt("id_empresa"));
                     produto.setDescricao(rs.getString("descricao"));
                     produto.setCodigoBarras(rs.getString("codigo_barras"));
                     produto.setUnidadeMedida(rs.getString("unidade_medida"));
@@ -112,7 +109,6 @@ public class ProdutoDAO {
                 while (rs.next()) {
                     Produto produto = new Produto();
                     produto.setIdProduto(rs.getInt("id_produto"));
-                    produto.setIdEmpresa(rs.getInt("id_empresa"));
                     produto.setDescricao(rs.getString("descricao"));
                     produto.setCodigoBarras(rs.getString("codigo_barras"));
                     produto.setUnidadeMedida(rs.getString("unidade_medida"));
@@ -132,24 +128,23 @@ public class ProdutoDAO {
 
     // Método para inserir novo produto
     public boolean inserir(Produto produto) throws SQLException {
-        String sql = "INSERT INTO produto (id_empresa, descricao, codigo_barras, unidade_medida, " +
+        String sql = "INSERT INTO produto (descricao, codigo_barras, unidade_medida, " +
                     "preco_custo, preco_venda, estoque_atual, id_fornecedor) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setInt(1, produto.getIdEmpresa());
-            stmt.setString(2, produto.getDescricao());
-            stmt.setString(3, produto.getCodigoBarras());
-            stmt.setString(4, produto.getUnidadeMedida());
-            stmt.setBigDecimal(5, produto.getPrecoCusto());
-            stmt.setBigDecimal(6, produto.getPrecoVenda());
-            stmt.setInt(7, produto.getEstoqueAtual());
+            stmt.setString(1, produto.getDescricao());
+            stmt.setString(2, produto.getCodigoBarras());
+            stmt.setString(3, produto.getUnidadeMedida());
+            stmt.setBigDecimal(4, produto.getPrecoCusto());
+            stmt.setBigDecimal(5, produto.getPrecoVenda());
+            stmt.setInt(6, produto.getEstoqueAtual());
             if (produto.getIdFornecedor() != null) {
-                stmt.setInt(8, produto.getIdFornecedor());
+                stmt.setInt(7, produto.getIdFornecedor());
             } else {
-                stmt.setNull(8, Types.INTEGER);
+                stmt.setNull(7, Types.INTEGER);
             }
 
             int linhasAfetadas = stmt.executeUpdate();

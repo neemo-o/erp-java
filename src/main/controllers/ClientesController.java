@@ -41,8 +41,7 @@ public class ClientesController {
     @FXML private ScrollPane formContainer;
     @FXML private Text lblFormTitle;
     @FXML private TextField txtNome;
-    @FXML private TextField txtCpfCnpj;
-    @FXML private TextField txtInscricaoEstadual;
+    @FXML private TextField txtCpf;
     @FXML private TextField txtTelefone;
     @FXML private TextField txtEmail;
     @FXML private TextField txtLogradouro;
@@ -67,43 +66,34 @@ public class ClientesController {
         configurarTableView();
         aplicarMascaras();
         aplicarValidacoes();
-        
+
         cbStatus.setItems(FXCollections.observableArrayList("PAGO", "NAO_PAGO"));
-        
+
         carregarClientes();
         atualizarTotal();
         configurarBusca();
-        
+
         formContainer.setVisible(false);
         formContainer.setManaged(false);
     }
 
     private void aplicarMascaras() {
-        // Máscara CPF/CNPJ
-        txtCpfCnpj.textProperty().addListener((obs, oldVal, newVal) -> {
+        // Máscara CPF
+        txtCpf.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null || newVal.isEmpty()) return;
             String numbers = newVal.replaceAll("[^0-9]", "");
-            if (numbers.length() > 14) numbers = numbers.substring(0, 14);
-            
+            if (numbers.length() > 11) numbers = numbers.substring(0, 11);
+
             String formatted = "";
-            if (numbers.length() <= 11) {
-                for (int i = 0; i < numbers.length(); i++) {
-                    if (i == 3 || i == 6) formatted += ".";
-                    if (i == 9) formatted += "-";
-                    formatted += numbers.charAt(i);
-                }
-            } else {
-                for (int i = 0; i < numbers.length(); i++) {
-                    if (i == 2 || i == 5) formatted += ".";
-                    if (i == 8) formatted += "/";
-                    if (i == 12) formatted += "-";
-                    formatted += numbers.charAt(i);
-                }
+            for (int i = 0; i < numbers.length(); i++) {
+                if (i == 3 || i == 6) formatted += ".";
+                if (i == 9) formatted += "-";
+                formatted += numbers.charAt(i);
             }
-            
+
             if (!formatted.equals(newVal)) {
-                txtCpfCnpj.setText(formatted);
-                txtCpfCnpj.positionCaret(formatted.length());
+                txtCpf.setText(formatted);
+                txtCpf.positionCaret(formatted.length());
             }
         });
 
@@ -112,7 +102,7 @@ public class ClientesController {
             if (newVal == null || newVal.isEmpty()) return;
             String numbers = newVal.replaceAll("[^0-9]", "");
             if (numbers.length() > 11) numbers = numbers.substring(0, 11);
-            
+
             String formatted = "";
             if (numbers.length() > 0) {
                 formatted += "(";
@@ -134,7 +124,7 @@ public class ClientesController {
                     }
                 }
             }
-            
+
             if (!formatted.equals(newVal)) {
                 txtTelefone.setText(formatted);
                 txtTelefone.positionCaret(formatted.length());
@@ -146,13 +136,13 @@ public class ClientesController {
             if (newVal == null || newVal.isEmpty()) return;
             String numbers = newVal.replaceAll("[^0-9]", "");
             if (numbers.length() > 8) numbers = numbers.substring(0, 8);
-            
+
             String formatted = "";
             for (int i = 0; i < numbers.length(); i++) {
                 if (i == 5) formatted += "-";
                 formatted += numbers.charAt(i);
             }
-            
+
             if (!formatted.equals(newVal)) {
                 txtCep.setText(formatted);
                 txtCep.positionCaret(formatted.length());
@@ -161,7 +151,6 @@ public class ClientesController {
 
         // Limites de caracteres
         limitarCaracteres(txtNome, 100);
-        limitarCaracteres(txtInscricaoEstadual, 20);
         limitarCaracteres(txtEmail, 100);
         limitarCaracteres(txtLogradouro, 100);
         limitarCaracteres(txtNumero, 10);
@@ -181,7 +170,7 @@ public class ClientesController {
     private void aplicarValidacoes() {
         // Validação campos obrigatórios
         validarCampoObrigatorio(txtNome);
-        validarCampoObrigatorio(txtCpfCnpj);
+        validarCampoObrigatorio(txtCpf);
 
         // Validação email
         txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
@@ -208,7 +197,7 @@ public class ClientesController {
                 }
             }
         });
-        
+
         field.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
                 field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
@@ -231,16 +220,16 @@ public class ClientesController {
     private void limparEstilos() {
         String estiloPadrao = "-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;";
         txtNome.setStyle(estiloPadrao);
-        txtCpfCnpj.setStyle(estiloPadrao);
+        txtCpf.setStyle(estiloPadrao);
         txtEmail.setStyle(estiloPadrao);
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
         Popup popup = new Popup();
-        
+
         String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
         String icone = tipo.equals("sucesso") ? "✓" : tipo.equals("erro") ? "✗" : "⚠";
-        
+
         VBox container = new VBox(5);
         container.setStyle(
             "-fx-background-color: white;" +
@@ -255,14 +244,14 @@ public class ClientesController {
 
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        
+
         Label iconLabel = new Label(icone);
         iconLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 20px; -fx-font-weight: bold;");
-        
+
         Label titleLabel = new Label(titulo);
         titleLabel.setStyle("-fx-text-fill: " + cor + "; -fx-font-size: 14px; -fx-font-weight: bold;");
         titleLabel.setFont(Font.font("Segoe UI", 14));
-        
+
         header.getChildren().addAll(iconLabel, titleLabel);
 
         Label messageLabel = new Label(mensagem);
@@ -275,8 +264,8 @@ public class ClientesController {
         popup.getContent().add(container);
 
         popup.setAutoHide(true);
-        popup.show(txtNome.getScene().getWindow(), 
-            txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380, 
+        popup.show(txtNome.getScene().getWindow(),
+            txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380,
             txtNome.getScene().getWindow().getY() + 60
         );
 
@@ -305,26 +294,26 @@ public class ClientesController {
     }
 
     private void configurarTableView() {
-        // Coluna CNPJ (colId)
-        colId.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
-        
-        // Coluna Razão Social (colNome)
+        // Coluna ID (colId)
+        colId.setCellValueFactory(new PropertyValueFactory<>("idCliente"));
+
+        // Coluna Nome (colNome)
         colNome.setCellValueFactory(new PropertyValueFactory<>("razaoSocial"));
-        
-        // Coluna Inscrição Estadual (colCpfCnpj) - reutilizando o campo
-        colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("inscricaoEstadual"));
-        
+
+        // Coluna CPF (colCpfCnpj)
+        colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
+
         // Coluna Telefone
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefoneCliente"));
-        
+
         // Coluna Email
         colEmail.setCellValueFactory(new PropertyValueFactory<>("emailCliente"));
-        
+
         // Coluna Endereço Completo - construída dinamicamente
         colEndereco.setCellValueFactory(cellData -> {
             Cliente cliente = cellData.getValue();
             StringBuilder endereco = new StringBuilder();
-            
+
             if (cliente.getLogradouro() != null && !cliente.getLogradouro().trim().isEmpty()) {
                 endereco.append(cliente.getLogradouro());
             }
@@ -352,10 +341,10 @@ public class ClientesController {
                 if (endereco.length() > 0) endereco.append(" - CEP: ");
                 endereco.append(cliente.getCep());
             }
-            
+
             return new javafx.beans.property.SimpleStringProperty(endereco.toString());
         });
-        
+
         // Coluna Status
         colStatus.setCellValueFactory(new PropertyValueFactory<>("statusCliente"));
 
@@ -455,7 +444,7 @@ public class ClientesController {
     @FXML
     void handleSalvar() {
         List<String> erros = validarFormulario();
-        
+
         if (!erros.isEmpty()) {
             mostrarListaErros(erros);
             return;
@@ -469,7 +458,7 @@ public class ClientesController {
                 carregarClientes();
                 atualizarTotal();
                 mostrarFormulario(false);
-                mostrarNotificacao("Sucesso", 
+                mostrarNotificacao("Sucesso",
                     modoEdicao ? "Cliente atualizado!" : "Cliente cadastrado!", "sucesso");
             } else {
                 mostrarNotificacao("Erro", "Não foi possível salvar o cliente", "erro");
@@ -494,8 +483,7 @@ public class ClientesController {
 
     private void limparFormulario() {
         txtNome.clear();
-        txtCpfCnpj.clear();
-        txtInscricaoEstadual.clear();
+        txtCpf.clear();
         txtTelefone.clear();
         txtEmail.clear();
         txtLogradouro.clear();
@@ -511,8 +499,7 @@ public class ClientesController {
 
     private void preencherFormulario(Cliente cliente) {
         txtNome.setText(cliente.getRazaoSocial());
-        txtCpfCnpj.setText(cliente.getCnpj());
-        txtInscricaoEstadual.setText(cliente.getInscricaoEstadual());
+        txtCpf.setText(cliente.getCnpj());
         txtTelefone.setText(cliente.getTelefoneCliente());
         txtEmail.setText(cliente.getEmailCliente());
         txtLogradouro.setText(cliente.getLogradouro());
@@ -528,8 +515,8 @@ public class ClientesController {
     private Cliente criarClienteDoFormulario() {
         Cliente cliente = modoEdicao ? clienteSelecionado : new Cliente();
         cliente.setRazaoSocial(txtNome.getText().trim());
-        cliente.setCnpj(extrairNumeros(txtCpfCnpj.getText()));
-        cliente.setInscricaoEstadual(txtInscricaoEstadual.getText().trim().isEmpty() ? null : txtInscricaoEstadual.getText().trim());
+        cliente.setCnpj(extrairNumeros(txtCpf.getText()));
+        cliente.setInscricaoEstadual(null);
         cliente.setNomeFantasia(null);
         cliente.setEmailCliente(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
         cliente.setTelefoneCliente(txtTelefone.getText().trim().isEmpty() ? null : extrairNumeros(txtTelefone.getText()));
@@ -548,23 +535,23 @@ public class ClientesController {
         List<String> erros = new ArrayList<>();
 
         if (txtNome.getText().trim().isEmpty()) {
-            erros.add("Nome/Razão Social é obrigatório");
+            erros.add("Nome é obrigatório");
         }
 
-        if (txtCpfCnpj.getText().trim().isEmpty()) {
-            erros.add("CPF/CNPJ é obrigatório");
+        if (txtCpf.getText().trim().isEmpty()) {
+            erros.add("CPF é obrigatório");
         } else {
-            String cpfCnpj = extrairNumeros(txtCpfCnpj.getText());
-            if (cpfCnpj.length() != 11 && cpfCnpj.length() != 14) {
-                erros.add("CPF deve ter 11 dígitos ou CNPJ 14 dígitos");
+            String cpf = extrairNumeros(txtCpf.getText());
+            if (cpf.length() != 11) {
+                erros.add("CPF deve ter 11 dígitos");
             } else {
                 try {
-                    String cnpjExcluir = modoEdicao ? clienteSelecionado.getCnpj() : null;
-                    if (clienteDAO.cnpjExiste(cpfCnpj, cnpjExcluir)) {
-                        erros.add("CPF/CNPJ já cadastrado");
+                    String cpfExcluir = modoEdicao ? clienteSelecionado.getCnpj() : null;
+                    if (clienteDAO.cnpjExiste(cpf, cpfExcluir)) {
+                        erros.add("CPF já cadastrado");
                     }
                 } catch (SQLException e) {
-                    erros.add("Erro ao verificar CPF/CNPJ");
+                    erros.add("Erro ao verificar CPF");
                 }
             }
         }

@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 
 public class Produto {
     private int idProduto;
-    private int idEmpresa;
     private String descricao;
     private String codigoBarras;
     private String unidadeMedida;
@@ -19,11 +18,10 @@ public class Produto {
     // Construtores
     public Produto() {}
 
-    public Produto(int idProduto, int idEmpresa, String descricao, String codigoBarras,
+    public Produto(int idProduto, String descricao, String codigoBarras,
                    String unidadeMedida, BigDecimal precoCusto, BigDecimal precoVenda,
                    int estoqueAtual, Integer idFornecedor) {
         this.idProduto = idProduto;
-        this.idEmpresa = idEmpresa;
         this.descricao = descricao;
         this.codigoBarras = codigoBarras;
         this.unidadeMedida = unidadeMedida;
@@ -40,14 +38,6 @@ public class Produto {
 
     public void setIdProduto(int idProduto) {
         this.idProduto = idProduto;
-    }
-
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
     }
 
     public String getDescricao() {

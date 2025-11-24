@@ -496,9 +496,7 @@ public class ProdutosController {
     private Produto criarProdutoDoFormulario() {
         Produto produto = modoEdicao ? produtoSelecionado : new Produto();
 
-        if (!modoEdicao) {
-            produto.setIdEmpresa(1);
-        }
+
 
         // Descrição do produto
         produto.setDescricao(txtNome.getText().trim());

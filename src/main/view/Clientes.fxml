@@ -42,9 +42,9 @@
          <children>
             <TableView fx:id="tableClientes" style="-fx-background-color: white; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="colId" prefWidth="120.0" text="CNPJ" />
-                <TableColumn fx:id="colNome" prefWidth="180.0" text="Razão Social" />
-                <TableColumn fx:id="colCpfCnpj" prefWidth="120.0" text="Inscrição Estadual" />
+                <TableColumn fx:id="colId" prefWidth="120.0" text="ID" />
+                <TableColumn fx:id="colNome" prefWidth="180.0" text="Nome" />
+                <TableColumn fx:id="colCpfCnpj" prefWidth="120.0" text="CPF" />
                 <TableColumn fx:id="colTelefone" prefWidth="110.0" text="Telefone" />
                 <TableColumn fx:id="colEmail" prefWidth="150.0" text="E-mail" />
                 <TableColumn fx:id="colEndereco" prefWidth="200.0" text="Endereço Completo" />
@@ -87,7 +87,7 @@
                   </HBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Razão Social:">
+                        <Label style="-fx-text-fill: #333;" text="Nome:">
                            <font>
                               <Font name="Segoe UI" size="11.0" />
                            </font>
@@ -97,22 +97,12 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="CNPJ:">
+                        <Label style="-fx-text-fill: #333;" text="CPF:">
                            <font>
                               <Font name="Segoe UI" size="11.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="txtCpfCnpj" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
-                     </children>
-                  </VBox>
-                  <VBox spacing="5.0">
-                     <children>
-                        <Label style="-fx-text-fill: #333;" text="Inscrição Estadual:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txtInscricaoEstadual" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                        <TextField fx:id="txtCpf" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">

@@ -29,7 +29,7 @@ public class ClienteDAO {
                 cliente.setTelefoneCliente(rs.getString("telefone_cliente"));
                 cliente.setIdEnderecoCliente(rs.getObject("id_endereco_cliente", Integer.class));
                 cliente.setStatusCliente(rs.getString("status_cliente"));
-                cliente.setDataCadastro(rs.getTimestamp("data_cadastro"));
+                
 
                 // Campos de endereço via JOIN
                 cliente.setLogradouro(rs.getString("logradouro"));
@@ -68,7 +68,7 @@ public class ClienteDAO {
                     cliente.setTelefoneCliente(rs.getString("telefone_cliente"));
                     cliente.setIdEnderecoCliente(rs.getObject("id_endereco_cliente", Integer.class));
                     cliente.setStatusCliente(rs.getString("status_cliente"));
-                    cliente.setDataCadastro(rs.getTimestamp("data_cadastro"));
+                    
 
                     // Campos de endereço via JOIN
                     cliente.setLogradouro(rs.getString("logradouro"));
@@ -109,7 +109,7 @@ public class ClienteDAO {
                     cliente.setTelefoneCliente(rs.getString("telefone_cliente"));
                     cliente.setIdEnderecoCliente(rs.getObject("id_endereco_cliente", Integer.class));
                     cliente.setStatusCliente(rs.getString("status_cliente"));
-                    cliente.setDataCadastro(rs.getTimestamp("data_cadastro"));
+                    
 
                     // Campos de endereço via JOIN
                     cliente.setLogradouro(rs.getString("logradouro"));

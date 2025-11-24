@@ -1,4 +1,4 @@
--- Active: 1761779476832@@127.0.0.1@5432@erp_licencas
+-- Active: 1762011391712@@localhost@5432@erp_licencas
 
 #   RODE O SCRIPT DEPOIS DE CRIAR A DATABASE COM O ESTE COMANDO ISOLADO
 #   CREATE DATABASE erp_licencas;

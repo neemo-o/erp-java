@@ -18,6 +18,7 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 import main.database.FornecedorDAO;
 import main.models.Fornecedor;
+import main.models.Endereco;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,7 +46,13 @@ public class FornecedoresController {
     @FXML private TextField txtContato;
     @FXML private TextField txtTelefone;
     @FXML private TextField txtEmail;
-    @FXML private TextField txtEndereco;
+    @FXML private TextField txtLogradouro;
+    @FXML private TextField txtNumero;
+    @FXML private TextField txtComplemento;
+    @FXML private TextField txtBairro;
+    @FXML private TextField txtCidade;
+    @FXML private TextField txtEstado;
+    @FXML private TextField txtCep;
     @FXML private Button btnSalvar;
     @FXML private Button btnCancelar;
 
@@ -125,11 +132,34 @@ public class FornecedoresController {
             }
         });
 
+        // Máscara CEP
+        txtCep.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) return;
+            String numbers = newVal.replaceAll("[^0-9]", "");
+            if (numbers.length() > 8) numbers = numbers.substring(0, 8);
+            
+            String formatted = "";
+            for (int i = 0; i < numbers.length(); i++) {
+                if (i == 5) formatted += "-";
+                formatted += numbers.charAt(i);
+            }
+            
+            if (!formatted.equals(newVal)) {
+                txtCep.setText(formatted);
+                txtCep.positionCaret(formatted.length());
+            }
+        });
+
         // Limites de caracteres
         limitarCaracteres(txtNome, 100);
         limitarCaracteres(txtContato, 100);
         limitarCaracteres(txtEmail, 100);
-        limitarCaracteres(txtEndereco, 200);
+        limitarCaracteres(txtLogradouro, 255);
+        limitarCaracteres(txtNumero, 10);
+        limitarCaracteres(txtComplemento, 255);
+        limitarCaracteres(txtBairro, 255);
+        limitarCaracteres(txtCidade, 255);
+        limitarCaracteres(txtEstado, 2);
     }
 
     private void aplicarValidacoes() {
@@ -198,6 +228,13 @@ public class FornecedoresController {
         txtNome.setStyle(estiloPadrao);
         txtCnpj.setStyle(estiloPadrao);
         txtEmail.setStyle(estiloPadrao);
+        txtLogradouro.setStyle(estiloPadrao);
+        txtNumero.setStyle(estiloPadrao);
+        txtComplemento.setStyle(estiloPadrao);
+        txtBairro.setStyle(estiloPadrao);
+        txtCidade.setStyle(estiloPadrao);
+        txtEstado.setStyle(estiloPadrao);
+        txtCep.setStyle(estiloPadrao);
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
@@ -421,7 +458,13 @@ public class FornecedoresController {
         txtContato.clear();
         txtTelefone.clear();
         txtEmail.clear();
-        txtEndereco.clear();
+        txtLogradouro.clear();
+        txtNumero.clear();
+        txtComplemento.clear();
+        txtBairro.clear();
+        txtCidade.clear();
+        txtEstado.clear();
+        txtCep.clear();
         limparEstilos();
     }
 
@@ -431,20 +474,35 @@ public class FornecedoresController {
         txtContato.setText(fornecedor.getTelefone());
         txtTelefone.setText(fornecedor.getTelefone());
         txtEmail.setText(fornecedor.getEmail());
-        txtEndereco.setText(fornecedor.getEnderecoCompleto());
+        if (fornecedor.getEndereco() != null) {
+            txtLogradouro.setText(fornecedor.getEndereco().getLogradouro());
+            txtNumero.setText(fornecedor.getEndereco().getNumero());
+            txtComplemento.setText(fornecedor.getEndereco().getComplemento());
+            txtBairro.setText(fornecedor.getEndereco().getBairro());
+            txtCidade.setText(fornecedor.getEndereco().getCidade());
+            txtEstado.setText(fornecedor.getEndereco().getEstado());
+            txtCep.setText(fornecedor.getEndereco().getCep());
+        }
     }
 
     private Fornecedor criarFornecedorDoFormulario() {
         Fornecedor fornecedor = modoEdicao ? fornecedorSelecionado : new Fornecedor();
 
-        if (!modoEdicao) {
-            fornecedor.setIdEmpresa(1);
-        }
-
         fornecedor.setRazaoSocial(txtNome.getText().trim());
         fornecedor.setCnpj(extrairNumeros(txtCnpj.getText()));
         fornecedor.setTelefone(extrairNumeros(txtTelefone.getText()));
         fornecedor.setEmail(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
+
+        Endereco endereco = new Endereco(
+            txtLogradouro.getText().trim(),
+            txtNumero.getText().trim(),
+            txtComplemento.getText().trim(),
+            txtBairro.getText().trim(),
+            txtCidade.getText().trim(),
+            txtEstado.getText().trim(),
+            txtCep.getText().trim()
+        );
+        fornecedor.setEndereco(endereco);
 
         return fornecedor;
     }
@@ -488,6 +546,26 @@ public class FornecedoresController {
             if (telefone.length() < 10) {
                 erros.add("Telefone deve ter no mínimo 10 dígitos");
             }
+        }
+
+        if (txtLogradouro.getText().trim().isEmpty()) {
+            erros.add("Logradouro é obrigatório");
+        }
+
+        if (txtCidade.getText().trim().isEmpty()) {
+            erros.add("Cidade é obrigatória");
+        }
+
+        if (txtEstado.getText().trim().isEmpty()) {
+            erros.add("Estado é obrigatório");
+        } else if (txtEstado.getText().trim().length() != 2) {
+            erros.add("Estado deve ter 2 caracteres");
+        }
+
+        if (txtCep.getText().trim().isEmpty()) {
+            erros.add("CEP é obrigatório");
+        } else if (extrairNumeros(txtCep.getText()).length() != 8) {
+            erros.add("CEP deve ter 8 dígitos");
         }
 
         return erros;

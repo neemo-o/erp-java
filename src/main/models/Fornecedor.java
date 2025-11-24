@@ -4,18 +4,12 @@ import java.time.LocalDateTime;
 
 public class Fornecedor {
     private int idFornecedor;
-    private int idEmpresa;
     private String cnpj;
     private String razaoSocial;
     private String senhaHash;
     private String telefone;
     private String email;
-    private String rua;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
-    private String cep;
+    private Endereco endereco;
     private LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;
 
@@ -27,23 +21,6 @@ public class Fornecedor {
         this.razaoSocial = razaoSocial;
     }
 
-    public Fornecedor(int idFornecedor, int idEmpresa, String cnpj, String razaoSocial,
-                     String telefone, String email, String rua, String numero,
-                     String bairro, String cidade, String estado, String cep) {
-        this.idFornecedor = idFornecedor;
-        this.idEmpresa = idEmpresa;
-        this.cnpj = cnpj;
-        this.razaoSocial = razaoSocial;
-        this.telefone = telefone;
-        this.email = email;
-        this.rua = rua;
-        this.numero = numero;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.estado = estado;
-        this.cep = cep;
-    }
-
     // Getters e Setters
     public int getIdFornecedor() {
         return idFornecedor;
@@ -51,14 +28,6 @@ public class Fornecedor {
 
     public void setIdFornecedor(int idFornecedor) {
         this.idFornecedor = idFornecedor;
-    }
-
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
     }
 
     public String getCnpj() {
@@ -101,52 +70,12 @@ public class Fornecedor {
         this.email = email;
     }
 
-    public String getRua() {
-        return rua;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public void setRua(String rua) {
-        this.rua = rua;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public String getBairro() {
-        return bairro;
-    }
-
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
     public LocalDateTime getDataCadastro() {
@@ -167,30 +96,7 @@ public class Fornecedor {
 
     // Método para obter endereço completo
     public String getEnderecoCompleto() {
-        StringBuilder endereco = new StringBuilder();
-        if (rua != null && !rua.trim().isEmpty()) {
-            endereco.append(rua);
-        }
-        if (numero != null && !numero.trim().isEmpty()) {
-            if (endereco.length() > 0) endereco.append(", ");
-            endereco.append(numero);
-        }
-        if (bairro != null && !bairro.trim().isEmpty()) {
-            if (endereco.length() > 0) endereco.append(" - ");
-            endereco.append(bairro);
-        }
-        if (cidade != null && !cidade.trim().isEmpty()) {
-            if (endereco.length() > 0) endereco.append(", ");
-            endereco.append(cidade);
-        }
-        if (estado != null && !estado.trim().isEmpty()) {
-            if (endereco.length() > 0) endereco.append(" - ");
-            endereco.append(estado);
-        }
-        if (cep != null && !cep.trim().isEmpty()) {
-            if (endereco.length() > 0) endereco.append(" - CEP: ");
-            endereco.append(cep);
-        }
+        if (endereco == null) return "";
         return endereco.toString();
     }
 

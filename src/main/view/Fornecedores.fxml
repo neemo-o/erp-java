@@ -133,14 +133,86 @@
             </VBox>
             <VBox spacing="5.0">
                <children>
-                  <Label style="-fx-text-fill: #333;" text="Endereço:">
+                  <Label style="-fx-text-fill: #333;" text="Logradouro:">
                      <font>
                         <Font name="Segoe UI" size="11.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtEndereco" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                  <TextField fx:id="txtLogradouro" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                </children>
             </VBox>
+            <HBox spacing="10.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="Número:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtNumero" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="Complemento:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtComplemento" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="Bairro:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtBairro" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="Cidade:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtCidade" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="Estado:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtEstado" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: #333;" text="CEP:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtCep" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 10 0 0 0;">
                <children>
                   <Button fx:id="btnSalvar" mnemonicParsing="false" onAction="#handleSalvar" prefHeight="28.0" prefWidth="100.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Salvar" />

@@ -1,6 +1,7 @@
 package main.database;
 
 import main.models.Fornecedor;
+import main.models.Endereco;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,12 +9,17 @@ import java.util.List;
 
 public class FornecedorDAO {
 
+    private EnderecoDAO enderecoDAO = new EnderecoDAO();
+
     // Método para buscar todos os fornecedores
     public List<Fornecedor> buscarTodos() throws SQLException {
         List<Fornecedor> fornecedores = new ArrayList<>();
-        String sql = "SELECT id_fornecedor, id_empresa, cnpj, razao_social, telefone, e_mail, " +
-                    "rua, numero, bairro, cidade, estado, cep, data_cadastro, data_atualizacao " +
-                    "FROM fornecedor ORDER BY razao_social";
+        String sql = "SELECT f.id_fornecedor, f.cnpj, f.razao_social, f.telefone, f.e_mail, " +
+                    "f.data_cadastro, f.data_atualizacao, " +
+                    "e.id_endereco, e.logradouro, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep " +
+                    "FROM fornecedor f " +
+                    "INNER JOIN enderecos e ON f.id_endereco = e.id_endereco " +
+                    "ORDER BY f.razao_social";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -22,21 +28,26 @@ public class FornecedorDAO {
             while (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
                 fornecedor.setIdFornecedor(rs.getInt("id_fornecedor"));
-                fornecedor.setIdEmpresa(rs.getInt("id_empresa"));
                 fornecedor.setCnpj(rs.getString("cnpj"));
                 fornecedor.setRazaoSocial(rs.getString("razao_social"));
                 fornecedor.setTelefone(rs.getString("telefone"));
                 fornecedor.setEmail(rs.getString("e_mail"));
-                fornecedor.setRua(rs.getString("rua"));
-                fornecedor.setNumero(rs.getString("numero"));
-                fornecedor.setBairro(rs.getString("bairro"));
-                fornecedor.setCidade(rs.getString("cidade"));
-                fornecedor.setEstado(rs.getString("estado"));
-                fornecedor.setCep(rs.getString("cep"));
                 fornecedor.setDataCadastro(rs.getTimestamp("data_cadastro") != null ?
                     rs.getTimestamp("data_cadastro").toLocalDateTime() : null);
                 fornecedor.setDataAtualizacao(rs.getTimestamp("data_atualizacao") != null ?
                     rs.getTimestamp("data_atualizacao").toLocalDateTime() : null);
+
+                Endereco endereco = new Endereco();
+                endereco.setIdEndereco(rs.getInt("id_endereco"));
+                endereco.setLogradouro(rs.getString("logradouro"));
+                endereco.setNumero(rs.getString("numero"));
+                endereco.setComplemento(rs.getString("complemento"));
+                endereco.setBairro(rs.getString("bairro"));
+                endereco.setCidade(rs.getString("cidade"));
+                endereco.setEstado(rs.getString("estado"));
+                endereco.setCep(rs.getString("cep"));
+
+                fornecedor.setEndereco(endereco);
 
                 fornecedores.add(fornecedor);
             }
@@ -46,9 +57,12 @@ public class FornecedorDAO {
 
     // Método para buscar fornecedor por ID
     public Fornecedor buscarPorId(int idFornecedor) throws SQLException {
-        String sql = "SELECT id_fornecedor, id_empresa, cnpj, razao_social, telefone, e_mail, " +
-                    "rua, numero, bairro, cidade, estado, cep, data_cadastro, data_atualizacao " +
-                    "FROM fornecedor WHERE id_fornecedor = ?";
+        String sql = "SELECT f.id_fornecedor, f.cnpj, f.razao_social, f.telefone, f.e_mail, " +
+                    "f.data_cadastro, f.data_atualizacao, " +
+                    "e.id_endereco, e.logradouro, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep " +
+                    "FROM fornecedor f " +
+                    "INNER JOIN enderecos e ON f.id_endereco = e.id_endereco " +
+                    "WHERE f.id_fornecedor = ?";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -59,21 +73,26 @@ public class FornecedorDAO {
                 if (rs.next()) {
                     Fornecedor fornecedor = new Fornecedor();
                     fornecedor.setIdFornecedor(rs.getInt("id_fornecedor"));
-                    fornecedor.setIdEmpresa(rs.getInt("id_empresa"));
                     fornecedor.setCnpj(rs.getString("cnpj"));
                     fornecedor.setRazaoSocial(rs.getString("razao_social"));
                     fornecedor.setTelefone(rs.getString("telefone"));
                     fornecedor.setEmail(rs.getString("e_mail"));
-                    fornecedor.setRua(rs.getString("rua"));
-                    fornecedor.setNumero(rs.getString("numero"));
-                    fornecedor.setBairro(rs.getString("bairro"));
-                    fornecedor.setCidade(rs.getString("cidade"));
-                    fornecedor.setEstado(rs.getString("estado"));
-                    fornecedor.setCep(rs.getString("cep"));
                     fornecedor.setDataCadastro(rs.getTimestamp("data_cadastro") != null ?
                         rs.getTimestamp("data_cadastro").toLocalDateTime() : null);
                     fornecedor.setDataAtualizacao(rs.getTimestamp("data_atualizacao") != null ?
                         rs.getTimestamp("data_atualizacao").toLocalDateTime() : null);
+
+                    Endereco endereco = new Endereco();
+                    endereco.setIdEndereco(rs.getInt("id_endereco"));
+                    endereco.setLogradouro(rs.getString("logradouro"));
+                    endereco.setNumero(rs.getString("numero"));
+                    endereco.setComplemento(rs.getString("complemento"));
+                    endereco.setBairro(rs.getString("bairro"));
+                    endereco.setCidade(rs.getString("cidade"));
+                    endereco.setEstado(rs.getString("estado"));
+                    endereco.setCep(rs.getString("cep"));
+
+                    fornecedor.setEndereco(endereco);
 
                     return fornecedor;
                 }
@@ -85,9 +104,12 @@ public class FornecedorDAO {
     // Método para buscar fornecedores por razão social (para busca)
     public List<Fornecedor> buscarPorRazaoSocial(String razaoSocial) throws SQLException {
         List<Fornecedor> fornecedores = new ArrayList<>();
-        String sql = "SELECT id_fornecedor, id_empresa, cnpj, razao_social, telefone, e_mail, " +
-                    "rua, numero, bairro, cidade, estado, cep, data_cadastro, data_atualizacao " +
-                    "FROM fornecedor WHERE UPPER(razao_social) LIKE UPPER(?) ORDER BY razao_social";
+        String sql = "SELECT f.id_fornecedor, f.cnpj, f.razao_social, f.telefone, f.e_mail, " +
+                    "f.data_cadastro, f.data_atualizacao, " +
+                    "e.id_endereco, e.logradouro, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep " +
+                    "FROM fornecedor f " +
+                    "INNER JOIN enderecos e ON f.id_endereco = e.id_endereco " +
+                    "WHERE UPPER(f.razao_social) LIKE UPPER(?) ORDER BY f.razao_social";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -98,21 +120,26 @@ public class FornecedorDAO {
                 while (rs.next()) {
                     Fornecedor fornecedor = new Fornecedor();
                     fornecedor.setIdFornecedor(rs.getInt("id_fornecedor"));
-                    fornecedor.setIdEmpresa(rs.getInt("id_empresa"));
                     fornecedor.setCnpj(rs.getString("cnpj"));
                     fornecedor.setRazaoSocial(rs.getString("razao_social"));
                     fornecedor.setTelefone(rs.getString("telefone"));
                     fornecedor.setEmail(rs.getString("e_mail"));
-                    fornecedor.setRua(rs.getString("rua"));
-                    fornecedor.setNumero(rs.getString("numero"));
-                    fornecedor.setBairro(rs.getString("bairro"));
-                    fornecedor.setCidade(rs.getString("cidade"));
-                    fornecedor.setEstado(rs.getString("estado"));
-                    fornecedor.setCep(rs.getString("cep"));
                     fornecedor.setDataCadastro(rs.getTimestamp("data_cadastro") != null ?
                         rs.getTimestamp("data_cadastro").toLocalDateTime() : null);
                     fornecedor.setDataAtualizacao(rs.getTimestamp("data_atualizacao") != null ?
                         rs.getTimestamp("data_atualizacao").toLocalDateTime() : null);
+
+                    Endereco endereco = new Endereco();
+                    endereco.setIdEndereco(rs.getInt("id_endereco"));
+                    endereco.setLogradouro(rs.getString("logradouro"));
+                    endereco.setNumero(rs.getString("numero"));
+                    endereco.setComplemento(rs.getString("complemento"));
+                    endereco.setBairro(rs.getString("bairro"));
+                    endereco.setCidade(rs.getString("cidade"));
+                    endereco.setEstado(rs.getString("estado"));
+                    endereco.setCep(rs.getString("cep"));
+
+                    fornecedor.setEndereco(endereco);
 
                     fornecedores.add(fornecedor);
                 }
@@ -123,24 +150,28 @@ public class FornecedorDAO {
 
     // Método para inserir fornecedor
     public boolean inserir(Fornecedor fornecedor) throws SQLException {
-        String sql = "INSERT INTO fornecedor (id_empresa, cnpj, razao_social, senha_hash, telefone, e_mail, " +
-                    "rua, numero, bairro, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        if (fornecedor.getEndereco() == null) {
+            throw new SQLException("Endereço é obrigatório para inserir fornecedor");
+        }
+
+        // Inserir endereço primeiro
+        boolean enderecoInserido = enderecoDAO.inserir(fornecedor.getEndereco());
+        if (!enderecoInserido) {
+            return false;
+        }
+
+        int idEndereco = fornecedor.getEndereco().getIdEndereco();
+
+        String sql = "INSERT INTO fornecedor (cnpj, razao_social, telefone, e_mail, id_endereco) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setInt(1, fornecedor.getIdEmpresa());
-            stmt.setString(2, fornecedor.getCnpj());
-            stmt.setString(3, fornecedor.getRazaoSocial());
-            stmt.setString(4, fornecedor.getSenhaHash() != null ? fornecedor.getSenhaHash() : "");
-            stmt.setString(5, fornecedor.getTelefone());
-            stmt.setString(6, fornecedor.getEmail());
-            stmt.setString(7, fornecedor.getRua());
-            stmt.setString(8, fornecedor.getNumero());
-            stmt.setString(9, fornecedor.getBairro());
-            stmt.setString(10, fornecedor.getCidade());
-            stmt.setString(11, fornecedor.getEstado());
-            stmt.setString(12, fornecedor.getCep());
+            stmt.setString(1, fornecedor.getCnpj());
+            stmt.setString(2, fornecedor.getRazaoSocial());
+            stmt.setString(3, fornecedor.getTelefone());
+            stmt.setString(4, fornecedor.getEmail());
+            stmt.setInt(5, idEndereco);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -149,9 +180,17 @@ public class FornecedorDAO {
 
     // Método para atualizar fornecedor
     public boolean atualizar(Fornecedor fornecedor) throws SQLException {
-        String sql = "UPDATE fornecedor SET cnpj = ?, razao_social = ?, telefone = ?, e_mail = ?, " +
-                    "rua = ?, numero = ?, bairro = ?, cidade = ?, estado = ?, cep = ? " +
-                    "WHERE id_fornecedor = ?";
+        if (fornecedor.getEndereco() == null || fornecedor.getEndereco().getIdEndereco() == 0) {
+            throw new SQLException("Endereço inválido para atualizar fornecedor");
+        }
+
+        // Atualizar endereço
+        boolean enderecoAtualizado = enderecoDAO.atualizar(fornecedor.getEndereco());
+        if (!enderecoAtualizado) {
+            return false;
+        }
+
+        String sql = "UPDATE fornecedor SET cnpj = ?, razao_social = ?, telefone = ?, e_mail = ? WHERE id_fornecedor = ?";
 
         try (Connection conn = DatabaseConnection.getConnectionMercado();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -160,13 +199,7 @@ public class FornecedorDAO {
             stmt.setString(2, fornecedor.getRazaoSocial());
             stmt.setString(3, fornecedor.getTelefone());
             stmt.setString(4, fornecedor.getEmail());
-            stmt.setString(5, fornecedor.getRua());
-            stmt.setString(6, fornecedor.getNumero());
-            stmt.setString(7, fornecedor.getBairro());
-            stmt.setString(8, fornecedor.getCidade());
-            stmt.setString(9, fornecedor.getEstado());
-            stmt.setString(10, fornecedor.getCep());
-            stmt.setInt(11, fornecedor.getIdFornecedor());
+            stmt.setInt(5, fornecedor.getIdFornecedor());
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;

@@ -332,7 +332,8 @@ public class ProdutosController {
             produtos.clear();
             produtos.addAll(listaProdutos);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar produtos", "erro");
+            mostrarNotificacao("Erro", "Erro ao carregar produtos: " + e.getMessage(), "erro");
+            e.printStackTrace();
         }
     }
 
@@ -342,7 +343,8 @@ public class ProdutosController {
             fornecedores.clear();
             fornecedores.addAll(listaFornecedores);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar fornecedores", "erro");
+            mostrarNotificacao("Erro", "Erro ao carregar fornecedores: " + e.getMessage(), "erro");
+            e.printStackTrace();
         }
     }
 
@@ -414,7 +416,8 @@ public class ProdutosController {
                     mostrarNotificacao("Erro", "Não foi possível excluir o produto", "erro");
                 }
             } catch (SQLException e) {
-                mostrarNotificacao("Erro", "Erro ao excluir produto", "erro");
+                mostrarNotificacao("Erro", "Erro ao excluir produto: " + e.getMessage(), "erro");
+                e.printStackTrace();
             }
         }
     }
@@ -442,7 +445,8 @@ public class ProdutosController {
                 mostrarNotificacao("Erro", "Não foi possível salvar o produto", "erro");
             }
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao salvar produto", "erro");
+            mostrarNotificacao("Erro", "Erro ao salvar produto: " + e.getMessage(), "erro");
+            e.printStackTrace();
         }
     }
 
@@ -496,12 +500,24 @@ public class ProdutosController {
             produto.setIdEmpresa(1);
         }
 
+        // Descrição do produto
         produto.setDescricao(txtNome.getText().trim());
+        
+        // Código de barras (opcional)
         produto.setCodigoBarras(txtCodigo.getText().trim().isEmpty() ? null : txtCodigo.getText().trim());
+        
+        // Unidade de medida
         produto.setUnidadeMedida(cbCategoria.getValue());
-        produto.setPrecoVenda(new BigDecimal(txtPreco.getText().replace(",", ".")));
+        
+        // Preço - CORREÇÃO APLICADA AQUI
+        BigDecimal preco = new BigDecimal(txtPreco.getText().replace(",", "."));
+        produto.setPrecoCusto(preco);    // Define o preço de custo
+        produto.setPrecoVenda(preco);    // Define o preço de venda
+        
+        // Estoque
         produto.setEstoqueAtual(Integer.parseInt(txtEstoque.getText()));
 
+        // Fornecedor (opcional)
         Fornecedor fornecedorSelecionado = cbFornecedor.getValue();
         produto.setIdFornecedor(fornecedorSelecionado != null ? fornecedorSelecionado.getIdFornecedor() : null);
 

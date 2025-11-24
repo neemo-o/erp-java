@@ -67,6 +67,37 @@ public class ProdutoDAO {
         return null;
     }
 
+    // Método para buscar produto por código de barras
+    public Produto buscarPorCodigoBarras(String codigoBarras) throws SQLException {
+        String sql = "SELECT * FROM produto WHERE codigo_barras = ?";
+
+        try (Connection conn = DatabaseConnection.getConnectionMercado();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigoBarras);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Produto produto = new Produto();
+                    produto.setIdProduto(rs.getInt("id_produto"));
+                    produto.setIdEmpresa(rs.getInt("id_empresa"));
+                    produto.setDescricao(rs.getString("descricao"));
+                    produto.setCodigoBarras(rs.getString("codigo_barras"));
+                    produto.setUnidadeMedida(rs.getString("unidade_medida"));
+                    produto.setPrecoCusto(rs.getBigDecimal("preco_custo"));
+                    produto.setPrecoVenda(rs.getBigDecimal("preco_venda"));
+                    produto.setEstoqueAtual(rs.getInt("estoque_atual"));
+                    produto.setIdFornecedor(rs.getObject("id_fornecedor", Integer.class));
+                    produto.setDataCadastro(rs.getTimestamp("data_cadastro"));
+                    produto.setDataAtualizacao(rs.getTimestamp("data_atualizacao"));
+
+                    return produto;
+                }
+            }
+        }
+        return null;
+    }
+
     // Método para buscar produtos por descrição (para busca)
     public List<Produto> buscarPorDescricao(String descricao) throws SQLException {
         List<Produto> produtos = new ArrayList<>();

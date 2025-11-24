@@ -2,8 +2,6 @@ package main.database;
 
 import main.models.Endereco;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EnderecoDAO {
 

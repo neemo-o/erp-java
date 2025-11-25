@@ -135,31 +135,20 @@ public class MainScreenController {
 
     // Método auxiliar para configurar o Stage
     private void configurarStage(Stage stage) {
-        try {
-            System.out.println("→ Configurando Stage...");
-            
-            // Pegar dimensões da tela
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            
-            System.out.println("  Resolução da tela: " + screenBounds.getWidth() + "x" + screenBounds.getHeight());
-            
-            // Configurar dimensões manualmente
-            stage.setX(screenBounds.getMinX());
-            stage.setY(screenBounds.getMinY());
-            stage.setWidth(screenBounds.getWidth());
-            stage.setHeight(screenBounds.getHeight());
-            
-            // Desabilitar redimensionamento
+    try {
+        System.out.println("→ Configurando Stage...");
+        
+        Platform.runLater(() -> {
+            stage.setMaximized(true);
             stage.setResizable(false);
-            
-            System.out.println("✓ Stage configurado em: " + stage.getX() + "," + stage.getY() + 
-                            " com tamanho " + stage.getWidth() + "x" + stage.getHeight());
-            
-        } catch (Exception e) {
-            System.err.println("✗ Erro ao configurar Stage: " + e.getMessage());
-            e.printStackTrace();
-        }
+            System.out.println("✓ Stage maximizado e redimensionamento desabilitado");
+        });
+        
+    } catch (Exception e) {
+        System.err.println("✗ Erro ao configurar Stage: " + e.getMessage());
+        e.printStackTrace();
     }
+}
 
     private void adicionarEfeitosMenu() {
         System.out.println("Adicionando efeitos ao menu...");

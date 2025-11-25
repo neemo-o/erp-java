@@ -123,36 +123,9 @@ public class Login2Controller {
 
                     if (loginButton.getScene() != null && loginButton.getScene().getWindow() != null) {
                         Stage stage = (Stage) loginButton.getScene().getWindow();
-                        
-                        // Detectar SO
-                        String os = System.getProperty("os.name").toLowerCase();
-                        boolean isLinux = os.contains("nux") || os.contains("nix");
-                        
-                        System.out.println("Carregando MainScreen em: " + os);
-                        
-                        if (isLinux) {
-                            // Linux: trocar cena primeiro, depois maximizar
-                            stage.setScene(scene);
-                            
-                            Platform.runLater(() -> {
-                                stage.setMaximized(true);
-                                System.out.println("✓ Linux: MainScreen maximizado");
-                            });
-                            
-                        } else {
-                            // Windows: configurar tamanho, depois trocar cena
-                            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-                            stage.setX(screenBounds.getMinX());
-                            stage.setY(screenBounds.getMinY());
-                            stage.setWidth(screenBounds.getWidth());
-                            stage.setHeight(screenBounds.getHeight());
-                            stage.setResizable(false);
-                            stage.setScene(scene);
-                            System.out.println("✓ Windows: MainScreen configurado");
-                        }
-                        
+                        stage.setScene(scene);
+                        stage.setResizable(false);  // Prevent resizing on all OS
                         stage.show();
-                        
                     } else {
                         statusMessage.setText("Erro: Janela não está disponível.");
                         statusMessage.setVisible(true);

@@ -4,14 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import main.database.DatabaseConnection;
 
@@ -107,38 +111,64 @@ public class Login2Controller {
             statusMessage.setVisible(true);
             return;
         }
-        try{
+        
+        try {
             Integer userId = Integer.parseInt(username);
 
             if (authenticateUser(userId, password)) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/MainScreen.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/MainScreen.fxml"));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
 
-                // Verificação segura para evitar NullPointerException
-                if (loginButton.getScene() != null && loginButton.getScene().getWindow() != null) {
-                    Stage stage = (Stage) loginButton.getScene().getWindow();
-                    stage.setResizable(false);
-                    stage.setScene(scene);
-                    stage.show();
-                } else {
-                    statusMessage.setText("Erro: Janela não está disponível.");
+                    if (loginButton.getScene() != null && loginButton.getScene().getWindow() != null) {
+                        Stage stage = (Stage) loginButton.getScene().getWindow();
+                        
+                        // Detectar SO
+                        String os = System.getProperty("os.name").toLowerCase();
+                        boolean isLinux = os.contains("nux") || os.contains("nix");
+                        
+                        System.out.println("Carregando MainScreen em: " + os);
+                        
+                        if (isLinux) {
+                            // Linux: trocar cena primeiro, depois maximizar
+                            stage.setScene(scene);
+                            
+                            Platform.runLater(() -> {
+                                stage.setMaximized(true);
+                                System.out.println("✓ Linux: MainScreen maximizado");
+                            });
+                            
+                        } else {
+                            // Windows: configurar tamanho, depois trocar cena
+                            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+                            stage.setX(screenBounds.getMinX());
+                            stage.setY(screenBounds.getMinY());
+                            stage.setWidth(screenBounds.getWidth());
+                            stage.setHeight(screenBounds.getHeight());
+                            stage.setResizable(false);
+                            stage.setScene(scene);
+                            System.out.println("✓ Windows: MainScreen configurado");
+                        }
+                        
+                        stage.show();
+                        
+                    } else {
+                        statusMessage.setText("Erro: Janela não está disponível.");
+                        statusMessage.setVisible(true);
+                    }
+                } catch (Exception e) {
+                    statusMessage.setText("Erro ao carregar a tela principal: " + e.getMessage());
                     statusMessage.setVisible(true);
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                statusMessage.setText("Erro ao carregar a tela principal: " + e.getMessage());
-                statusMessage.setVisible(true);
             }
-        }
 
         } catch (NumberFormatException e) {
             statusMessage.setText("ID de usuário inválido.");
             statusMessage.setVisible(true);
             return;
         }
-        
-
     }
 
     @FXML

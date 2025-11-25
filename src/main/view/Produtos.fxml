@@ -88,61 +88,115 @@
                   </HBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Código de Barras:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Código de Barras:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <TextField fx:id="txtCodigo" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Nome do Produto:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Nome do Produto:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <TextField fx:id="txtNome" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Unidade de Medida:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Unidade de Medida:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <ComboBox fx:id="cbCategoria" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Preço (R$):">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Preço (R$):">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <TextField fx:id="txtPreco" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Estoque:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Estoque:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <TextField fx:id="txtEstoque" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label style="-fx-text-fill: #333;" text="Fornecedor:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Label style="-fx-text-fill: #333;" text="Fornecedor:">
+                                 <font>
+                                    <Font name="Segoe UI" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                                 <font>
+                                    <Font name="Segoe UI" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <ComboBox fx:id="cbFornecedor" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
                      </children>
                   </VBox>

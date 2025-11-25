@@ -19,7 +19,7 @@ public class EnderecoDAO {
             stmt.setString(4, endereco.getBairro());
             stmt.setString(5, endereco.getCidade());
             stmt.setString(6, endereco.getEstado());
-            stmt.setString(7, endereco.getCep());
+            stmt.setString(7, formatarCep(endereco.getCep()));
 
             int linhasAfetadas = stmt.executeUpdate();
 
@@ -78,7 +78,7 @@ public class EnderecoDAO {
             stmt.setString(4, endereco.getBairro());
             stmt.setString(5, endereco.getCidade());
             stmt.setString(6, endereco.getEstado());
-            stmt.setString(7, endereco.getCep());
+            stmt.setString(7, formatarCep(endereco.getCep()));
             stmt.setInt(8, endereco.getIdEndereco());
 
             return stmt.executeUpdate() > 0;
@@ -95,5 +95,13 @@ public class EnderecoDAO {
             stmt.setInt(1, idEndereco);
             return stmt.executeUpdate() > 0;
         }
+    }
+
+    // Método para formatar CEP com traço
+    private String formatarCep(String cep) {
+        if (cep != null && cep.length() == 8) {
+            return cep.substring(0, 5) + "-" + cep.substring(5);
+        }
+        return cep;
     }
 }

@@ -567,7 +567,7 @@ public class ClientesController {
             String cep = extrairNumeros(txtCep.getText());
             if (cep.length() != 8) {
                 erros.add("CEP deve ter 8 dígitos");
-            } else if (!cep.matches("\\d{8}") || Integer.parseInt(cep.substring(0,1)) <= 0) { // Básico: não começar com 0
+            } else if (!cep.matches("\\d{8}")) {
                 erros.add("CEP inválido");
             }
         }

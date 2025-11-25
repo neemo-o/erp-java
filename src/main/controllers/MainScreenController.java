@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.database.DatabaseConnection;
+import javafx.stage.Screen;
+import javafx.geometry.Rectangle2D;
 
 import java.net.InetAddress;
 import java.sql.Connection;
@@ -88,19 +90,21 @@ public class MainScreenController {
     public void initialize() {
         System.out.println("=== INITIALIZE MainScreenController ===");
 
-        // IMPORTANTE: Configurar janela IMEDIATAMENTE quando a cena estiver disponível
+        // Configurar janela quando o Stage estiver completamente carregado
         Platform.runLater(() -> {
-            try {
-                if (contentArea.getScene() != null && contentArea.getScene().getWindow() != null) {
-                    Stage stage = (Stage) contentArea.getScene().getWindow();
-                    System.out.println("Configurando stage...");
-                    stage.setResizable(false);
-                    stage.setMaximized(true);
-                    System.out.println("Stage maximizado: " + stage.isMaximized());
-                }
-            } catch (Exception e) {
-                System.err.println("Erro ao maximizar: " + e.getMessage());
-                e.printStackTrace();
+            if (contentArea.getScene() != null && contentArea.getScene().getWindow() != null) {
+                Stage stage = (Stage) contentArea.getScene().getWindow();
+                configurarStage(stage);
+            } else {
+                // Fallback: usar listener se não estiver pronto
+                contentArea.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                    if (newScene != null) {
+                        Stage stage = (Stage) newScene.getWindow();
+                        if (stage != null) {
+                            configurarStage(stage);
+                        }
+                    }
+                });
             }
         });
 
@@ -127,6 +131,34 @@ public class MainScreenController {
         adicionarEfeitosMenu();
 
         System.out.println("=== INITIALIZE CONCLUÍDO ===");
+    }
+
+    // Método auxiliar para configurar o Stage
+    private void configurarStage(Stage stage) {
+        try {
+            System.out.println("→ Configurando Stage...");
+            
+            // Pegar dimensões da tela
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            System.out.println("  Resolução da tela: " + screenBounds.getWidth() + "x" + screenBounds.getHeight());
+            
+            // Configurar dimensões manualmente
+            stage.setX(screenBounds.getMinX());
+            stage.setY(screenBounds.getMinY());
+            stage.setWidth(screenBounds.getWidth());
+            stage.setHeight(screenBounds.getHeight());
+            
+            // Desabilitar redimensionamento
+            stage.setResizable(false);
+            
+            System.out.println("✓ Stage configurado em: " + stage.getX() + "," + stage.getY() + 
+                            " com tamanho " + stage.getWidth() + "x" + stage.getHeight());
+            
+        } catch (Exception e) {
+            System.err.println("✗ Erro ao configurar Stage: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void adicionarEfeitosMenu() {

@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VendasController {
 
@@ -92,6 +93,9 @@ public class VendasController {
     @FXML
     private Label lblOperador;
 
+    @FXML
+    private ListView<Produto> listSugestoesProdutos;
+
     private VendasDAO vendasDAO;
     private ItemVendaDAO itemVendaDAO;
     private ProdutoDAO produtoDAO;
@@ -99,9 +103,13 @@ public class VendasController {
     private ObservableList<ItemVenda> itensVenda;
     private ObservableList<Cliente> clientes;
     private ObservableList<String> formasPagamento;
+    private ObservableList<Produto> sugestoesProdutos;
     private Vendas vendaAtual;
     private BigDecimal subtotal = BigDecimal.ZERO;
     private BigDecimal desconto = BigDecimal.ZERO;
+    
+    private PauseTransition searchDebounce;
+    private List<Produto> todosOsProdutos; // Cache de produtos
 
     @FXML
     void initialize() {
@@ -113,13 +121,17 @@ public class VendasController {
         itensVenda = FXCollections.observableArrayList();
         clientes = FXCollections.observableArrayList();
         formasPagamento = FXCollections.observableArrayList();
+        sugestoesProdutos = FXCollections.observableArrayList();
+        todosOsProdutos = new ArrayList<>();
 
         configurarTableView();
         configurarComboBoxes();
         aplicarMascaras();
         aplicarValidacoes();
+        configurarBuscaProdutos();
 
         carregarClientes();
+        carregarTodosProdutos(); // NOVO: Carregar produtos na inicialização
         configurarFormasPagamento();
         iniciarNovaVenda();
 
@@ -127,6 +139,172 @@ public class VendasController {
         atualizarTotais();
 
         lblOperador.setText("Operador: Sistema");
+    }
+
+    // NOVO: Carregar todos os produtos no início para busca rápida
+    private void carregarTodosProdutos() {
+        try {
+            todosOsProdutos = produtoDAO.buscarTodos();
+            System.out.println("✅ " + todosOsProdutos.size() + " produtos carregados!");
+        } catch (SQLException e) {
+            System.err.println("❌ Erro ao carregar produtos: " + e.getMessage());
+            mostrarNotificacao("Erro", "Erro ao carregar produtos", "erro");
+        }
+    }
+
+    private void configurarBuscaProdutos() {
+        System.out.println("🔧 Configurando busca de produtos...");
+        
+        if (listSugestoesProdutos != null) {
+            System.out.println("✅ ListView encontrado!");
+            listSugestoesProdutos.setVisible(false);
+            listSugestoesProdutos.setMaxHeight(200);
+            
+            listSugestoesProdutos.setCellFactory(param -> new ListCell<Produto>() {
+                @Override
+                protected void updateItem(Produto produto, boolean empty) {
+                    super.updateItem(produto, empty);
+                    if (empty || produto == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        setText(String.format("%s - %s | Estoque: %d | R$ %.2f",
+                            produto.getCodigoBarras(),
+                            produto.getDescricao(),
+                            produto.getEstoqueAtual(),
+                            produto.getPrecoVenda()));
+                        
+                        // Estilo visual melhor
+                        setStyle("-fx-padding: 8; -fx-font-size: 11px;");
+                    }
+                }
+            });
+
+            // Duplo clique para selecionar
+            listSugestoesProdutos.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Produto produtoSelecionado = listSugestoesProdutos.getSelectionModel().getSelectedItem();
+                    if (produtoSelecionado != null) {
+                        selecionarProduto(produtoSelecionado);
+                    }
+                }
+            });
+
+            // Teclas na lista
+            listSugestoesProdutos.setOnKeyPressed(event -> {
+                switch (event.getCode()) {
+                    case ENTER:
+                        Produto produtoSelecionado = listSugestoesProdutos.getSelectionModel().getSelectedItem();
+                        if (produtoSelecionado != null) {
+                            selecionarProduto(produtoSelecionado);
+                        }
+                        break;
+                    case ESCAPE:
+                        listSugestoesProdutos.setVisible(false);
+                        txtCodigoBarras.requestFocus();
+                        break;
+                }
+            });
+        } else {
+            System.err.println("❌ ListView NÃO encontrado no FXML!");
+        }
+
+        // Debounce de 200ms (mais rápido)
+        searchDebounce = new PauseTransition(Duration.millis(200));
+        searchDebounce.setOnFinished(event -> buscarProdutosPreditivo());
+
+        // Listener que dispara a busca
+        txtCodigoBarras.textProperty().addListener((obs, oldVal, newVal) -> {
+            System.out.println("📝 Digitado: '" + newVal + "'");
+            
+            if (newVal != null && newVal.trim().length() >= 1) { // Busca a partir de 1 caractere!
+                System.out.println("🔍 Iniciando busca...");
+                searchDebounce.playFromStart();
+            } else {
+                if (listSugestoesProdutos != null) {
+                    listSugestoesProdutos.setVisible(false);
+                }
+                sugestoesProdutos.clear();
+            }
+        });
+
+        // Navegar com setas
+        txtCodigoBarras.setOnKeyPressed(event -> {
+            if (listSugestoesProdutos != null && listSugestoesProdutos.isVisible()) {
+                switch (event.getCode()) {
+                    case DOWN:
+                        event.consume();
+                        listSugestoesProdutos.requestFocus();
+                        listSugestoesProdutos.getSelectionModel().selectFirst();
+                        break;
+                    case ESCAPE:
+                        event.consume();
+                        listSugestoesProdutos.setVisible(false);
+                        break;
+                }
+            }
+        });
+    }
+
+    // NOVA busca preditiva ultrarrápida
+    private void buscarProdutosPreditivo() {
+        String termo = txtCodigoBarras.getText().trim().toLowerCase();
+        
+        System.out.println("🔎 Buscando por: '" + termo + "'");
+        
+        if (termo.isEmpty()) {
+            if (listSugestoesProdutos != null) {
+                listSugestoesProdutos.setVisible(false);
+            }
+            return;
+        }
+
+        try {
+            // Busca em memória (super rápido!)
+            List<Produto> resultados = todosOsProdutos.stream()
+                .filter(p -> {
+                    String codigo = p.getCodigoBarras() != null ? p.getCodigoBarras().toLowerCase() : "";
+                    String descricao = p.getDescricao() != null ? p.getDescricao().toLowerCase() : "";
+                    
+                    // Busca se o termo está CONTIDO no código ou descrição
+                    return codigo.contains(termo) || descricao.contains(termo);
+                })
+                .limit(15) // Máximo 15 resultados
+                .collect(Collectors.toList());
+
+            System.out.println("📊 Encontrados " + resultados.size() + " produtos");
+
+            sugestoesProdutos.clear();
+            
+            if (!resultados.isEmpty()) {
+                sugestoesProdutos.addAll(resultados);
+                
+                if (listSugestoesProdutos != null) {
+                    listSugestoesProdutos.setItems(sugestoesProdutos);
+                    listSugestoesProdutos.setVisible(true);
+                    System.out.println("✅ Lista exibida!");
+                }
+            } else {
+                if (listSugestoesProdutos != null) {
+                    listSugestoesProdutos.setVisible(false);
+                }
+                System.out.println("⚠️ Nenhum produto encontrado");
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro na busca: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void selecionarProduto(Produto produto) {
+        System.out.println("✅ Produto selecionado: " + produto.getDescricao());
+        txtCodigoBarras.setText(produto.getCodigoBarras());
+        if (listSugestoesProdutos != null) {
+            listSugestoesProdutos.setVisible(false);
+        }
+        txtQuantidade.requestFocus();
+        txtQuantidade.selectAll();
     }
 
     private void configurarTableView() {
@@ -168,6 +346,31 @@ public class VendasController {
         });
 
         tableItens.setItems(itensVenda);
+        
+        tableItens.setOnKeyPressed(event -> {
+            ItemVenda itemSelecionado = tableItens.getSelectionModel().getSelectedItem();
+            if (itemSelecionado != null) {
+                switch (event.getCode()) {
+                    case DELETE:
+                        handleRemoverItem();
+                        break;
+                    case ADD:
+                    case PLUS:
+                        itemSelecionado.setQuantidade(itemSelecionado.getQuantidade() + 1);
+                        tableItens.refresh();
+                        atualizarTotais();
+                        break;
+                    case SUBTRACT:
+                    case MINUS:
+                        if (itemSelecionado.getQuantidade() > 1) {
+                            itemSelecionado.setQuantidade(itemSelecionado.getQuantidade() - 1);
+                            tableItens.refresh();
+                            atualizarTotais();
+                        }
+                        break;
+                }
+            }
+        });
     }
 
     private void configurarComboBoxes() {
@@ -195,7 +398,6 @@ public class VendasController {
     }
 
     private void aplicarMascaras() {
-        // Apenas números para quantidade
         txtQuantidade.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.matches("\\d*")) {
                 txtQuantidade.setText(newVal.replaceAll("[^\\d]", ""));
@@ -209,13 +411,6 @@ public class VendasController {
                 } catch (NumberFormatException e) {
                     txtQuantidade.setText(oldVal);
                 }
-            }
-        });
-
-        // Apenas números para código de barras
-        txtCodigoBarras.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.matches("\\d*")) {
-                txtCodigoBarras.setText(newVal.replaceAll("[^\\d]", ""));
             }
         });
     }
@@ -307,7 +502,13 @@ public class VendasController {
     private void configurarFocoCampo() {
         txtCodigoBarras.setOnAction(event -> {
             if (!txtCodigoBarras.getText().trim().isEmpty()) {
-                txtQuantidade.requestFocus();
+                if (listSugestoesProdutos != null && 
+                    listSugestoesProdutos.isVisible() && 
+                    sugestoesProdutos.size() == 1) {
+                    selecionarProduto(sugestoesProdutos.get(0));
+                } else {
+                    txtQuantidade.requestFocus();
+                }
             }
         });
 
@@ -347,7 +548,10 @@ public class VendasController {
         cbCliente.setValue(null);
         cbFormaPagamento.setValue("DINHEIRO");
 
-        // Resetar estilos
+        if (listSugestoesProdutos != null) {
+            listSugestoesProdutos.setVisible(false);
+        }
+
         txtCodigoBarras.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
         txtQuantidade.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
     }
@@ -391,10 +595,6 @@ public class VendasController {
             }
         }
 
-        if (codigoBarras.length() > 50) {
-            erros.add("Código de barras muito longo");
-        }
-
         if (!erros.isEmpty()) {
             mostrarNotificacao("Corrija os erros", String.join("\n", erros), "erro");
             return false;
@@ -426,18 +626,23 @@ public class VendasController {
                 return;
             }
 
-            // Verificar se o produto já está na lista
             ItemVenda itemExistente = itensVenda.stream()
                 .filter(item -> item.getIdProduto() == produto.getIdProduto())
                 .findFirst()
                 .orElse(null);
 
             if (itemExistente != null) {
-                itemExistente.setQuantidade(itemExistente.getQuantidade() + quantidade);
+                int novaQuantidade = itemExistente.getQuantidade() + quantidade;
+                if (produto.getEstoqueAtual() < novaQuantidade) {
+                    mostrarNotificacao("Erro", "Estoque insuficiente para esta quantidade total", "erro");
+                    return;
+                }
+                itemExistente.setQuantidade(novaQuantidade);
+                tableItens.refresh();
             } else {
                 ItemVenda novoItem = new ItemVenda();
                 novoItem.setIdProduto(produto.getIdProduto());
-                novoItem.setProduto(produto); // Para facilitar acesso no TableView
+                novoItem.setProduto(produto);
                 novoItem.setQuantidade(quantidade);
                 novoItem.setPrecoUnitario(produto.getPrecoVenda());
                 novoItem.setDataCadastro(new Timestamp(System.currentTimeMillis()));
@@ -497,7 +702,6 @@ public class VendasController {
         }
 
         try {
-            // Salvar venda
             vendaAtual.setFormaPagamento(cbFormaPagamento.getValue());
             int idVenda = vendasDAO.salvar(vendaAtual);
 
@@ -508,12 +712,10 @@ public class VendasController {
 
             vendaAtual.setIdVenda(idVenda);
 
-            // Salvar itens da venda
             for (ItemVenda item : itensVenda) {
                 item.setIdVenda(idVenda);
                 itemVendaDAO.salvar(item);
 
-                // Atualizar estoque do produto
                 Produto produto = item.getProduto();
                 if (produto != null) {
                     produto.setEstoqueAtual(produto.getEstoqueAtual() - item.getQuantidade());
@@ -523,7 +725,10 @@ public class VendasController {
 
             mostrarNotificacao("Sucesso", "Venda finalizada com sucesso!", "sucesso");
             lblVendaAtual.setText("Venda #" + idVenda);
-            iniciarNovaVenda(); // Preparar para nova venda
+            
+            // Recarregar produtos após venda (estoque atualizado)
+            carregarTodosProdutos();
+            iniciarNovaVenda();
 
         } catch (SQLException e) {
             mostrarNotificacao("Erro", "Erro ao finalizar venda", "erro");

@@ -67,7 +67,9 @@ public class ClientesController {
         aplicarMascaras();
         aplicarValidacoes();
 
+        // CORREÇÃO: Configurar ComboBox antes de carregar dados
         cbStatus.setItems(FXCollections.observableArrayList("PAGO", "NAO_PAGO"));
+        cbStatus.setValue("PAGO"); // Valor padrão
 
         carregarClientes();
         atualizarTotal();
@@ -225,6 +227,12 @@ public class ClientesController {
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
+        // Verificação de segurança
+        if (txtNome == null || txtNome.getScene() == null || txtNome.getScene().getWindow() == null) {
+            System.out.println(tipo.toUpperCase() + ": " + titulo + " - " + mensagem);
+            return;
+        }
+        
         Popup popup = new Popup();
 
         String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
@@ -294,14 +302,22 @@ public class ClientesController {
     }
 
     private void configurarTableView() {
-        // Coluna ID (colId)
-        colId.setCellValueFactory(new PropertyValueFactory<>("idCliente"));
+        // CORREÇÃO: Usar CNPJ como ID já que não existe campo id_cliente no banco
+        colId.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
 
         // Coluna Nome (colNome)
         colNome.setCellValueFactory(new PropertyValueFactory<>("razaoSocial"));
 
-        // Coluna CPF (colCpfCnpj)
-        colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
+        // Coluna CPF (colCpfCnpj) - formatado
+        colCpfCnpj.setCellValueFactory(cellData -> {
+            String cpf = cellData.getValue().getCnpj();
+            if (cpf != null && cpf.length() == 11) {
+                String formatted = cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." + 
+                                   cpf.substring(6, 9) + "-" + cpf.substring(9);
+                return new javafx.beans.property.SimpleStringProperty(formatted);
+            }
+            return new javafx.beans.property.SimpleStringProperty(cpf);
+        });
 
         // Coluna Telefone
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefoneCliente"));
@@ -364,7 +380,9 @@ public class ClientesController {
             clientes.clear();
             clientes.addAll(listaClientes);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar clientes", "erro");
+            System.err.println("Erro ao carregar clientes: " + e.getMessage());
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao carregar clientes: " + e.getMessage(), "erro");
         }
     }
 
@@ -397,6 +415,8 @@ public class ClientesController {
         clienteSelecionado = null;
         limparFormulario();
         lblFormTitle.setText("Novo Cliente");
+        // CORREÇÃO: Definir valor padrão no ComboBox
+        cbStatus.setValue("PAGO");
         mostrarFormulario(true);
     }
 
@@ -436,7 +456,7 @@ public class ClientesController {
                     mostrarNotificacao("Erro", "Não foi possível excluir o cliente", "erro");
                 }
             } catch (SQLException e) {
-                mostrarNotificacao("Erro", "Erro ao excluir cliente", "erro");
+                mostrarNotificacao("Erro", "Erro ao excluir cliente: " + e.getMessage(), "erro");
             }
         }
     }
@@ -452,7 +472,13 @@ public class ClientesController {
 
         try {
             Cliente cliente = criarClienteDoFormulario();
-            boolean sucesso = modoEdicao ? clienteDAO.atualizar(cliente) : clienteDAO.inserir(cliente);
+            boolean sucesso;
+            
+            if (modoEdicao) {
+                sucesso = clienteDAO.atualizar(cliente);
+            } else {
+                sucesso = clienteDAO.inserir(cliente);
+            }
 
             if (sucesso) {
                 carregarClientes();
@@ -464,7 +490,9 @@ public class ClientesController {
                 mostrarNotificacao("Erro", "Não foi possível salvar o cliente", "erro");
             }
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao salvar cliente", "erro");
+            System.err.println("Erro ao salvar cliente: " + e.getMessage());
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao salvar cliente: " + e.getMessage(), "erro");
         }
     }
 
@@ -493,13 +521,21 @@ public class ClientesController {
         txtCidade.clear();
         txtEstado.clear();
         txtCep.clear();
-        cbStatus.setValue(null);
+        cbStatus.setValue("PAGO"); // CORREÇÃO: Valor padrão
         limparEstilos();
     }
 
     private void preencherFormulario(Cliente cliente) {
         txtNome.setText(cliente.getRazaoSocial());
-        txtCpf.setText(cliente.getCnpj());
+        
+        // CORREÇÃO: Formatar CPF ao preencher
+        String cpf = cliente.getCnpj();
+        if (cpf != null && cpf.length() == 11) {
+            cpf = cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." + 
+                  cpf.substring(6, 9) + "-" + cpf.substring(9);
+        }
+        txtCpf.setText(cpf);
+        
         txtTelefone.setText(cliente.getTelefoneCliente());
         txtEmail.setText(cliente.getEmailCliente());
         txtLogradouro.setText(cliente.getLogradouro());
@@ -509,7 +545,10 @@ public class ClientesController {
         txtCidade.setText(cliente.getCidade());
         txtEstado.setText(cliente.getEstado());
         txtCep.setText(cliente.getCep());
-        cbStatus.setValue(cliente.getStatusCliente());
+        
+        // CORREÇÃO: Verificar se status não é nulo
+        String status = cliente.getStatusCliente();
+        cbStatus.setValue(status != null ? status : "PAGO");
     }
 
     private Cliente criarClienteDoFormulario() {
@@ -527,7 +566,11 @@ public class ClientesController {
         cliente.setCidade(txtCidade.getText().trim().isEmpty() ? null : txtCidade.getText().trim());
         cliente.setEstado(txtEstado.getText().trim().isEmpty() ? null : txtEstado.getText().trim());
         cliente.setCep(txtCep.getText().trim().isEmpty() ? null : extrairNumeros(txtCep.getText()));
-        cliente.setStatusCliente(cbStatus.getValue() != null ? cbStatus.getValue().toString() : "PAGO");
+        
+        // CORREÇÃO: Garantir que status nunca seja nulo
+        String status = cbStatus.getValue();
+        cliente.setStatusCliente(status != null ? status : "PAGO");
+        
         return cliente;
     }
 
@@ -551,7 +594,7 @@ public class ClientesController {
                         erros.add("CPF já cadastrado");
                     }
                 } catch (SQLException e) {
-                    erros.add("Erro ao verificar CPF");
+                    erros.add("Erro ao verificar CPF: " + e.getMessage());
                 }
             }
         }

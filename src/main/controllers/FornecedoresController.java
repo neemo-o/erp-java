@@ -132,7 +132,7 @@ public class FornecedoresController {
             }
         });
 
-        // Máscara CEP
+        // Máscara CEP - CORREÇÃO: Formato correto para o banco (XXXXX-XXX)
         txtCep.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null || newVal.isEmpty()) return;
             String numbers = newVal.replaceAll("[^0-9]", "");
@@ -160,11 +160,24 @@ public class FornecedoresController {
         limitarCaracteres(txtBairro, 255);
         limitarCaracteres(txtCidade, 255);
         limitarCaracteres(txtEstado, 2);
+        
+        // Estado em maiúsculas
+        txtEstado.textProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null && !newVal.equals(newVal.toUpperCase())) {
+                txtEstado.setText(newVal.toUpperCase());
+            }
+        });
     }
 
     private void aplicarValidacoes() {
         validarCampoObrigatorio(txtNome);
         validarCampoObrigatorio(txtCnpj);
+        validarCampoObrigatorio(txtTelefone);
+        validarCampoObrigatorio(txtLogradouro);
+        validarCampoObrigatorio(txtBairro);
+        validarCampoObrigatorio(txtCidade);
+        validarCampoObrigatorio(txtEstado);
+        validarCampoObrigatorio(txtCep);
 
         // Validação email
         txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
@@ -235,10 +248,15 @@ public class FornecedoresController {
         txtCidade.setStyle(estiloPadrao);
         txtEstado.setStyle(estiloPadrao);
         txtCep.setStyle(estiloPadrao);
+        txtTelefone.setStyle(estiloPadrao);
+        txtContato.setStyle(estiloPadrao);
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
-        if (txtNome.getScene() == null || txtNome.getScene().getWindow() == null) return;
+        if (txtNome == null || txtNome.getScene() == null || txtNome.getScene().getWindow() == null) {
+            System.out.println(tipo.toUpperCase() + ": " + titulo + " - " + mensagem);
+            return;
+        }
         
         Popup popup = new Popup();
         String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
@@ -310,7 +328,18 @@ public class FornecedoresController {
     private void configurarTableView() {
         colId.setCellValueFactory(new PropertyValueFactory<>("idFornecedor"));
         colNome.setCellValueFactory(new PropertyValueFactory<>("razaoSocial"));
-        colCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpj"));
+        
+        // CORREÇÃO: Formatar CNPJ na exibição
+        colCnpj.setCellValueFactory(cellData -> {
+            String cnpj = cellData.getValue().getCnpj();
+            if (cnpj != null && cnpj.length() == 14) {
+                String formatted = cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "." + 
+                                   cnpj.substring(5, 8) + "/" + cnpj.substring(8, 12) + "-" + cnpj.substring(12);
+                return new javafx.beans.property.SimpleStringProperty(formatted);
+            }
+            return new javafx.beans.property.SimpleStringProperty(cnpj);
+        });
+        
         colContato.setCellValueFactory(new PropertyValueFactory<>("telefone"));
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefone"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -335,7 +364,9 @@ public class FornecedoresController {
             fornecedores.clear();
             fornecedores.addAll(listaFornecedores);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar fornecedores", "erro");
+            System.err.println("Erro ao carregar fornecedores: " + e.getMessage());
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao carregar fornecedores: " + e.getMessage(), "erro");
         }
     }
 
@@ -407,7 +438,7 @@ public class FornecedoresController {
                     mostrarNotificacao("Erro", "Não foi possível excluir o fornecedor", "erro");
                 }
             } catch (SQLException e) {
-                mostrarNotificacao("Erro", "Erro ao excluir fornecedor", "erro");
+                mostrarNotificacao("Erro", "Erro ao excluir fornecedor: " + e.getMessage(), "erro");
             }
         }
     }
@@ -423,7 +454,13 @@ public class FornecedoresController {
 
         try {
             Fornecedor fornecedor = criarFornecedorDoFormulario();
-            boolean sucesso = modoEdicao ? fornecedorDAO.atualizar(fornecedor) : fornecedorDAO.inserir(fornecedor);
+            boolean sucesso;
+            
+            if (modoEdicao) {
+                sucesso = fornecedorDAO.atualizar(fornecedor);
+            } else {
+                sucesso = fornecedorDAO.inserir(fornecedor);
+            }
 
             if (sucesso) {
                 carregarFornecedores();
@@ -435,7 +472,9 @@ public class FornecedoresController {
                 mostrarNotificacao("Erro", "Não foi possível salvar o fornecedor", "erro");
             }
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao salvar fornecedor", "erro");
+            System.err.println("Erro ao salvar fornecedor: " + e.getMessage());
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao salvar fornecedor: " + e.getMessage(), "erro");
         }
     }
 
@@ -470,10 +509,19 @@ public class FornecedoresController {
 
     private void preencherFormulario(Fornecedor fornecedor) {
         txtNome.setText(fornecedor.getRazaoSocial());
-        txtCnpj.setText(fornecedor.getCnpj());
+        
+        // CORREÇÃO: Formatar CNPJ
+        String cnpj = fornecedor.getCnpj();
+        if (cnpj != null && cnpj.length() == 14) {
+            cnpj = cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "." + 
+                   cnpj.substring(5, 8) + "/" + cnpj.substring(8, 12) + "-" + cnpj.substring(12);
+        }
+        txtCnpj.setText(cnpj);
+        
         txtContato.setText(fornecedor.getTelefone());
         txtTelefone.setText(fornecedor.getTelefone());
         txtEmail.setText(fornecedor.getEmail());
+        
         if (fornecedor.getEndereco() != null) {
             txtLogradouro.setText(fornecedor.getEndereco().getLogradouro());
             txtNumero.setText(fornecedor.getEndereco().getNumero());
@@ -493,15 +541,35 @@ public class FornecedoresController {
         fornecedor.setTelefone(extrairNumeros(txtTelefone.getText()));
         fornecedor.setEmail(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
 
-        Endereco endereco = new Endereco(
-            txtLogradouro.getText().trim(),
-            txtNumero.getText().trim(),
-            txtComplemento.getText().trim(),
-            txtBairro.getText().trim(),
-            txtCidade.getText().trim(),
-            txtEstado.getText().trim(),
-            txtCep.getText().trim()
-        );
+        // CORREÇÃO: Criar endereço com CEP formatado corretamente (XXXXX-XXX)
+        String cepFormatado = txtCep.getText().trim();
+        String cepNumeros = extrairNumeros(cepFormatado);
+        if (cepNumeros.length() == 8) {
+            cepFormatado = cepNumeros.substring(0, 5) + "-" + cepNumeros.substring(5);
+        }
+        
+        Endereco endereco;
+        if (modoEdicao && fornecedorSelecionado.getEndereco() != null) {
+            // Manter o ID do endereço existente
+            endereco = fornecedorSelecionado.getEndereco();
+            endereco.setLogradouro(txtLogradouro.getText().trim());
+            endereco.setNumero(txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim());
+            endereco.setComplemento(txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim());
+            endereco.setBairro(txtBairro.getText().trim());
+            endereco.setCidade(txtCidade.getText().trim());
+            endereco.setEstado(txtEstado.getText().trim().toUpperCase());
+            endereco.setCep(cepFormatado);
+        } else {
+            endereco = new Endereco(
+                txtLogradouro.getText().trim(),
+                txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim(),
+                txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim(),
+                txtBairro.getText().trim(),
+                txtCidade.getText().trim(),
+                txtEstado.getText().trim().toUpperCase(),
+                cepFormatado
+            );
+        }
         fornecedor.setEndereco(endereco);
 
         return fornecedor;
@@ -527,7 +595,7 @@ public class FornecedoresController {
                         erros.add("CNPJ já cadastrado");
                     }
                 } catch (SQLException e) {
-                    erros.add("Erro ao verificar CNPJ");
+                    erros.add("Erro ao verificar CNPJ: " + e.getMessage());
                 }
             }
         }
@@ -548,8 +616,13 @@ public class FornecedoresController {
             }
         }
 
+        // Validações de endereço (obrigatório para fornecedor)
         if (txtLogradouro.getText().trim().isEmpty()) {
             erros.add("Logradouro é obrigatório");
+        }
+
+        if (txtBairro.getText().trim().isEmpty()) {
+            erros.add("Bairro é obrigatório");
         }
 
         if (txtCidade.getText().trim().isEmpty()) {
@@ -559,13 +632,16 @@ public class FornecedoresController {
         if (txtEstado.getText().trim().isEmpty()) {
             erros.add("Estado é obrigatório");
         } else if (txtEstado.getText().trim().length() != 2) {
-            erros.add("Estado deve ter 2 caracteres");
+            erros.add("Estado deve ter 2 caracteres (UF)");
         }
 
         if (txtCep.getText().trim().isEmpty()) {
             erros.add("CEP é obrigatório");
-        } else if (extrairNumeros(txtCep.getText()).length() != 8) {
-            erros.add("CEP deve ter 8 dígitos");
+        } else {
+            String cep = extrairNumeros(txtCep.getText());
+            if (cep.length() != 8) {
+                erros.add("CEP deve ter 8 dígitos");
+            }
         }
 
         return erros;

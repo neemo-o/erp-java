@@ -109,7 +109,7 @@ public class VendasController {
     private BigDecimal desconto = BigDecimal.ZERO;
     
     private PauseTransition searchDebounce;
-    private List<Produto> todosOsProdutos; // Cache de produtos
+    private List<Produto> todosOsProdutos;
 
     @FXML
     void initialize() {
@@ -131,7 +131,7 @@ public class VendasController {
         configurarBuscaProdutos();
 
         carregarClientes();
-        carregarTodosProdutos(); // NOVO: Carregar produtos na inicialização
+        carregarTodosProdutos();
         configurarFormasPagamento();
         iniciarNovaVenda();
 
@@ -141,7 +141,6 @@ public class VendasController {
         lblOperador.setText("Operador: Sistema");
     }
 
-    // NOVO: Carregar todos os produtos no início para busca rápida
     private void carregarTodosProdutos() {
         try {
             todosOsProdutos = produtoDAO.buscarTodos();
@@ -174,13 +173,11 @@ public class VendasController {
                             produto.getEstoqueAtual(),
                             produto.getPrecoVenda()));
                         
-                        // Estilo visual melhor
                         setStyle("-fx-padding: 8; -fx-font-size: 11px;");
                     }
                 }
             });
 
-            // Duplo clique para selecionar
             listSugestoesProdutos.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
                     Produto produtoSelecionado = listSugestoesProdutos.getSelectionModel().getSelectedItem();
@@ -190,7 +187,6 @@ public class VendasController {
                 }
             });
 
-            // Teclas na lista
             listSugestoesProdutos.setOnKeyPressed(event -> {
                 switch (event.getCode()) {
                     case ENTER:
@@ -209,15 +205,13 @@ public class VendasController {
             System.err.println("❌ ListView NÃO encontrado no FXML!");
         }
 
-        // Debounce de 200ms (mais rápido)
         searchDebounce = new PauseTransition(Duration.millis(200));
         searchDebounce.setOnFinished(event -> buscarProdutosPreditivo());
 
-        // Listener que dispara a busca
         txtCodigoBarras.textProperty().addListener((obs, oldVal, newVal) -> {
             System.out.println("📝 Digitado: '" + newVal + "'");
             
-            if (newVal != null && newVal.trim().length() >= 1) { // Busca a partir de 1 caractere!
+            if (newVal != null && newVal.trim().length() >= 1) {
                 System.out.println("🔍 Iniciando busca...");
                 searchDebounce.playFromStart();
             } else {
@@ -228,7 +222,6 @@ public class VendasController {
             }
         });
 
-        // Navegar com setas
         txtCodigoBarras.setOnKeyPressed(event -> {
             if (listSugestoesProdutos != null && listSugestoesProdutos.isVisible()) {
                 switch (event.getCode()) {
@@ -246,7 +239,6 @@ public class VendasController {
         });
     }
 
-    // NOVA busca preditiva ultrarrápida
     private void buscarProdutosPreditivo() {
         String termo = txtCodigoBarras.getText().trim().toLowerCase();
         
@@ -260,16 +252,14 @@ public class VendasController {
         }
 
         try {
-            // Busca em memória (super rápido!)
             List<Produto> resultados = todosOsProdutos.stream()
                 .filter(p -> {
                     String codigo = p.getCodigoBarras() != null ? p.getCodigoBarras().toLowerCase() : "";
                     String descricao = p.getDescricao() != null ? p.getDescricao().toLowerCase() : "";
                     
-                    // Busca se o termo está CONTIDO no código ou descrição
                     return codigo.contains(termo) || descricao.contains(termo);
                 })
-                .limit(15) // Máximo 15 resultados
+                .limit(15)
                 .collect(Collectors.toList());
 
             System.out.println("📊 Encontrados " + resultados.size() + " produtos");
@@ -690,40 +680,79 @@ public class VendasController {
 
     @FXML
     void handleFinalizarVenda() {
+        System.out.println("=== INICIANDO FINALIZAÇÃO DA VENDA ===");
+        
+        // Validação 1: Verificar se há itens
         if (itensVenda.isEmpty()) {
+            System.out.println("❌ Erro: Nenhum item na venda");
             mostrarNotificacao("Atenção", "Adicione pelo menos um produto à venda", "aviso");
             return;
         }
 
-        if (cbFormaPagamento.getValue() == null) {
+        // Validação 2: Verificar forma de pagamento
+        if (cbFormaPagamento.getValue() == null || cbFormaPagamento.getValue().trim().isEmpty()) {
+            System.out.println("❌ Erro: Forma de pagamento não selecionada");
             mostrarNotificacao("Atenção", "Selecione a forma de pagamento", "aviso");
             cbFormaPagamento.requestFocus();
             return;
         }
 
         try {
+            System.out.println("→ Configurando dados da venda...");
+            
+            // Configurar dados da venda
             vendaAtual.setFormaPagamento(cbFormaPagamento.getValue());
+            vendaAtual.setDataVenda(new Timestamp(System.currentTimeMillis()));
+            
+            System.out.println("→ Valor total da venda: R$ " + vendaAtual.getValorTotal());
+            System.out.println("→ Forma de pagamento: " + vendaAtual.getFormaPagamento());
+            System.out.println("→ Total de itens: " + itensVenda.size());
+            
+            // Salvar venda no banco
+            System.out.println("→ Salvando venda no banco de dados...");
             int idVenda = vendasDAO.salvar(vendaAtual);
 
             if (idVenda <= 0) {
-                mostrarNotificacao("Erro", "Erro ao salvar venda", "erro");
+                System.err.println("❌ Erro: ID da venda retornou 0 ou negativo");
+                mostrarNotificacao("Erro", "Erro ao salvar venda no banco de dados", "erro");
                 return;
             }
 
+            System.out.println("✅ Venda salva com sucesso! ID: " + idVenda);
             vendaAtual.setIdVenda(idVenda);
 
+            // Salvar itens da venda
+            System.out.println("→ Salvando itens da venda...");
+            int itemCount = 0;
             for (ItemVenda item : itensVenda) {
                 item.setIdVenda(idVenda);
-                itemVendaDAO.salvar(item);
+                
+                System.out.println("  → Item " + (++itemCount) + ": " + item.getProduto().getDescricao() + 
+                                 " (Qtd: " + item.getQuantidade() + ", Preço: R$ " + item.getPrecoUnitario() + ")");
+                
+                int idItem = itemVendaDAO.salvar(item);
+                if (idItem <= 0) {
+                    System.err.println("  ❌ Erro ao salvar item da venda");
+                }
 
+                // Atualizar estoque do produto
                 Produto produto = item.getProduto();
                 if (produto != null) {
-                    produto.setEstoqueAtual(produto.getEstoqueAtual() - item.getQuantidade());
-                    produtoDAO.atualizar(produto);
+                    int novoEstoque = produto.getEstoqueAtual() - item.getQuantidade();
+                    System.out.println("  → Atualizando estoque: " + produto.getEstoqueAtual() + " → " + novoEstoque);
+                    produto.setEstoqueAtual(novoEstoque);
+                    boolean estoqueAtualizado = produtoDAO.atualizar(produto);
+                    
+                    if (!estoqueAtualizado) {
+                        System.err.println("  ⚠️ Aviso: Estoque não foi atualizado para o produto ID " + produto.getIdProduto());
+                    }
                 }
             }
 
-            mostrarNotificacao("Sucesso", "Venda finalizada com sucesso!", "sucesso");
+            System.out.println("✅ Todos os itens salvos com sucesso!");
+            System.out.println("✅ VENDA FINALIZADA COM SUCESSO! ID: " + idVenda);
+            
+            mostrarNotificacao("Sucesso", "Venda #" + idVenda + " finalizada com sucesso!", "sucesso");
             lblVendaAtual.setText("Venda #" + idVenda);
             
             // Recarregar produtos após venda (estoque atualizado)
@@ -731,7 +760,16 @@ public class VendasController {
             iniciarNovaVenda();
 
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao finalizar venda", "erro");
+            System.err.println("❌ ERRO AO FINALIZAR VENDA:");
+            System.err.println("   Mensagem: " + e.getMessage());
+            System.err.println("   Código SQL: " + e.getErrorCode());
+            e.printStackTrace();
+            
+            mostrarNotificacao("Erro", "Erro ao finalizar venda: " + e.getMessage(), "erro");
+        } catch (Exception e) {
+            System.err.println("❌ ERRO INESPERADO:");
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro inesperado: " + e.getMessage(), "erro");
         }
     }
 

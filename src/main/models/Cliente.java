@@ -3,6 +3,7 @@ package main.models;
 import java.sql.Timestamp;
 
 public class Cliente {
+    private Integer idCliente; // ADICIONADO - campo que faltava
     private String cnpj;
     private String razaoSocial;
     private String nomeFantasia;
@@ -38,7 +39,16 @@ public class Cliente {
         this.statusCliente = statusCliente;
     }
 
-    // Getters e Setters
+    // NOVO - Getter e Setter para idCliente
+    public Integer getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(Integer idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    // Getters e Setters existentes
     public String getCnpj() {
         return cnpj;
     }

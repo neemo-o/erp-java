@@ -80,7 +80,6 @@ public class ProdutosController {
     }
 
     private void aplicarMascaras() {
-        // Máscara de preço
         txtPreco.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null || newVal.isEmpty()) return;
             String cleaned = newVal.replaceAll("[^0-9.,]", "");
@@ -91,7 +90,7 @@ public class ProdutosController {
             if (commaCount + dotCount > 1) {
                 char separator = cleaned.contains(",") ? ',' : '.';
                 int firstSep = cleaned.indexOf(separator);
-                String beforeSep = cleaned.substring(0, firstSep + 1).replaceAll("[,.]", String.valueOf(separator));
+                String beforeSep = cleaned.substring(0, firstSep + 1);
                 String afterSep = cleaned.substring(firstSep + 1).replaceAll("[,.]", "");
                 cleaned = beforeSep + afterSep;
             }
@@ -114,21 +113,18 @@ public class ProdutosController {
             }
         });
 
-        // Apenas números para estoque
         txtEstoque.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.matches("\\d*")) {
                 txtEstoque.setText(newVal.replaceAll("[^\\d]", ""));
             }
         });
 
-        // Apenas números para código
         txtCodigo.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.matches("\\d*")) {
                 txtCodigo.setText(newVal.replaceAll("[^\\d]", ""));
             }
         });
 
-        // Limites de caracteres
         limitarCaracteres(txtCodigo, 20);
         limitarCaracteres(txtNome, 100);
         limitarCaracteres(txtPreco, 15);
@@ -137,12 +133,18 @@ public class ProdutosController {
 
     private void aplicarValidacoes() {
         validarCampoObrigatorio(txtNome);
+        validarCampoObrigatorio(txtPreco);
+        validarCampoObrigatorio(txtEstoque);
 
         txtPreco.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused && !txtPreco.getText().trim().isEmpty()) {
                 try {
-                    new BigDecimal(txtPreco.getText().replace(",", "."));
-                    txtPreco.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    BigDecimal preco = new BigDecimal(txtPreco.getText().replace(",", "."));
+                    if (preco.compareTo(BigDecimal.ZERO) > 0) {
+                        txtPreco.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    } else {
+                        txtPreco.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    }
                 } catch (NumberFormatException e) {
                     txtPreco.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 }
@@ -152,8 +154,12 @@ public class ProdutosController {
         txtEstoque.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused && !txtEstoque.getText().trim().isEmpty()) {
                 try {
-                    Integer.parseInt(txtEstoque.getText());
-                    txtEstoque.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    int estoque = Integer.parseInt(txtEstoque.getText());
+                    if (estoque >= 0) {
+                        txtEstoque.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    } else {
+                        txtEstoque.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
+                    }
                 } catch (NumberFormatException e) {
                     txtEstoque.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 }
@@ -192,24 +198,21 @@ public class ProdutosController {
         txtNome.setStyle(estiloPadrao);
         txtPreco.setStyle(estiloPadrao);
         txtEstoque.setStyle(estiloPadrao);
+        txtCodigo.setStyle(estiloPadrao);
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
-        if (txtNome.getScene() == null || txtNome.getScene().getWindow() == null) return;
+        if (txtNome == null || txtNome.getScene() == null || txtNome.getScene().getWindow() == null) {
+            System.out.println(tipo.toUpperCase() + ": " + titulo + " - " + mensagem);
+            return;
+        }
         
         Popup popup = new Popup();
         String cor = tipo.equals("sucesso") ? "#7cb342" : tipo.equals("erro") ? "#e57373" : "#ffb74d";
         String icone = tipo.equals("sucesso") ? "✓" : tipo.equals("erro") ? "✗" : "⚠";
         
         VBox container = new VBox(5);
-        container.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 5;" +
-            "-fx-border-color: " + cor + ";" +
-            "-fx-border-width: 2;" +
-            "-fx-border-radius: 5;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
-        );
+        container.setStyle("-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: " + cor + "; -fx-border-width: 2; -fx-border-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);");
         container.setPadding(new Insets(15));
         container.setMaxWidth(350);
 
@@ -237,8 +240,7 @@ public class ProdutosController {
         popup.setAutoHide(true);
         popup.show(txtNome.getScene().getWindow(), 
             txtNome.getScene().getWindow().getX() + txtNome.getScene().getWindow().getWidth() - 380, 
-            txtNome.getScene().getWindow().getY() + 60
-        );
+            txtNome.getScene().getWindow().getY() + 60);
 
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), container);
         fadeIn.setFromValue(0.0);
@@ -251,8 +253,7 @@ public class ProdutosController {
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(e -> popup.hide());
 
-        SequentialTransition sequence = new SequentialTransition(fadeIn, pause, fadeOut);
-        sequence.play();
+        new SequentialTransition(fadeIn, pause, fadeOut).play();
     }
 
     private void mostrarListaErros(List<String> erros) {
@@ -273,12 +274,11 @@ public class ProdutosController {
         colEstoque.setCellValueFactory(new PropertyValueFactory<>("estoqueAtual"));
         colFornecedor.setCellValueFactory(cellData -> {
             Integer idFornecedor = cellData.getValue().getIdFornecedor();
-            if (idFornecedor != null) {
+            if (idFornecedor != null && fornecedores != null) {
                 Fornecedor fornecedor = fornecedores.stream()
                     .filter(f -> f.getIdFornecedor() == idFornecedor)
                     .findFirst().orElse(null);
-                return new javafx.beans.property.SimpleStringProperty(
-                    fornecedor != null ? fornecedor.getRazaoSocial() : "");
+                return new javafx.beans.property.SimpleStringProperty(fornecedor != null ? fornecedor.getRazaoSocial() : "");
             }
             return new javafx.beans.property.SimpleStringProperty("");
         });
@@ -296,9 +296,8 @@ public class ProdutosController {
     }
 
     private void configurarComboBoxes() {
-        cbCategoria.setItems(FXCollections.observableArrayList(
-            "UN", "KG", "L", "M", "M²", "M³", "PCT", "CX", "FD"
-        ));
+        cbCategoria.setItems(FXCollections.observableArrayList("UN", "KG", "L", "M", "M²", "M³", "PCT", "CX", "FD"));
+        cbCategoria.setValue("UN");
 
         fornecedores = FXCollections.observableArrayList();
         cbFornecedor.setItems(fornecedores);
@@ -307,7 +306,7 @@ public class ProdutosController {
             @Override
             protected void updateItem(Fornecedor item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getRazaoSocial());
+                setText(empty || item == null ? "Selecione (opcional)" : item.getRazaoSocial());
             }
         });
         
@@ -315,15 +314,13 @@ public class ProdutosController {
             @Override
             protected void updateItem(Fornecedor item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getRazaoSocial());
+                setText(empty || item == null ? "Selecione (opcional)" : item.getRazaoSocial());
             }
         });
     }
 
     private void configurarBusca() {
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filtrarProdutos(newValue);
-        });
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> filtrarProdutos(newValue));
     }
 
     private void carregarProdutos() {
@@ -332,8 +329,9 @@ public class ProdutosController {
             produtos.clear();
             produtos.addAll(listaProdutos);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar produtos: " + e.getMessage(), "erro");
+            System.err.println("Erro ao carregar produtos: " + e.getMessage());
             e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao carregar produtos: " + e.getMessage(), "erro");
         }
     }
 
@@ -343,7 +341,7 @@ public class ProdutosController {
             fornecedores.clear();
             fornecedores.addAll(listaFornecedores);
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao carregar fornecedores: " + e.getMessage(), "erro");
+            System.err.println("Erro ao carregar fornecedores: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -417,7 +415,6 @@ public class ProdutosController {
                 }
             } catch (SQLException e) {
                 mostrarNotificacao("Erro", "Erro ao excluir produto: " + e.getMessage(), "erro");
-                e.printStackTrace();
             }
         }
     }
@@ -439,14 +436,18 @@ public class ProdutosController {
                 carregarProdutos();
                 atualizarTotal();
                 mostrarFormulario(false);
-                mostrarNotificacao("Sucesso", 
-                    modoEdicao ? "Produto atualizado!" : "Produto cadastrado!", "sucesso");
+                mostrarNotificacao("Sucesso", modoEdicao ? "Produto atualizado!" : "Produto cadastrado!", "sucesso");
             } else {
                 mostrarNotificacao("Erro", "Não foi possível salvar o produto", "erro");
             }
         } catch (SQLException e) {
-            mostrarNotificacao("Erro", "Erro ao salvar produto: " + e.getMessage(), "erro");
+            System.err.println("Erro ao salvar produto: " + e.getMessage());
             e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro ao salvar produto: " + e.getMessage(), "erro");
+        } catch (Exception e) {
+            System.err.println("Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            mostrarNotificacao("Erro", "Erro inesperado: " + e.getMessage(), "erro");
         }
     }
 
@@ -466,19 +467,19 @@ public class ProdutosController {
     private void limparFormulario() {
         txtCodigo.clear();
         txtNome.clear();
-        cbCategoria.setValue(null);
+        cbCategoria.setValue("UN");
         txtPreco.clear();
-        txtEstoque.clear();
+        txtEstoque.setText("0");
         cbFornecedor.setValue(null);
         txtDescricao.clear();
         limparEstilos();
     }
 
     private void preencherFormulario(Produto produto) {
-        txtCodigo.setText(produto.getCodigoBarras());
+        txtCodigo.setText(produto.getCodigoBarras() != null ? produto.getCodigoBarras() : "");
         txtNome.setText(produto.getDescricao());
-        cbCategoria.setValue(produto.getUnidadeMedida());
-        txtPreco.setText(produto.getPrecoVenda() != null ? produto.getPrecoVenda().toString() : "");
+        cbCategoria.setValue(produto.getUnidadeMedida() != null ? produto.getUnidadeMedida() : "UN");
+        txtPreco.setText(produto.getPrecoVenda() != null ? produto.getPrecoVenda().toString().replace(".", ",") : "");
         txtEstoque.setText(String.valueOf(produto.getEstoqueAtual()));
 
         if (produto.getIdFornecedor() != null) {
@@ -496,26 +497,22 @@ public class ProdutosController {
     private Produto criarProdutoDoFormulario() {
         Produto produto = modoEdicao ? produtoSelecionado : new Produto();
 
-
-
-        // Descrição do produto
         produto.setDescricao(txtNome.getText().trim());
         
-        // Código de barras (opcional)
-        produto.setCodigoBarras(txtCodigo.getText().trim().isEmpty() ? null : txtCodigo.getText().trim());
+        String codigo = txtCodigo.getText().trim();
+        produto.setCodigoBarras(codigo.isEmpty() ? null : codigo);
         
-        // Unidade de medida
-        produto.setUnidadeMedida(cbCategoria.getValue());
+        String unidade = cbCategoria.getValue();
+        produto.setUnidadeMedida(unidade != null ? unidade : "UN");
         
-        // Preço - CORREÇÃO APLICADA AQUI
-        BigDecimal preco = new BigDecimal(txtPreco.getText().replace(",", "."));
-        produto.setPrecoCusto(preco);    // Define o preço de custo
-        produto.setPrecoVenda(preco);    // Define o preço de venda
+        String precoStr = txtPreco.getText().trim().replace(",", ".");
+        BigDecimal preco = new BigDecimal(precoStr);
+        produto.setPrecoCusto(preco);
+        produto.setPrecoVenda(preco);
         
-        // Estoque
-        produto.setEstoqueAtual(Integer.parseInt(txtEstoque.getText()));
+        String estoqueStr = txtEstoque.getText().trim();
+        produto.setEstoqueAtual(estoqueStr.isEmpty() ? 0 : Integer.parseInt(estoqueStr));
 
-        // Fornecedor (opcional)
         Fornecedor fornecedorSelecionado = cbFornecedor.getValue();
         produto.setIdFornecedor(fornecedorSelecionado != null ? fornecedorSelecionado.getIdFornecedor() : null);
 
@@ -555,6 +552,7 @@ public class ProdutosController {
             }
         }
 
+        // Código de barras é OPCIONAL, mas se preenchido, verificar duplicidade
         if (!txtCodigo.getText().trim().isEmpty()) {
             try {
                 Integer idExcluir = modoEdicao ? produtoSelecionado.getIdProduto() : null;

@@ -1,4 +1,4 @@
--- Active: 1761779476832@@127.0.0.1@5432@erp_oficial
+-- Active: 1764800155343@@127.0.0.1@5432@erp_oficial
 
 #   RODE O SCRIPT DEPOIS DE CRIAR A DATABASE COM O ESTE COMANDO ISOLADO
 #   CREATE DATABASE erp_oficial;
@@ -206,3 +206,4 @@ COMMENT ON TABLE licencas IS 'Usuários do sistema';
 -- - Índices adicionais para FKs de endereços
 -- - Validação CEP brasileira
 -- - Comentários aprimorados
+

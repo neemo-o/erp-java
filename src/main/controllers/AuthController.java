@@ -39,17 +39,27 @@ public class AuthController {
 
     @FXML
     public void initialize() {
-        // Limitar o campo a 18 caracteres
-        UnaryOperator<TextFormatter.Change> filter = change -> {
-            if (change.getControlNewText().length() > 18) {
-                return null; // Rejeitar mudança se exceder 18 caracteres
+        // Aplicar máscara de CNPJ com formatação automática
+        documentField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) return;
+            
+            // Remove todos os caracteres não numéricos
+            String numbers = newValue.replaceAll("[^0-9]", "");
+            
+            // Limita a 14 dígitos
+            if (numbers.length() > 14) {
+                numbers = numbers.substring(0, 14);
             }
-            return change;
-        };
-        documentField.setTextFormatter(new TextFormatter<>(filter));
-        
-        // Desabilitar resize da janela
-        
+            
+            // Formata o CNPJ: XX.XXX.XXX/XXXX-XX
+            String formatted = formatCNPJ(numbers);
+            
+            // Atualiza o campo apenas se o texto formatado for diferente
+            if (!formatted.equals(newValue)) {
+                documentField.setText(formatted);
+                documentField.positionCaret(formatted.length());
+            }
+        });
     }
 
     @FXML
@@ -125,6 +135,25 @@ public class AuthController {
             statusMessage.setText("Erro ao conectar ao banco de dados: " + e.getMessage());
             statusMessage.setVisible(true);
         }
+    }
+    @FXML
+     private String formatCNPJ(String numbers) {
+        if (numbers.isEmpty()) return "";
+        
+        StringBuilder formatted = new StringBuilder();
+        
+        for (int i = 0; i < numbers.length(); i++) {
+            if (i == 2 || i == 5) {
+                formatted.append(".");
+            } else if (i == 8) {
+                formatted.append("/");
+            } else if (i == 12) {
+                formatted.append("-");
+            }
+            formatted.append(numbers.charAt(i));
+        }
+        
+        return formatted.toString();
     }
 
     @FXML

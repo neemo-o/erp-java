@@ -18,20 +18,16 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane hbarPolicy="NEVER" maxHeight="600.0" maxWidth="1000.0" prefHeight="600.0" prefWidth="1000.0" 
-    style="-fx-background: #f5f7fa; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-    vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" 
-    fx:controller="main.controllers.RelatoriosController">
-    <VBox alignment="CENTER" prefHeight="600.0" prefWidth="1000.0" spacing="15.0" 
-        style="-fx-background-color: #f5f7fa; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+<ScrollPane hbarPolicy="NEVER" maxHeight="600.0" maxWidth="1000.0" prefHeight="600.0" prefWidth="1000.0" style="-fx-background: #f5f7fa; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.RelatoriosController">
+    <VBox alignment="CENTER" prefHeight="600.0" prefWidth="1000.0" spacing="15.0" style="-fx-background-color: #f5f7fa; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
         <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
         </padding>
 
         <!-- Cabeçalho -->
         <HBox alignment="CENTER" spacing="10.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
-            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                <Image url="@../resources/svg/chart-line-solid-full.svg" />
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #1A1D2E , 30, 0.8 , 0 , 0 );">
+                <Image url="@../resources/svg/chart-line-solid-full.png" />
             </ImageView>
             <Text fill="#2c5282" text="Dashboard de Relatórios">
                 <font>
@@ -39,12 +35,11 @@
                 </font>
             </Text>
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnAtualizar" mnemonicParsing="false" onAction="#handleAtualizar" prefHeight="32.0" prefWidth="120.0" 
-                style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+            <Button fx:id="btnAtualizar" mnemonicParsing="false" onAction="#handleAtualizar" prefHeight="32.0" prefWidth="120.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                 <graphic>
                     <HBox alignment="CENTER" spacing="6.0">
                         <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
-                            <Image url="@../resources/svg/arrows-rotate-solid-full.svg" />
+                            <Image url="@../resources/svg/refresh.png" />
                         </ImageView>
                         <Label style="-fx-text-fill: white;" text="Atualizar" />
                     </HBox>
@@ -53,37 +48,31 @@
         </HBox>
 
         <!-- Filtros -->
-        <VBox alignment="CENTER" spacing="10.0" 
-            style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+        <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
             <HBox alignment="CENTER_LEFT" spacing="15.0">
                 <VBox spacing="5.0">
                     <Label style="-fx-text-fill: #666;" text="Período:">
                         <font><Font name="Segoe UI" size="11.0" /></font>
                     </Label>
-                    <ComboBox fx:id="cbPeriodo" prefWidth="150.0" 
-                        style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
+                    <ComboBox fx:id="cbPeriodo" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
                 </VBox>
 
                 <VBox spacing="5.0">
                     <Label style="-fx-text-fill: #666;" text="Data Inicial:">
                         <font><Font name="Segoe UI" size="11.0" /></font>
                     </Label>
-                    <DatePicker fx:id="dpDataInicial" prefWidth="130.0" 
-                        style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
+                    <DatePicker fx:id="dpDataInicial" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
                 </VBox>
 
                 <VBox spacing="5.0">
                     <Label style="-fx-text-fill: #666;" text="Data Final:">
                         <font><Font name="Segoe UI" size="11.0" /></font>
                     </Label>
-                    <DatePicker fx:id="dpDataFinal" prefWidth="130.0" 
-                        style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
+                    <DatePicker fx:id="dpDataFinal" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
                 </VBox>
 
                 <VBox alignment="BOTTOM_CENTER">
-                    <Button fx:id="btnFiltrar" mnemonicParsing="false" onAction="#handleFiltrar" prefHeight="32.0" prefWidth="100.0" 
-                        style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                        text="Filtrar" />
+                    <Button fx:id="btnFiltrar" mnemonicParsing="false" onAction="#handleFiltrar" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" text="Filtrar" />
                 </VBox>
             </HBox>
 
@@ -103,11 +92,9 @@
         <!-- Cards de Resumo -->
         <HBox alignment="CENTER" spacing="15.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
             <!-- Card 1: Total Vendas -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
-                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/coins-solid-full.svg" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
+                <ImageView id="1" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #5ED143 , 30, 0.8 , 0 , 0 );">
+                    <Image url="@../resources/svg/coins.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Total de Vendas">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -118,11 +105,9 @@
             </VBox>
 
             <!-- Card 2: Ticket Médio -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
-                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/crosshairs-solid-full.svg" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
+                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #DBDE28 , 30, 0.8 , 0 , 0 );">
+                    <Image url="@../resources/svg/crosshairs-solid-full.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Ticket Médio">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -133,11 +118,9 @@
             </VBox>
 
             <!-- Card 3: Total Produtos -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
                 <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/box-solid-full.svg" />
+                    <Image url="@../resources/svg/box.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Total Produtos">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -148,11 +131,9 @@
             </VBox>
 
             <!-- Card 4: Total Clientes -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
-                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/users-solid-full.svg" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
+                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #737FC9 , 30, 0.8 , 0 , 0 );">
+                    <Image url="@../resources/svg/users-solid-full.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Total Clientes">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -163,11 +144,9 @@
             </VBox>
 
             <!-- Card 5: Fornecedores -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
-                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/truck-solid-full.svg" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
+                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #1A1D2E , 30, 0.8 , 0 , 0 );">
+                    <Image url="@../resources/svg/truck-solid-full.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Fornecedores">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -178,11 +157,9 @@
             </VBox>
 
             <!-- Card 6: Baixo Estoque -->
-            <VBox alignment="CENTER" spacing="8.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
-                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                    <Image url="@../resources/svg/triangle-exclamation-solid-full.svg" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 20; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
+                <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #DE992F , 30, 0.8 , 0 , 0 );">
+                    <Image url="@../resources/svg/triangle-exclamation-solid-full.png" />
                 </ImageView>
                 <Label style="-fx-text-fill: #666;" text="Baixo Estoque">
                     <font><Font name="Segoe UI Semibold" size="11.0" /></font>
@@ -196,14 +173,11 @@
         <!-- Gráficos - Linha 1 -->
         <HBox alignment="CENTER" spacing="15.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
             <!-- Gráfico Formas de Pagamento -->
-            <VBox alignment="CENTER" spacing="10.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
                 <Label style="-fx-text-fill: #2c5282; -fx-font-weight: bold;" text="Formas de Pagamento">
                     <font><Font name="Segoe UI Semibold" size="13.0" /></font>
                 </Label>
-                <BarChart fx:id="chartFormasPagamento" legendVisible="false" prefHeight="280.0" 
-                    style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+                <BarChart fx:id="chartFormasPagamento" legendVisible="false" prefHeight="280.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" fx:id="xAxisPagamento" />
                     </xAxis>
@@ -214,14 +188,11 @@
             </VBox>
 
             <!-- Gráfico Vendas por Mês -->
-            <VBox alignment="CENTER" spacing="10.0" 
-                style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" 
-                HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 15; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" HBox.hgrow="ALWAYS">
                 <Label style="-fx-text-fill: #2c5282; -fx-font-weight: bold;" text="Evolução de Vendas">
                     <font><Font name="Segoe UI Semibold" size="13.0" /></font>
                 </Label>
-                <BarChart fx:id="chartVendasMes" legendVisible="false" prefHeight="280.0" 
-                    style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
+                <BarChart fx:id="chartVendasMes" legendVisible="false" prefHeight="280.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent;">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" fx:id="xAxisVendas" />
                     </xAxis>

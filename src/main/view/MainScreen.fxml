@@ -40,8 +40,8 @@
                 <Button fx:id="btnHome" onAction="#handleHome" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/house-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/home.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Início" />
                         </HBox>
@@ -51,8 +51,8 @@
                 <Button fx:id="btnProdutos" onAction="#handleProdutos" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/box-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/box.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Produtos" />
                         </HBox>
@@ -62,8 +62,8 @@
                 <Button fx:id="btnClientes" onAction="#handleClientes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/users-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/users-solid-full.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Clientes" />
                         </HBox>
@@ -73,8 +73,8 @@
                 <Button fx:id="btnVendas" onAction="#handleVendas" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/cart-shopping-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/shopcart.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Vendas" />
                         </HBox>
@@ -84,8 +84,8 @@
                 <Button fx:id="btnFornecedores" onAction="#handleFornecedores" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/truck-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/truck-solid-full.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Fornecedores" />
                         </HBox>
@@ -95,8 +95,8 @@
                 <Button fx:id="btnRelatorios" onAction="#handleRelatorios" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/chart-column-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/chart-column-solid-full.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Relatórios" />
                         </HBox>
@@ -106,8 +106,8 @@
                 <Button fx:id="btnConfiguracoes" onAction="#handleConfiguracoes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../resources/svg/gear-solid-full.svg" />
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #292C45 , 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/gear-solid-full.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: #2c5282;" text="Configurações" />
                         </HBox>
@@ -141,8 +141,8 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
-                            <Image url="@../resources/svg/chart-line-solid-full.svg" />
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #737FC9 , 30, 0.8 , 0 , 0 );">
+                            <Image url="@../resources/svg/chart-line-solid-full.png" />
                         </ImageView>
                         <Text fill="#2c5282" text="Vendas Hoje">
                             <font>
@@ -160,8 +160,8 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
-                            <Image url="@../resources/svg/box-solid-full.svg" />
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #737FC9 , 30, 0.8 , 0 , 0 );">
+                            <Image url="@../resources/svg/box.png" />
                         </ImageView>
                         <Text fill="#2c5282" text="Produtos">
                             <font>
@@ -179,8 +179,8 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
-                            <Image url="@../resources/svg/users-solid-full.svg" />
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #737FC9 , 30, 0.8 , 0 , 0 );">
+                            <Image url="@../resources/svg/users-solid-full.png" />
                         </ImageView>
                         <Text fill="#2c5282" text="Clientes">
                             <font>

@@ -24,7 +24,7 @@
         <!-- Título -->
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
-                <Image url="@../resources/svg/gear-solid-full.svg" />
+                <Image url="@../resources/svg/gear-solid-full.png" />
             </ImageView>
             <Text fill="#2c5282" strokeType="OUTSIDE" strokeWidth="0.0" text="Configurações do Sistema">
                 <font>
@@ -122,8 +122,8 @@
                 <Button fx:id="btnTestarBloqueio" mnemonicParsing="false" onAction="#handleTestarBloqueio" prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;">
                     <graphic>
                         <HBox alignment="CENTER" spacing="6.0">
-                            <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
-                                <Image url="@../resources/svg/lock-solid-full.svg" />
+                            <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #F2F5F5, 30, 0.8 , 0 , 0 );">
+                                <Image url="@../resources/svg/lock-solid-full.png" />
                             </ImageView>
                             <Label style="-fx-text-fill: white;" text="Testar Bloqueio de Horário" />
                         </HBox>
@@ -132,7 +132,7 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <ImageView fitHeight="12.0" fitWidth="12.0" preserveRatio="true">
-                        <Image url="@../resources/svg/check-solid-full.svg" />
+                        <Image url="@../resources/svg/check-solid-full.png" />
                     </ImageView>
                     <Text fill="#2e7d32" text="Configurações de horário são salvas localmente e funcionam imediatamente">
                         <font>
@@ -163,7 +163,7 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <ImageView fitHeight="12.0" fitWidth="12.0" preserveRatio="true">
-                        <Image url="@../resources/svg/check-solid-full.svg" />
+                        <Image url="@../resources/svg/check-solid-full.png" />
                     </ImageView>
                     <Text fill="#2e7d32" text="O nível de permissão será salvo no banco de dados (tabela: licencas)">
                         <font>
@@ -188,7 +188,7 @@
                         <graphic>
                             <HBox alignment="CENTER" spacing="6.0">
                                 <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
-                                    <Image url="@../resources/svg/arrows-rotate-solid-full.svg" />
+                                    <Image url="@../resources/svg/refresh.png" />
                                 </ImageView>
                                 <Label style="-fx-text-fill: white;" text="Fazer Backup" />
                             </HBox>
@@ -197,8 +197,8 @@
                     <Button fx:id="btnRestaurarBackup" mnemonicParsing="false" onAction="#handleRestaurarBackup" prefHeight="32.0" prefWidth="160.0" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;">
                         <graphic>
                             <HBox alignment="CENTER" spacing="6.0">
-                                <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
-                                    <Image url="@../resources/svg/triangle-exclamation-solid-full.svg" />
+                                <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true" style="-fx-effect: innershadow( gaussian , #F2F5F5, 30, 0.8 , 0 , 0 );">
+                                    <Image url="@../resources/svg/triangle-exclamation-solid-full.png" />
                                 </ImageView>
                                 <Label style="-fx-text-fill: white;" text="Restaurar Backup" />
                             </HBox>
@@ -220,7 +220,7 @@
                 <graphic>
                     <HBox alignment="CENTER" spacing="6.0">
                         <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                            <Image url="@../resources/svg/check-solid-full.svg" />
+                            <Image url="@../resources/svg/check-solid-full.png" />
                         </ImageView>
                         <Label style="-fx-text-fill: white;" text="Salvar Configurações" />
                     </HBox>
@@ -230,7 +230,7 @@
                 <graphic>
                     <HBox alignment="CENTER" spacing="6.0">
                         <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                            <Image url="@../resources/svg/x-solid-full.svg" />
+                            <Image url="@../resources/svg/x-solid-full.png" />
                         </ImageView>
                         <Label style="-fx-text-fill: white;" text="Cancelar" />
                     </HBox>

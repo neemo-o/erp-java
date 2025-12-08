@@ -11,12 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import main.database.DatabaseConnection;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.function.UnaryOperator;
 
 public class RegistroController {
 
@@ -439,60 +437,18 @@ public class RegistroController {
         field.setStyle(baseStyle + " -fx-border-color: #f44336;");
     }
 
-    // ==================== MÉTODOS ORIGINAIS ====================
-
-    private Integer gerarIDCredencial(String cnpj) {
-        Integer id = null;
-        Connection db = null;
-        try {
-            db = DatabaseConnection.getConnectionLicenses();
-            if (db != null) {
-                String query = "SELECT COALESCE(MAX(ID_Credenciais), 0) + 1 AS next_id FROM licenca_credenciais WHERE cnpj = ?";
-                PreparedStatement stmt = db.prepareStatement(query);
-                stmt.setString(1, cnpj);
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    id = rs.getInt("next_id");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao gerar ID de credencial: " + e.getMessage());
-        } finally {
-            if (db != null) {
-                try {
-                    db.close();
-                } catch (SQLException e) {
-                    System.err.println("Erro ao fechar conexão: " + e.getMessage());
-                }
-            }
-        }
-        return id;
-    }
-
-    private String gerarSenhaAleatoria() {
-        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom random = new SecureRandom();
-        StringBuilder senha = new StringBuilder(10);
-
-        for (int i = 0; i < 10; i++) {
-            senha.append(caracteres.charAt(random.nextInt(caracteres.length())));
-        }
-
-        return senha.toString();
-    }
-
-    private String gerarNomeUsuario(String cnpj) {
-        String cnpjLimpo = cnpj.replaceAll("[./-]", "");
-        return "user" + cnpjLimpo.substring(0, Math.min(8, cnpjLimpo.length()));
-    }
+    // ==================== CADASTRO SIMPLIFICADO ====================
 
     @FXML
     private void handleRegistro() {
+        System.out.println("=== INICIANDO CADASTRO DE EMPRESA ===");
+        
         // Limpa mensagem anterior
         statusMessage.setVisible(false);
         
         // Valida campos
         if (!validarCampos()) {
+            System.out.println("❌ Validação falhou");
             return;
         }
 
@@ -510,116 +466,118 @@ public class RegistroController {
         String cidade = cidadeField.getText().trim();
         String estado = estadoField.getText().trim();
 
+        System.out.println("→ Dados validados com sucesso");
+        System.out.println("→ CNPJ: " + cnpj);
+        System.out.println("→ Razão Social: " + razaoSocial);
+
         Connection db = null;
         try {
             db = DatabaseConnection.getConnectionLicenses();
-            if (db != null) {
-                db.setAutoCommit(false);
-
-                String queryLicenca = "INSERT INTO licencas (cnpj, razao_social, nome_fantasia, inscricao_estadual, telefone, e_mail, rua, numero, bairro, cidade, estado, cep, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PAGO')";
-                PreparedStatement stmtLicenca = db.prepareStatement(queryLicenca);
-                stmtLicenca.setString(1, cnpj);
-                stmtLicenca.setString(2, razaoSocial);
-                stmtLicenca.setString(3, nomeFantasia);
-                stmtLicenca.setString(4, inscricaoEstadual);
-                stmtLicenca.setString(5, telefone);
-                stmtLicenca.setString(6, email);
-                stmtLicenca.setString(7, rua);
-                stmtLicenca.setString(8, numero);
-                stmtLicenca.setString(9, bairro);
-                stmtLicenca.setString(10, cidade);
-                stmtLicenca.setString(11, estado);
-                stmtLicenca.setString(12, cep);
-
-                int licencaRows = stmtLicenca.executeUpdate();
-                stmtLicenca.close();
-
-                if (licencaRows > 0) {
-                    Integer idCredencial = gerarIDCredencial(cnpj);
-                    String nomeUsuario = gerarNomeUsuario(cnpj);
-                    String senha = gerarSenhaAleatoria();
-
-                    String queryCredenciais = "INSERT INTO licenca_credenciais (ID_Credenciais, cnpj, credenciais, senha, tipo_usuario) VALUES (?, ?, ?, ?, 'ADM')";
-                    PreparedStatement stmtCredenciais = db.prepareStatement(queryCredenciais, Statement.RETURN_GENERATED_KEYS);
-                    stmtCredenciais.setString(1, cnpj);
-                    stmtCredenciais.setString(2, nomeUsuario);
-                    stmtCredenciais.setString(3, senha);
-
-                    int credenciaisRows = stmtCredenciais.executeUpdate();
-
-                    if (credenciaisRows > 0) {
-                        ResultSet generatedKeys = stmtCredenciais.getGeneratedKeys();
-                        if (generatedKeys.next()) {
-                            idCredencial = generatedKeys.getInt(1);
-                        }
-                        generatedKeys.close();
-                    }
-                    stmtCredenciais.close();
-
-                    if (idCredencial > 0) {
-                        String queryUpdate = "UPDATE licencas SET id_credencial_principal = ? WHERE cnpj = ?";
-                        PreparedStatement stmtUpdate = db.prepareStatement(queryUpdate);
-                        stmtUpdate.setInt(1, idCredencial);
-                        stmtUpdate.setString(2, cnpj);
-                        stmtUpdate.executeUpdate();
-                        stmtUpdate.close();
-
-                        db.commit();
-
-                        statusMessage.setFill(javafx.scene.paint.Color.web("#4caf50"));
-                        statusMessage.setText("✓ Cadastro realizado com sucesso!");
-                        statusMessage.setVisible(true);
-
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Credenciais Criadas");
-                        alert.setHeaderText("Seu cadastro foi realizado com sucesso!");
-                        alert.setContentText(String.format(
-                            "Credenciais de acesso:\n\n" +
-                            "Usuário: %s\n" +
-                            "Senha: %s\n\n" +
-                            "Tipo: Administrador\n\n" +
-                            "Guarde essas informações em local seguro.\n" +
-                            "Você poderá alterar a senha após o primeiro login.",
-                            nomeUsuario, senha
-                        ));
-                        alert.showAndWait();
-
-                    } else {
-                        db.rollback();
-                        statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
-                        statusMessage.setText("✗ Erro ao criar credenciais para a empresa.");
-                        statusMessage.setVisible(true);
-                    }
-
-                } else {
-                    statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
-                    statusMessage.setText("✗ Erro ao cadastrar empresa.");
-                    statusMessage.setVisible(true);
-                }
-
-            } else {
+            
+            if (db == null) {
+                System.err.println("❌ Falha ao conectar ao banco de dados");
                 statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
                 statusMessage.setText("✗ Falha na conexão com o banco.");
                 statusMessage.setVisible(true);
+                return;
             }
+
+            System.out.println("✓ Conexão estabelecida com o banco");
+            db.setAutoCommit(false);
+
+            // Inserir apenas na tabela licencas
+            String queryLicenca = "INSERT INTO licencas (cnpj, razao_social, nome_fantasia, inscricao_estadual, " +
+                                "telefone, e_mail, rua, numero, bairro, cidade, estado, cep, status) " +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PAGO')";
+            
+            PreparedStatement stmtLicenca = db.prepareStatement(queryLicenca);
+            stmtLicenca.setString(1, cnpj);
+            stmtLicenca.setString(2, razaoSocial);
+            stmtLicenca.setString(3, nomeFantasia.isEmpty() ? null : nomeFantasia);
+            stmtLicenca.setString(4, inscricaoEstadual.isEmpty() ? null : inscricaoEstadual);
+            stmtLicenca.setString(5, telefone.isEmpty() ? null : telefone);
+            stmtLicenca.setString(6, email);
+            stmtLicenca.setString(7, rua.isEmpty() ? null : rua);
+            stmtLicenca.setString(8, numero.isEmpty() ? null : numero);
+            stmtLicenca.setString(9, bairro.isEmpty() ? null : bairro);
+            stmtLicenca.setString(10, cidade.isEmpty() ? null : cidade);
+            stmtLicenca.setString(11, estado.isEmpty() ? null : estado);
+            stmtLicenca.setString(12, cep.isEmpty() ? null : cep);
+
+            System.out.println("→ Executando INSERT na tabela licencas...");
+            int licencaRows = stmtLicenca.executeUpdate();
+            stmtLicenca.close();
+
+            if (licencaRows > 0) {
+                db.commit();
+                System.out.println("✅ CADASTRO REALIZADO COM SUCESSO!");
+                
+                statusMessage.setFill(javafx.scene.paint.Color.web("#4caf50"));
+                statusMessage.setText("✓ Cadastro realizado com sucesso!");
+                statusMessage.setVisible(true);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Cadastro Concluído");
+                alert.setHeaderText("Empresa cadastrada com sucesso!");
+                alert.setContentText(
+                    "Sua empresa foi cadastrada no sistema.\n\n" +
+                    "CNPJ: " + cnpj + "\n" +
+                    "Razão Social: " + razaoSocial + "\n\n" +
+                    "Você já pode fazer login no sistema usando seu CNPJ."
+                );
+                alert.showAndWait();
+
+                // Redirecionar para tela de login após 2 segundos
+                Platform.runLater(() -> {
+                    try {
+                        Thread.sleep(500);
+                        handleLoginLink();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+            } else {
+                db.rollback();
+                System.err.println("❌ Erro: Nenhuma linha foi inserida");
+                statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
+                statusMessage.setText("✗ Erro ao cadastrar empresa.");
+                statusMessage.setVisible(true);
+            }
+
         } catch (SQLException e) {
+            System.err.println("❌ ERRO SQL:");
+            System.err.println("   Mensagem: " + e.getMessage());
+            System.err.println("   Código: " + e.getErrorCode());
+            System.err.println("   Estado SQL: " + e.getSQLState());
+            e.printStackTrace();
+            
             if (db != null) {
                 try {
                     db.rollback();
+                    System.out.println("→ Rollback executado");
                 } catch (SQLException rollbackEx) {
-                    System.err.println("Erro no rollback: " + rollbackEx.getMessage());
+                    System.err.println("✗ Erro no rollback: " + rollbackEx.getMessage());
                 }
             }
+            
+            String errorMsg = e.getMessage();
+            if (errorMsg.contains("duplicate key") || errorMsg.contains("já existe")) {
+                statusMessage.setText("✗ CNPJ já cadastrado no sistema");
+            } else {
+                statusMessage.setText("✗ Erro: " + e.getMessage());
+            }
             statusMessage.setFill(javafx.scene.paint.Color.web("#f44336"));
-            statusMessage.setText("✗ Erro: " + e.getMessage());
             statusMessage.setVisible(true);
+            
         } finally {
             if (db != null) {
                 try {
                     db.setAutoCommit(true);
                     db.close();
+                    System.out.println("→ Conexão fechada");
                 } catch (SQLException closeEx) {
-                    System.err.println("Erro ao fechar conexão: " + closeEx.getMessage());
+                    System.err.println("✗ Erro ao fechar conexão: " + closeEx.getMessage());
                 }
             }
         }

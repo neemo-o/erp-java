@@ -37,52 +37,81 @@
                 </effect>
                 
                 <!-- Botão Home/Dashboard -->
-                <Button fx:id="btnHome" onAction="#handleHome" prefHeight="28.0" prefWidth="82.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Início">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnHome" onAction="#handleHome" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/house-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Início" />
+                        </HBox>
+                    </graphic>
                 </Button>
             
-                
-                <Button fx:id="btnProdutos" onAction="#handleProdutos" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Produtos">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnProdutos" onAction="#handleProdutos" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/box-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Produtos" />
+                        </HBox>
+                    </graphic>
                 </Button>
            
-                
-                <Button fx:id="btnClientes" onAction="#handleClientes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Clientes">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnClientes" onAction="#handleClientes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/users-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Clientes" />
+                        </HBox>
+                    </graphic>
                 </Button>
             
-                
-                <Button fx:id="btnVendas" onAction="#handleVendas" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Vendas">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnVendas" onAction="#handleVendas" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/cart-shopping-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Vendas" />
+                        </HBox>
+                    </graphic>
                 </Button>
             
-                
-                <Button fx:id="btnFornecedores" onAction="#handleFornecedores" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Fornecedores">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnFornecedores" onAction="#handleFornecedores" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/truck-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Fornecedores" />
+                        </HBox>
+                    </graphic>
                 </Button>
             
-                
-                <Button fx:id="btnRelatorios" onAction="#handleRelatorios" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Relatórios">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnRelatorios" onAction="#handleRelatorios" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/chart-column-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Relatórios" />
+                        </HBox>
+                    </graphic>
                 </Button>
             
-                
-                <Button fx:id="btnConfiguracoes" onAction="#handleConfiguracoes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;" text="Configurações">
-                    <font>
-                        <Font name="Segoe UI" size="13" />
-                    </font>
+                <Button fx:id="btnConfiguracoes" onAction="#handleConfiguracoes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: #2c5282; -fx-font-size: 13; -fx-cursor: hand; -fx-padding: 0 25; -fx-border-color: transparent; -fx-border-width: 0 0 3 0;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                                <Image url="@../resources/svg/gear-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: #2c5282;" text="Configurações" />
+                        </HBox>
+                    </graphic>
                 </Button>
             </HBox>
         </VBox>
@@ -112,11 +141,9 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <Text fill="#4fa8d8" text="📈">
-                            <font>
-                                <Font size="36" />
-                            </font>
-                        </Text>
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
+                            <Image url="@../resources/svg/chart-line-solid-full.svg" />
+                        </ImageView>
                         <Text fill="#2c5282" text="Vendas Hoje">
                             <font>
                                 <Font name="Segoe UI Semibold" size="14" />
@@ -133,11 +160,9 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <Text fill="#4fa8d8" text="📦">
-                            <font>
-                                <Font size="36" />
-                            </font>
-                        </Text>
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
+                            <Image url="@../resources/svg/box-solid-full.svg" />
+                        </ImageView>
                         <Text fill="#2c5282" text="Produtos">
                             <font>
                                 <Font name="Segoe UI Semibold" size="14" />
@@ -154,11 +179,9 @@
                         <effect>
                             <DropShadow color="rgba(0,0,0,0.1)" offsetY="5" radius="15" />
                         </effect>
-                        <Text fill="#4fa8d8" text="👥">
-                            <font>
-                                <Font size="36" />
-                            </font>
-                        </Text>
+                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
+                            <Image url="@../resources/svg/users-solid-full.svg" />
+                        </ImageView>
                         <Text fill="#2c5282" text="Clientes">
                             <font>
                                 <Font name="Segoe UI Semibold" size="14" />

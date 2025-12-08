@@ -8,6 +8,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -20,7 +22,10 @@
         </padding>
 
         <!-- Título -->
-        <HBox alignment="CENTER_LEFT" spacing="15.0">
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <Image url="@../resources/svg/gear-solid-full.svg" />
+            </ImageView>
             <Text fill="#2c5282" strokeType="OUTSIDE" strokeWidth="0.0" text="Configurações do Sistema">
                 <font>
                     <Font name="Segoe UI" size="18.0" />
@@ -114,13 +119,27 @@
                     </font>
                 </CheckBox>
 
-                <Button fx:id="btnTestarBloqueio" mnemonicParsing="false" onAction="#handleTestarBloqueio" prefHeight="32.0" prefWidth="180.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Testar Bloqueio de Horário" />
+                <Button fx:id="btnTestarBloqueio" mnemonicParsing="false" onAction="#handleTestarBloqueio" prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;">
+                    <graphic>
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
+                                <Image url="@../resources/svg/lock-solid-full.svg" />
+                            </ImageView>
+                            <Label style="-fx-text-fill: white;" text="Testar Bloqueio de Horário" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Text fill="#2e7d32" text="✓ Configurações de horário são salvas localmente e funcionam imediatamente">
-                    <font>
-                        <Font name="Segoe UI" size="10.0" />
-                    </font>
-                </Text>
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                    <ImageView fitHeight="12.0" fitWidth="12.0" preserveRatio="true">
+                        <Image url="@../resources/svg/check-solid-full.svg" />
+                    </ImageView>
+                    <Text fill="#2e7d32" text="Configurações de horário são salvas localmente e funcionam imediatamente">
+                        <font>
+                            <Font name="Segoe UI" size="10.0" />
+                        </font>
+                    </Text>
+                </HBox>
             </VBox>
 
             <Separator prefWidth="200.0" />
@@ -142,11 +161,16 @@
                     <ComboBox fx:id="cbNivelPermissao" prefWidth="200.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
                 </VBox>
 
-                <Text fill="#2e7d32" text="✓ O nível de permissão será salvo no banco de dados (tabela: licencas)">
-                    <font>
-                        <Font name="Segoe UI" size="10.0" />
-                    </font>
-                </Text>
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                    <ImageView fitHeight="12.0" fitWidth="12.0" preserveRatio="true">
+                        <Image url="@../resources/svg/check-solid-full.svg" />
+                    </ImageView>
+                    <Text fill="#2e7d32" text="O nível de permissão será salvo no banco de dados (tabela: licencas)">
+                        <font>
+                            <Font name="Segoe UI" size="10.0" />
+                        </font>
+                    </Text>
+                </HBox>
             </VBox>
 
             <Separator prefWidth="200.0" />
@@ -160,8 +184,26 @@
                 </Label>
 
                 <HBox spacing="10.0">
-                    <Button fx:id="btnFazerBackup" mnemonicParsing="false" onAction="#handleFazerBackup" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Fazer Backup" />
-                    <Button fx:id="btnRestaurarBackup" mnemonicParsing="false" onAction="#handleRestaurarBackup" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;" text="Restaurar Backup" />
+                    <Button fx:id="btnFazerBackup" mnemonicParsing="false" onAction="#handleFazerBackup" prefHeight="32.0" prefWidth="160.0" style="-fx-background-color: #5a9fd4; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;">
+                        <graphic>
+                            <HBox alignment="CENTER" spacing="6.0">
+                                <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
+                                    <Image url="@../resources/svg/arrows-rotate-solid-full.svg" />
+                                </ImageView>
+                                <Label style="-fx-text-fill: white;" text="Fazer Backup" />
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="btnRestaurarBackup" mnemonicParsing="false" onAction="#handleRestaurarBackup" prefHeight="32.0" prefWidth="160.0" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11;">
+                        <graphic>
+                            <HBox alignment="CENTER" spacing="6.0">
+                                <ImageView fitHeight="14.0" fitWidth="14.0" preserveRatio="true">
+                                    <Image url="@../resources/svg/triangle-exclamation-solid-full.svg" />
+                                </ImageView>
+                                <Label style="-fx-text-fill: white;" text="Restaurar Backup" />
+                            </HBox>
+                        </graphic>
+                    </Button>
                 </HBox>
 
                 <Text fill="#666" text="💡 Dica: Faça backups regularmente para proteger seus dados!">
@@ -174,8 +216,26 @@
 
         <!-- Botões de Ação -->
         <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
-            <Button fx:id="btnSalvarConfiguracoes" mnemonicParsing="false" onAction="#handleSalvarConfiguracoes" prefHeight="36.0" prefWidth="160.0" style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Salvar Configurações" />
-            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" prefHeight="36.0" prefWidth="100.0" style="-fx-background-color: #999; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;" text="Cancelar" />
+            <Button fx:id="btnSalvarConfiguracoes" mnemonicParsing="false" onAction="#handleSalvarConfiguracoes" prefHeight="36.0" prefWidth="180.0" style="-fx-background-color: #7cb342; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;">
+                <graphic>
+                    <HBox alignment="CENTER" spacing="6.0">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                            <Image url="@../resources/svg/check-solid-full.svg" />
+                        </ImageView>
+                        <Label style="-fx-text-fill: white;" text="Salvar Configurações" />
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" prefHeight="36.0" prefWidth="100.0" style="-fx-background-color: #999; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12;">
+                <graphic>
+                    <HBox alignment="CENTER" spacing="6.0">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                            <Image url="@../resources/svg/x-solid-full.svg" />
+                        </ImageView>
+                        <Label style="-fx-text-fill: white;" text="Cancelar" />
+                    </HBox>
+                </graphic>
+            </Button>
         </HBox>
     </VBox>
 </ScrollPane>

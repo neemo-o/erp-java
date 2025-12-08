@@ -14,7 +14,6 @@ import main.database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.function.UnaryOperator;
 
 public class RegistroController {
 

@@ -18,7 +18,6 @@ import main.database.DatabaseConnection;
 import javafx.stage.Screen;
 import javafx.geometry.Rectangle2D;
 
-import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

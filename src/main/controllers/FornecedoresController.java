@@ -178,22 +178,22 @@ public class FornecedoresController {
 
         // Validação email
         txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (!isNowFocused && !txtEmail.getText().trim().isEmpty()) {
-                String email = txtEmail.getText().trim();
+            if (!isNowFocused && !getTextSafe(txtEmail).trim().isEmpty()) {
+                String email = getTextSafe(txtEmail).trim();
                 if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
                     txtEmail.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 } else {
                     txtEmail.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 }
-            } else if (txtEmail.getText().trim().isEmpty()) {
+            } else if (getTextSafe(txtEmail).trim().isEmpty()) {
                 txtEmail.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
             }
         });
 
         // Validação CNPJ
         txtCnpj.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (!isNowFocused && !txtCnpj.getText().trim().isEmpty()) {
-                String cnpj = extrairNumeros(txtCnpj.getText());
+            if (!isNowFocused && !getTextSafe(txtCnpj).trim().isEmpty()) {
+                String cnpj = extrairNumeros(getTextSafe(txtCnpj));
                 if (cnpj.length() == 14) {
                     txtCnpj.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 } else {
@@ -206,16 +206,16 @@ public class FornecedoresController {
     private void validarCampoObrigatorio(TextField field) {
         field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
-                if (field.getText().trim().isEmpty()) {
+                if (getTextSafe(field).trim().isEmpty()) {
                     field.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 } else {
                     field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 }
             }
         });
-        
+
         field.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
+            if (newVal != null && !newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
                 field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
             }
         });
@@ -246,6 +246,11 @@ public class FornecedoresController {
         txtEstado.setStyle(estiloPadrao);
         txtCep.setStyle(estiloPadrao);
         txtTelefone.setStyle(estiloPadrao);
+    }
+
+    private String getTextSafe(TextField field) {
+        String text = field.getText();
+        return text != null ? text : "";
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
@@ -529,37 +534,37 @@ public class FornecedoresController {
     private Fornecedor criarFornecedorDoFormulario() {
         Fornecedor fornecedor = modoEdicao ? fornecedorSelecionado : new Fornecedor();
 
-        fornecedor.setRazaoSocial(txtNome.getText().trim());
-        fornecedor.setCnpj(extrairNumeros(txtCnpj.getText()));
-        fornecedor.setTelefone(extrairNumeros(txtTelefone.getText()));
-        fornecedor.setEmail(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
+        fornecedor.setRazaoSocial(getTextSafe(txtNome).trim());
+        fornecedor.setCnpj(extrairNumeros(getTextSafe(txtCnpj)));
+        fornecedor.setTelefone(extrairNumeros(getTextSafe(txtTelefone)));
+        fornecedor.setEmail(getTextSafe(txtEmail).trim().isEmpty() ? null : getTextSafe(txtEmail).trim());
 
         // CORREÇÃO: Criar endereço com CEP formatado corretamente (XXXXX-XXX)
-        String cepFormatado = txtCep.getText().trim();
+        String cepFormatado = getTextSafe(txtCep).trim();
         String cepNumeros = extrairNumeros(cepFormatado);
         if (cepNumeros.length() == 8) {
             cepFormatado = cepNumeros.substring(0, 5) + "-" + cepNumeros.substring(5);
         }
-        
+
         Endereco endereco;
         if (modoEdicao && fornecedorSelecionado.getEndereco() != null) {
             // Manter o ID do endereço existente
             endereco = fornecedorSelecionado.getEndereco();
-            endereco.setLogradouro(txtLogradouro.getText().trim());
-            endereco.setNumero(txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim());
-            endereco.setComplemento(txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim());
-            endereco.setBairro(txtBairro.getText().trim());
-            endereco.setCidade(txtCidade.getText().trim());
-            endereco.setEstado(txtEstado.getText().trim().toUpperCase());
+            endereco.setLogradouro(getTextSafe(txtLogradouro).trim());
+            endereco.setNumero(getTextSafe(txtNumero).trim().isEmpty() ? null : getTextSafe(txtNumero).trim());
+            endereco.setComplemento(getTextSafe(txtComplemento).trim().isEmpty() ? null : getTextSafe(txtComplemento).trim());
+            endereco.setBairro(getTextSafe(txtBairro).trim());
+            endereco.setCidade(getTextSafe(txtCidade).trim());
+            endereco.setEstado(getTextSafe(txtEstado).trim().toUpperCase());
             endereco.setCep(cepFormatado);
         } else {
             endereco = new Endereco(
-                txtLogradouro.getText().trim(),
-                txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim(),
-                txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim(),
-                txtBairro.getText().trim(),
-                txtCidade.getText().trim(),
-                txtEstado.getText().trim().toUpperCase(),
+                getTextSafe(txtLogradouro).trim(),
+                getTextSafe(txtNumero).trim().isEmpty() ? null : getTextSafe(txtNumero).trim(),
+                getTextSafe(txtComplemento).trim().isEmpty() ? null : getTextSafe(txtComplemento).trim(),
+                getTextSafe(txtBairro).trim(),
+                getTextSafe(txtCidade).trim(),
+                getTextSafe(txtEstado).trim().toUpperCase(),
                 cepFormatado
             );
         }
@@ -571,14 +576,14 @@ public class FornecedoresController {
     private List<String> validarFormulario() {
         List<String> erros = new ArrayList<>();
 
-        if (txtNome.getText().trim().isEmpty()) {
+        if (getTextSafe(txtNome).trim().isEmpty()) {
             erros.add("Razão social é obrigatória");
         }
 
-        if (txtCnpj.getText().trim().isEmpty()) {
+        if (getTextSafe(txtCnpj).trim().isEmpty()) {
             erros.add("CNPJ é obrigatório");
         } else {
-            String cnpj = extrairNumeros(txtCnpj.getText());
+            String cnpj = extrairNumeros(getTextSafe(txtCnpj));
             if (cnpj.length() != 14) {
                 erros.add("CNPJ deve ter 14 dígitos");
             } else {
@@ -593,45 +598,45 @@ public class FornecedoresController {
             }
         }
 
-        if (!txtEmail.getText().trim().isEmpty()) {
-            String email = txtEmail.getText().trim();
+        if (!getTextSafe(txtEmail).trim().isEmpty()) {
+            String email = getTextSafe(txtEmail).trim();
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
                 erros.add("E-mail inválido");
             }
         }
 
-        if (txtTelefone.getText().trim().isEmpty()) {
+        if (getTextSafe(txtTelefone).trim().isEmpty()) {
             erros.add("Telefone é obrigatório");
         } else {
-            String telefone = extrairNumeros(txtTelefone.getText());
+            String telefone = extrairNumeros(getTextSafe(txtTelefone));
             if (telefone.length() < 10) {
                 erros.add("Telefone deve ter no mínimo 10 dígitos");
             }
         }
 
         // Validações de endereço (obrigatório para fornecedor)
-        if (txtLogradouro.getText().trim().isEmpty()) {
+        if (getTextSafe(txtLogradouro).trim().isEmpty()) {
             erros.add("Logradouro é obrigatório");
         }
 
-        if (txtBairro.getText().trim().isEmpty()) {
+        if (getTextSafe(txtBairro).trim().isEmpty()) {
             erros.add("Bairro é obrigatório");
         }
 
-        if (txtCidade.getText().trim().isEmpty()) {
+        if (getTextSafe(txtCidade).trim().isEmpty()) {
             erros.add("Cidade é obrigatória");
         }
 
-        if (txtEstado.getText().trim().isEmpty()) {
+        if (getTextSafe(txtEstado).trim().isEmpty()) {
             erros.add("Estado é obrigatório");
-        } else if (txtEstado.getText().trim().length() != 2) {
+        } else if (getTextSafe(txtEstado).trim().length() != 2) {
             erros.add("Estado deve ter 2 caracteres (UF)");
         }
 
-        if (txtCep.getText().trim().isEmpty()) {
+        if (getTextSafe(txtCep).trim().isEmpty()) {
             erros.add("CEP é obrigatório");
         } else {
-            String cep = extrairNumeros(txtCep.getText());
+            String cep = extrairNumeros(getTextSafe(txtCep));
             if (cep.length() != 8) {
                 erros.add("CEP deve ter 8 dígitos");
             }

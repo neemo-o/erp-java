@@ -176,14 +176,14 @@ public class ClientesController {
 
         // Validação email
         txtEmail.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (!isNowFocused && !txtEmail.getText().trim().isEmpty()) {
-                String email = txtEmail.getText().trim();
+            if (!isNowFocused && !getTextSafe(txtEmail).trim().isEmpty()) {
+                String email = getTextSafe(txtEmail).trim();
                 if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
                     txtEmail.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 } else {
                     txtEmail.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 }
-            } else if (txtEmail.getText().trim().isEmpty()) {
+            } else if (getTextSafe(txtEmail).trim().isEmpty()) {
                 txtEmail.setStyle("-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
             }
         });
@@ -192,7 +192,7 @@ public class ClientesController {
     private void validarCampoObrigatorio(TextField field) {
         field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
-                if (field.getText().trim().isEmpty()) {
+                if (getTextSafe(field).trim().isEmpty()) {
                     field.setStyle("-fx-border-color: #e57373; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
                 } else {
                     field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
@@ -201,7 +201,7 @@ public class ClientesController {
         });
 
         field.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
+            if (newVal != null && !newVal.trim().isEmpty() && field.getStyle().contains("#e57373")) {
                 field.setStyle("-fx-border-color: #7cb342; -fx-border-width: 2; -fx-background-color: white; -fx-padding: 6;");
             }
         });
@@ -217,6 +217,11 @@ public class ClientesController {
 
     private String extrairNumeros(String texto) {
         return texto == null ? "" : texto.replaceAll("[^0-9]", "");
+    }
+
+    private String getTextSafe(TextField field) {
+        String text = field.getText();
+        return text != null ? text : "";
     }
 
     private void limparEstilos() {
@@ -553,38 +558,38 @@ public class ClientesController {
 
     private Cliente criarClienteDoFormulario() {
         Cliente cliente = modoEdicao ? clienteSelecionado : new Cliente();
-        cliente.setRazaoSocial(txtNome.getText().trim());
-        cliente.setCnpj(extrairNumeros(txtCpf.getText()));
+        cliente.setRazaoSocial(getTextSafe(txtNome).trim());
+        cliente.setCnpj(extrairNumeros(getTextSafe(txtCpf)));
         cliente.setInscricaoEstadual(null);
         cliente.setNomeFantasia(null);
-        cliente.setEmailCliente(txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim());
-        cliente.setTelefoneCliente(txtTelefone.getText().trim().isEmpty() ? null : extrairNumeros(txtTelefone.getText()));
-        cliente.setLogradouro(txtLogradouro.getText().trim().isEmpty() ? null : txtLogradouro.getText().trim());
-        cliente.setNumero(txtNumero.getText().trim().isEmpty() ? null : txtNumero.getText().trim());
-        cliente.setComplemento(txtComplemento.getText().trim().isEmpty() ? null : txtComplemento.getText().trim());
-        cliente.setBairro(txtBairro.getText().trim().isEmpty() ? null : txtBairro.getText().trim());
-        cliente.setCidade(txtCidade.getText().trim().isEmpty() ? null : txtCidade.getText().trim());
-        cliente.setEstado(txtEstado.getText().trim().isEmpty() ? null : txtEstado.getText().trim());
-        cliente.setCep(txtCep.getText().trim().isEmpty() ? null : extrairNumeros(txtCep.getText()));
-        
+        cliente.setEmailCliente(getTextSafe(txtEmail).trim().isEmpty() ? null : getTextSafe(txtEmail).trim());
+        cliente.setTelefoneCliente(getTextSafe(txtTelefone).trim().isEmpty() ? null : extrairNumeros(getTextSafe(txtTelefone)));
+        cliente.setLogradouro(getTextSafe(txtLogradouro).trim().isEmpty() ? null : getTextSafe(txtLogradouro).trim());
+        cliente.setNumero(getTextSafe(txtNumero).trim().isEmpty() ? null : getTextSafe(txtNumero).trim());
+        cliente.setComplemento(getTextSafe(txtComplemento).trim().isEmpty() ? null : getTextSafe(txtComplemento).trim());
+        cliente.setBairro(getTextSafe(txtBairro).trim().isEmpty() ? null : getTextSafe(txtBairro).trim());
+        cliente.setCidade(getTextSafe(txtCidade).trim().isEmpty() ? null : getTextSafe(txtCidade).trim());
+        cliente.setEstado(getTextSafe(txtEstado).trim().isEmpty() ? null : getTextSafe(txtEstado).trim());
+        cliente.setCep(getTextSafe(txtCep).trim().isEmpty() ? null : extrairNumeros(getTextSafe(txtCep)));
+
         // CORREÇÃO: Garantir que status nunca seja nulo
         String status = cbStatus.getValue();
         cliente.setStatusCliente(status != null ? status : "PAGO");
-        
+
         return cliente;
     }
 
     private List<String> validarFormulario() {
         List<String> erros = new ArrayList<>();
 
-        if (txtNome.getText().trim().isEmpty()) {
+        if (getTextSafe(txtNome).trim().isEmpty()) {
             erros.add("Nome é obrigatório");
         }
 
-        if (txtCpf.getText().trim().isEmpty()) {
+        if (getTextSafe(txtCpf).trim().isEmpty()) {
             erros.add("CPF é obrigatório");
         } else {
-            String cpf = extrairNumeros(txtCpf.getText());
+            String cpf = extrairNumeros(getTextSafe(txtCpf));
             if (cpf.length() != 11) {
                 erros.add("CPF deve ter 11 dígitos");
             } else {
@@ -599,15 +604,15 @@ public class ClientesController {
             }
         }
 
-        if (!txtEmail.getText().trim().isEmpty()) {
-            String email = txtEmail.getText().trim();
+        if (!getTextSafe(txtEmail).trim().isEmpty()) {
+            String email = getTextSafe(txtEmail).trim();
             if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
                 erros.add("E-mail inválido");
             }
         }
 
-        if (!txtCep.getText().trim().isEmpty()) {
-            String cep = extrairNumeros(txtCep.getText());
+        if (!getTextSafe(txtCep).trim().isEmpty()) {
+            String cep = extrairNumeros(getTextSafe(txtCep));
             if (cep.length() != 8) {
                 erros.add("CEP deve ter 8 dígitos");
             } else if (!cep.matches("\\d{8}")) {

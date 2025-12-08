@@ -42,12 +42,11 @@
             <TableView fx:id="tableFornecedores" style="-fx-background-color: white; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
               <columns>
                 <TableColumn fx:id="colId" minWidth="50.0" prefWidth="60.0" style="-fx-alignment: CENTER;" text="ID" />
-                <TableColumn fx:id="colNome" minWidth="150.0" prefWidth="220.0" text="Nome/Razão Social" />
+                <TableColumn fx:id="colNome" minWidth="150.0" prefWidth="250.0" text="Nome/Razão Social" />
                 <TableColumn fx:id="colCnpj" minWidth="120.0" prefWidth="150.0" text="CNPJ" />
-                <TableColumn fx:id="colContato" minWidth="120.0" prefWidth="180.0" text="Pessoa de Contato" />
                 <TableColumn fx:id="colTelefone" minWidth="100.0" prefWidth="130.0" text="Telefone" />
                 <TableColumn fx:id="colEmail" minWidth="150.0" prefWidth="220.0" text="E-mail" />
-                <TableColumn fx:id="colEndereco" minWidth="180.0" prefWidth="300.0" text="Endereço" />
+                <TableColumn fx:id="colEndereco" minWidth="180.0" prefWidth="350.0" text="Endereço" />
               </columns>
             </TableView>
          </children>
@@ -121,16 +120,6 @@
             </VBox>
             <VBox spacing="5.0">
                <children>
-                  <Label style="-fx-text-fill: #333;" text="Pessoa de Contato:">
-                     <font>
-                        <Font name="Segoe UI" size="11.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtContato" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
-               </children>
-            </VBox>
-            <VBox spacing="5.0">
-               <children>
                   <HBox spacing="5.0">
                      <children>
                         <Label style="-fx-text-fill: #333;" text="Telefone:">
@@ -181,20 +170,11 @@
                <children>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <HBox spacing="5.0">
-                           <children>
-                              <Label style="-fx-text-fill: #333;" text="Número:">
-                                 <font>
-                                    <Font name="Segoe UI" size="11.0" />
-                                 </font>
-                              </Label>
-                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
-                                 <font>
-                                    <Font name="Segoe UI" size="10.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
+                        <Label style="-fx-text-fill: #333;" text="Número:">
+                           <font>
+                              <Font name="Segoe UI" size="11.0" />
+                           </font>
+                        </Label>
                         <TextField fx:id="txtNumero" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;" />
                      </children>
                   </VBox>

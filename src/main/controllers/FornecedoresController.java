@@ -31,7 +31,6 @@ public class FornecedoresController {
     @FXML private TableColumn<Fornecedor, Integer> colId;
     @FXML private TableColumn<Fornecedor, String> colNome;
     @FXML private TableColumn<Fornecedor, String> colCnpj;
-    @FXML private TableColumn<Fornecedor, String> colContato;
     @FXML private TableColumn<Fornecedor, String> colTelefone;
     @FXML private TableColumn<Fornecedor, String> colEmail;
     @FXML private TableColumn<Fornecedor, String> colEndereco;
@@ -43,7 +42,6 @@ public class FornecedoresController {
     @FXML private Text lblFormTitle;
     @FXML private TextField txtNome;
     @FXML private TextField txtCnpj;
-    @FXML private TextField txtContato;
     @FXML private TextField txtTelefone;
     @FXML private TextField txtEmail;
     @FXML private TextField txtLogradouro;
@@ -152,7 +150,6 @@ public class FornecedoresController {
 
         // Limites de caracteres
         limitarCaracteres(txtNome, 100);
-        limitarCaracteres(txtContato, 100);
         limitarCaracteres(txtEmail, 100);
         limitarCaracteres(txtLogradouro, 255);
         limitarCaracteres(txtNumero, 10);
@@ -249,7 +246,6 @@ public class FornecedoresController {
         txtEstado.setStyle(estiloPadrao);
         txtCep.setStyle(estiloPadrao);
         txtTelefone.setStyle(estiloPadrao);
-        txtContato.setStyle(estiloPadrao);
     }
 
     private void mostrarNotificacao(String titulo, String mensagem, String tipo) {
@@ -340,7 +336,6 @@ public class FornecedoresController {
             return new javafx.beans.property.SimpleStringProperty(cnpj);
         });
         
-        colContato.setCellValueFactory(new PropertyValueFactory<>("telefone"));
         colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefone"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colEndereco.setCellValueFactory(cellData -> {
@@ -494,7 +489,6 @@ public class FornecedoresController {
     private void limparFormulario() {
         txtNome.clear();
         txtCnpj.clear();
-        txtContato.clear();
         txtTelefone.clear();
         txtEmail.clear();
         txtLogradouro.clear();
@@ -518,7 +512,6 @@ public class FornecedoresController {
         }
         txtCnpj.setText(cnpj);
         
-        txtContato.setText(fornecedor.getTelefone());
         txtTelefone.setText(fornecedor.getTelefone());
         txtEmail.setText(fornecedor.getEmail());
         

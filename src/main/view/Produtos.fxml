@@ -7,7 +7,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -95,7 +94,7 @@
                                     <Font name="Segoe UI" size="11.0" />
                                  </font>
                               </Label>
-                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                              <Label style="-fx-text-fill: #999;" text="*opcional">
                                  <font>
                                     <Font name="Segoe UI" size="10.0" />
                                  </font>
@@ -190,7 +189,7 @@
                                     <Font name="Segoe UI" size="11.0" />
                                  </font>
                               </Label>
-                              <Label style="-fx-text-fill: #999;" text="*obrigatório">
+                              <Label style="-fx-text-fill: #999;" text="*opcional">
                                  <font>
                                     <Font name="Segoe UI" size="10.0" />
                                  </font>
@@ -198,16 +197,6 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="cbFornecedor" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
-                     </children>
-                  </VBox>
-                  <VBox spacing="5.0">
-                     <children>
-                        <Label style="-fx-text-fill: #333;" text="Descrição:">
-                           <font>
-                              <Font name="Segoe UI" size="11.0" />
-                           </font>
-                        </Label>
-                        <TextArea fx:id="txtDescricao" prefRowCount="2" style="-fx-background-color: white; -fx-border-color: #d0d0d0; -fx-border-width: 1;" />
                      </children>
                   </VBox>
                   <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 10 0 0 0;">

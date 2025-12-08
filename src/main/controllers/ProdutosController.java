@@ -49,7 +49,6 @@ public class ProdutosController {
     @FXML private TextField txtPreco;
     @FXML private TextField txtEstoque;
     @FXML private ComboBox<Fornecedor> cbFornecedor;
-    @FXML private TextArea txtDescricao;
     @FXML private Button btnSalvar;
     @FXML private Button btnCancelar;
 
@@ -471,7 +470,6 @@ public class ProdutosController {
         txtPreco.clear();
         txtEstoque.setText("0");
         cbFornecedor.setValue(null);
-        txtDescricao.clear();
         limparEstilos();
     }
 
@@ -491,7 +489,6 @@ public class ProdutosController {
             cbFornecedor.setValue(null);
         }
 
-        txtDescricao.setText(produto.getDescricao());
     }
 
     private Produto criarProdutoDoFormulario() {

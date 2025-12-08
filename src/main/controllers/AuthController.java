@@ -63,7 +63,7 @@ public class AuthController {
             return;
         }
 
-
+        
         // Validar formato básico do CNPJ (exemplo: XX.XXX.XXX/XXXX-XX)
         if (!doc.matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
             statusMessage.setText("Formato de CNPJ inválido. Use: XX.XXX.XXX/XXXX-XX");

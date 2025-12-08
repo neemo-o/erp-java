@@ -47,6 +47,13 @@ public class ConfiguracoesController {
     private static final String PREF_FUNCIONA_FDS = "funciona_fds";
     private static final String PREF_BLOQUEAR_FORA_HORARIO = "bloquear_fora_horario";
 
+    // Variáveis para armazenar valores originais (para o botão Cancelar)
+    private String originalHorarioAbertura;
+    private String originalHorarioFechamento;
+    private boolean originalFuncionaFds;
+    private boolean originalBloquearForaHorario;
+    private String originalNivelPermissao;
+
     @FXML
     void initialize() {
         System.out.println("=== Inicializando ConfiguracoesController ===");
@@ -65,6 +72,9 @@ public class ConfiguracoesController {
         
         // Aplicar máscaras
         aplicarMascaras();
+        
+        txtNomeEmpresa.setEditable(false);
+        txtNomeEmpresa.setStyle("-fx-background-color: #f5f5f5; -fx-border-color: #d0d0d0; -fx-border-width: 1; -fx-padding: 6;");
         
         System.out.println("=== ConfiguracoesController inicializado ===");
     }
@@ -115,8 +125,10 @@ public class ConfiguracoesController {
             
             if (rsUser.next()) {
                 cbNivelPermissao.setValue(rsUser.getString("tipo_usuario"));
+                originalNivelPermissao = rsUser.getString("tipo_usuario"); // Salvar valor original
             } else {
                 cbNivelPermissao.setValue("user");
+                originalNivelPermissao = "user"; // Salvar valor original
             }
             
             rsUser.close();
@@ -145,6 +157,12 @@ public class ConfiguracoesController {
         txtHorarioFechamento.setText(horaFechamento);
         chkFuncionaFds.setSelected(funcionaFds);
         chkBloquearSistemaForaHorario.setSelected(bloquearForaHorario);
+        
+        // Salvar valores originais
+        originalHorarioAbertura = horaAbertura;
+        originalHorarioFechamento = horaFechamento;
+        originalFuncionaFds = funcionaFds;
+        originalBloquearForaHorario = bloquearForaHorario;
         
         System.out.println("✓ Preferências locais carregadas");
     }
@@ -494,26 +512,17 @@ public class ConfiguracoesController {
             confirmacao.setHeaderText("Deseja salvar as alterações?");
             confirmacao.setContentText(
                 "✓ Configurações que serão salvas:\n\n" +
-                "• Nome da empresa: no banco erp_licencas\n" +
                 "• Nível de permissão: no banco erp_oficial\n" +
                 "• Horários de funcionamento: localmente\n" +
                 "• Funciona FDS: localmente\n" +
                 "• Bloquear fora do horário: localmente\n\n" +
-                "CNPJ e Endereço: somente leitura"
+                "Nome da Empresa, CNPJ e Endereço: somente leitura"
             );
             
             Optional<ButtonType> resultado = confirmacao.showAndWait();
             if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
                 
-                // Salvar nome da empresa no banco erp_licencas
-                Connection conn = DatabaseConnection.getConnectionLicenses();
-                String sql = "UPDATE licencas SET razao_social = ? WHERE cnpj = ?";
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setString(1, txtNomeEmpresa.getText().trim());
-                stmt.setString(2, txtCnpj.getText().trim());
-                
-                int rowsAffected = stmt.executeUpdate();
-                stmt.close();
+                // REMOVIDO: Não atualiza mais o nome da empresa no banco erp_licencas
                 
                 // Salvar nível de permissão no banco erp_oficial
                 Connection connOficial = DatabaseConnection.getConnectionMercado();
@@ -531,12 +540,16 @@ public class ConfiguracoesController {
                 prefs.putBoolean(PREF_FUNCIONA_FDS, chkFuncionaFds.isSelected());
                 prefs.putBoolean(PREF_BLOQUEAR_FORA_HORARIO, chkBloquearSistemaForaHorario.isSelected());
                 
+                //Atualizar valores originais após salvar
+                originalHorarioAbertura = txtHorarioAbertura.getText();
+                originalHorarioFechamento = txtHorarioFechamento.getText();
+                originalFuncionaFds = chkFuncionaFds.isSelected();
+                originalBloquearForaHorario = chkBloquearSistemaForaHorario.isSelected();
+                originalNivelPermissao = cbNivelPermissao.getValue();
+                
                 System.out.println("✓ Configurações salvas com sucesso!");
                 
                 String mensagem = "Configurações salvas com sucesso!\n\n";
-                if (rowsAffected > 0) {
-                    mensagem += "✓ Nome da empresa atualizado no banco\n";
-                }
                 if (rowsPermissao > 0) {
                     mensagem += "✓ Nível de permissão atualizado no banco\n";
                 }
@@ -576,26 +589,54 @@ public class ConfiguracoesController {
     }
 
     /**
-     * Cancela e volta para o dashboard
+     * Cancela alterações e restaura valores originais
      */
     @FXML
     void handleCancelar() {
-        System.out.println("=== Cancelando Configurações ===");
+        System.out.println("=== Cancelando Alterações ===");
         
         try {
-            StackPane contentArea = (StackPane) btnCancelar.getScene().lookup("#contentArea");
+            // Verificar se houve alterações
+            boolean houveAlteracoes = false;
             
-            if (contentArea != null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/view/Dashboard.fxml"));
-                Parent dashboard = loader.load();
-                
-                contentArea.getChildren().clear();
-                contentArea.getChildren().add(dashboard);
-                
-                System.out.println("✓ Voltou para o dashboard");
+            if (!txtHorarioAbertura.getText().equals(originalHorarioAbertura) ||
+                !txtHorarioFechamento.getText().equals(originalHorarioFechamento) ||
+                chkFuncionaFds.isSelected() != originalFuncionaFds ||
+                chkBloquearSistemaForaHorario.isSelected() != originalBloquearForaHorario ||
+                !cbNivelPermissao.getValue().equals(originalNivelPermissao)) {
+                houveAlteracoes = true;
             }
+            
+            if (houveAlteracoes) {
+                Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmacao.setTitle("Cancelar Alterações");
+                confirmacao.setHeaderText("Descartar alterações?");
+                confirmacao.setContentText("Todas as alterações não salvas serão perdidas.\n\nDeseja continuar?");
+                
+                Optional<ButtonType> resultado = confirmacao.showAndWait();
+                if (resultado.isEmpty() || resultado.get() != ButtonType.OK) {
+                    System.out.println("✗ Cancelamento abortado pelo usuário");
+                    return;
+                }
+            }
+            
+            // Restaurar valores originais
+            txtHorarioAbertura.setText(originalHorarioAbertura);
+            txtHorarioFechamento.setText(originalHorarioFechamento);
+            chkFuncionaFds.setSelected(originalFuncionaFds);
+            chkBloquearSistemaForaHorario.setSelected(originalBloquearForaHorario);
+            cbNivelPermissao.setValue(originalNivelPermissao);
+            
+            System.out.println("✓ Valores restaurados para os originais");
+            
+            if (houveAlteracoes) {
+                mostrarAlerta("Cancelado", 
+                    "Alterações descartadas!\n\nTodos os campos foram restaurados para os valores originais.", 
+                    Alert.AlertType.INFORMATION);
+            }
+            
         } catch (Exception e) {
-            System.err.println("✗ Erro ao voltar: " + e.getMessage());
+            System.err.println("✗ Erro ao cancelar: " + e.getMessage());
             e.printStackTrace();
         }
     }

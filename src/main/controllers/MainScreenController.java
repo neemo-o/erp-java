@@ -138,11 +138,21 @@ public class MainScreenController {
     try {
         System.out.println("→ Configurando Stage...");
         
-        Platform.runLater(() -> {
-            stage.setMaximized(true);
-            stage.setResizable(false);
-            System.out.println("✓ Stage maximizado e redimensionamento desabilitado");
-        });
+        // Obter dimensões da tela
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        
+        // Configurar posição e tamanho manualmente
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
+        stage.setWidth(screenBounds.getWidth());
+        stage.setHeight(screenBounds.getHeight());
+        
+        // Desabilitar redimensionamento DEPOIS de definir o tamanho
+        stage.setResizable(false);
+        
+        System.out.println("✓ Stage configurado em tela cheia: " + 
+                          screenBounds.getWidth() + "x" + screenBounds.getHeight());
+        
         
     } catch (Exception e) {
         System.err.println("✗ Erro ao configurar Stage: " + e.getMessage());

@@ -20,11 +20,6 @@ Sistema integrado desenvolvido em Java para gestão completa de operações de s
 - **Dashboard**: Visão geral com métricas de vendas, produtos e clientes cadastrados.
 - **Configurações**: Ajustes gerais do sistema.
 
-## Demonstração
-
-![Tela de Login](demo/login.png) *(Exemplo: Substitua por imagem real da interface)*
-
-Para demonstração em vídeo ou mais imagens, consulte a pasta `docs/demo/` (criada posteriormente).
 
 ## Tecnologias Utilizadas
 
@@ -163,16 +158,6 @@ Este é um aplicativo desktop JavaFX; não expõe APIs REST. Toda interação é
 - Movimentacao_Estoque → Produto (FK)
 
 Índices otimizados em FKs e campos frequentes (ex: código barras, datas). Triggers auto-atualizam datas de modificação.
-
-## Roadmap
-
-- [ ] Implementar exportação de relatórios em PDF/Excel.
-- [ ] Adicionar gráficos no dashboard (vendas por período).
-- [ ] Integração com APIs de pagamento (Pix, cartão).
-- [ ] Sistema de notificações de baixo estoque.
-- [ ] Modo offline para sincronização posterior.
-- [ ] Multi-empresa (suporte a filiais).
-- [ ] API REST para integração externa.
 
 ## Contribuição
 
